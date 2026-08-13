@@ -42,7 +42,13 @@ function FitBounds({ pins }: { pins: MapPin[] }) {
   return null;
 }
 
-export default function LeafletMap({ pins, showPath, onPinClick, className }: MapViewProps) {
+export default function LeafletMap({
+  pins,
+  showPath,
+  routeGeometry,
+  onPinClick,
+  className,
+}: MapViewProps) {
   return (
     <MapContainer
       center={SEOUL_CENTER}
@@ -56,8 +62,8 @@ export default function LeafletMap({ pins, showPath, onPinClick, className }: Ma
       />
       {showPath && pins.length > 1 && (
         <Polyline
-          positions={pins.map((p) => [p.lat, p.lng])}
-          pathOptions={{ color: "#7c5cfc", weight: 3, dashArray: "6 6" }}
+          positions={routeGeometry && routeGeometry.length > 1 ? routeGeometry : pins.map((p) => [p.lat, p.lng])}
+          pathOptions={{ color: "#7c5cfc", weight: 3, dashArray: routeGeometry?.length ? undefined : "6 6" }}
         />
       )}
       {pins.map((pin) => (

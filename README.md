@@ -16,6 +16,25 @@ npm run test     # vitest (routeOptimizer / scheduleCalculator 단위 테스트)
 
 지도 API 키는 필요 없습니다 (OpenStreetMap 타일 + Leaflet).
 
+한국관광공사 TourAPI / TMAP 연동을 쓰려면 `.env.example`을 `.env.local`로 복사해
+`TOUR_API_KEY`(공공데이터포털 디코딩 키)를 채워 넣으세요. 키가 없어도 앱은 정상
+동작하며(더미 데이터로 자동 폴백), 이 값들은 서버 Route Handler에서만 사용되고
+브라우저에는 절대 노출되지 않습니다(`NEXT_PUBLIC_` 접두사 없음).
+
+### Vercel 환경변수
+
+Vercel 프로젝트 설정 → Environment Variables 에 아래 값을 등록하세요.
+
+| 변수명 | 필수 | 설명 |
+|---|---|---|
+| `TOUR_API_KEY` | 선택(없으면 dummy 폴백) | 공공데이터포털 TourAPI 디코딩 서비스키. 국문/영문/연관관광지 서비스는 data.go.kr에서 상품별로 별도 활용신청 필요(같은 키 재사용) |
+| `TMAP_APP_KEY` | 선택(없으면 Haversine 폴백) | TMAP(SK Open API) appKey |
+| `TOUR_API_BASE_URL` | 선택 | 기본값 `apis.data.go.kr/B551011/KorService2` |
+| `TOUR_API_EN_BASE_URL` | 선택 | 기본값 `apis.data.go.kr/B551011/EngService2` |
+| `TOUR_API_RELATED_BASE_URL` | 선택 | 기본값 `apis.data.go.kr/B551011/TarRlteTarService1` |
+| `TMAP_API_BASE_URL` | 선택 | 기본값 `apis.openapi.sk.com/tmap` |
+| `TOUR_SEARCH_RADIUS_METERS` | 선택 | 기본값 2000(m) |
+
 ## 핵심 파일 구조
 
 ```
@@ -76,16 +95,19 @@ src/
 
 | 인터페이스 | 현재 (MVP) | 교체 위치 |
 |---|---|---|
-| TourismDataProvider | `src/data/*.ts` 로컬 더미 | 한국관광공사 OpenAPI 연동 시 이 파일들을 API 호출로 교체 |
-| DirectionsProvider | `src/lib/distance.ts` Haversine + 상수 모델 | TMAP/Kakao Directions API로 `estimateTravelMinutes` 내부만 교체 |
+| TourismDataProvider | `src/lib/tour-api/` (KorService2 연동, `/api/tourism/*`) — 실패 시 `src/data/*.ts` 더미로 자동 폴백. `?locale=en`이면 EngService2 우선 시도 후 국문으로 폴백 | 아티스트 장소는 계속 STARA 자체 데이터가 관리하고, TourAPI는 로컬 관광지/음식점 자동보완 후보 풀만 확장 공급 |
+| DirectionsProvider | `src/lib/distance.ts` Haversine(기본) — TMAP 연동 시 구간별 실제 duration/geometry로 override | `src/lib/directions/` 참고, 실패 시 구간 단위로 Haversine 폴백 |
 | 지도 렌더링 | `src/components/map/LeafletMap.tsx` | 다른 지도 SDK로 교체 시 `MapView.tsx`가 노출하는 `MapPin`/`MapViewProps` 인터페이스만 유지하면 나머지 화면은 무수정 |
+| 관광지 랭킹 signal | `src/lib/tour-api/relatedTourism.ts` (`TarRlteTarService1`, 실제 연동됨) — 메인 루트 5곳을 anchor로 연관 관광지 랭킹을 가져와 `scoreCandidate`에 반영 | 실패/미승인 시 `relatedTourismScore`가 0(중립)이 되어 거리/식사시간 기준으로만 자연스럽게 폴백 |
 | QuestVerificationProvider | 사용자가 직접 체크 (`store/tripStore.ts`) | GPS/사진 인증 붙일 때 `toggleQuest`/`claimStamp` 내부 로직만 확장 |
 | CollectionBookProvider | 미구현 (완료 화면에 안내 문구만 표시) | 향후 별도 모듈로 추가 |
 
 ## 테스트 및 빌드 결과
 
-- `npm run test` — 9개 단위 테스트 통과 (haversine 거리, 최적 삽입 위치, 09:00 시작/오픈
-  대기/21:00 초과 판정).
+- `npm run test` — 33개 단위 테스트 통과 (haversine 거리, 최적 삽입 위치, 09:00 시작/오픈
+  대기/21:00 초과 판정, autoPlaceSelector의 TourAPI 후보/폴백 분기, TMAP 응답 파싱,
+  scheduleCalculator의 실제 이동시간 override, 영문 TourAPI locale 폴백, 랭킹 signal 공식,
+  연관 관광지 순위 정규화/폴백).
 - `npm run lint` — 오류 없음.
 - `npx tsc --noEmit` — 오류 없음.
 - `npm run build` — 프로덕션 빌드 성공 (정적 페이지 8개 모두 생성).
@@ -95,7 +117,12 @@ src/
 
 ## 알려진 제한사항
 
-- 이동시간은 실제 도로/대중교통 API가 아닌 직선거리 기반 근사치입니다.
+- `TMAP_APP_KEY`가 없으면 이동시간/경로는 실제 도로/대중교통 API가 아닌 직선거리 기반
+  근사치입니다(키가 있으면 구간별로 실제 TMAP 값이 적용됩니다).
+- "관광지별 연관 관광지" 서비스는 시군구코드 기반이라, 현재는 주소가 고정된 STARA 메인 루트
+  5곳만 anchor로 사용합니다(구/코드를 미리 매핑해둠). 사용자가 선택한 장소나 KTO 후보까지
+  anchor로 넓히려면 `resolveSignguCdFromAddress`(주소→구 자동 추출, 이미 구현됨)를
+  anchor 목록 생성 부분에 추가로 연결하면 됩니다.
 - 30곳 이상을 한 번에 추가하는 등 극단적인 스트레스 상황에서는 종료 예상시각이
   다음날로 넘어갈 수 있으며, 이 경우 "+1일" 표기는 하지 않고 초과 경고만 표시합니다
   (정상적인 사용 범위에서는 발생하지 않음).

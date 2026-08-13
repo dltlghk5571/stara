@@ -27,6 +27,9 @@ export interface Artist {
   description: string;
 }
 
+/** 장소 데이터의 출처. 없으면("stara") STARA가 직접 관리하는 데이터. */
+export type PlaceSource = "stara" | "kto";
+
 export interface Place {
   id: string;
   nameKo: string;
@@ -45,6 +48,11 @@ export interface Place {
   isLocalSpot: boolean;
   isMainRoute: boolean;
   questIds: string[];
+  /** 데이터 출처. 생략 시 "stara"(자체 관리 데이터)로 취급. */
+  source?: PlaceSource;
+  /** source가 "kto"일 때 한국관광공사 원본 contentId (상세/이미지 캐시 키로도 사용) */
+  contentId?: string;
+  address?: string;
 }
 
 export type QuestType =

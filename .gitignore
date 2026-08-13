@@ -26,3 +26,7 @@ next-env.d.ts
 
 # vercel
 .vercel
+
+# claude code local settings
+.claude/settings.local.json
+.gbrain-source

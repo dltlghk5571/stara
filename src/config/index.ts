@@ -23,3 +23,8 @@ export const TRAVEL_CONFIG = {
 };
 
 export const MIN_TOUCH_TARGET_PX = 44;
+
+/** 아티스트 장소 주변에서 한국관광공사 관광정보를 검색할 반경(m). 하드코딩 금지 — 여기서만 수정. */
+export const TOUR_SEARCH_RADIUS_METERS = Number(
+  process.env.TOUR_SEARCH_RADIUS_METERS ?? 2000
+);

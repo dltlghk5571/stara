@@ -1,17 +1,21 @@
 import Link from "next/link";
 import { MAIN_ROUTE_PLACE_IDS, getPlaceById } from "@/data/places";
 import { buildSchedule } from "@/lib/scheduleCalculator";
+import { computeRouteLegs } from "@/lib/directions/computeRouteLegs";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
 import { TRIP_START_TIME } from "@/config";
 import TopBar from "@/components/layout/TopBar";
 import MapView from "@/components/map/MapView";
 import type { Place } from "@/types";
 
-export default function MainRoutePage() {
+export default async function MainRoutePage() {
   const mainPlaces = MAIN_ROUTE_PLACE_IDS.map((id) => getPlaceById(id)).filter(
     (p): p is Place => !!p
   );
   const schedule = buildSchedule(mainPlaces);
+  const { geometry } = await computeRouteLegs(
+    mainPlaces.map((p) => ({ id: p.id, lat: p.latitude, lng: p.longitude }))
+  );
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -28,6 +32,7 @@ export default function MainRoutePage() {
             title: p.nameKo,
           }))}
           showPath
+          routeGeometry={geometry.length > 0 ? geometry : undefined}
         />
       </div>
 

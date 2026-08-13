@@ -14,6 +14,8 @@ export interface MapViewProps {
   pins: MapPin[];
   /** 핀을 순서대로 연결하는 선을 표시할지 여부 */
   showPath?: boolean;
+  /** TMAP 등에서 받은 실제 경로 좌표([lat,lng][]). 없으면 pins를 순서대로 이은 직선을 그린다. */
+  routeGeometry?: [number, number][];
   onPinClick?: (id: string) => void;
   className?: string;
 }

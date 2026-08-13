@@ -64,4 +64,23 @@ describe("buildSchedule", () => {
     const result = buildSchedule(places);
     expect(result.isOverLimit).toBe(false);
   });
+
+  it("legDurationOverridesSec가 있는 구간은 Haversine 대신 그 값을 쓴다", () => {
+    const A = place({ id: "A", latitude: 37.5, longitude: 127, dwellMinutes: 0 });
+    const B = place({ id: "B", latitude: 37.51, longitude: 127.01, dwellMinutes: 0 });
+    const overrides = new Map([["A__B", 600]]); // 실제 이동시간 10분(600초)이라고 가정
+    const result = buildSchedule([A, B], "09:00", overrides);
+    expect(result.stops[1].travelMinutesFromPrev).toBe(10);
+    expect(result.stops[1].arrival).toBe("09:10");
+  });
+
+  it("override가 없는 구간은 기존 Haversine 추정치를 그대로 쓴다(구간 단위 폴백)", () => {
+    const A = place({ id: "A", latitude: 37.5, longitude: 127, dwellMinutes: 0 });
+    const B = place({ id: "B", latitude: 37.51, longitude: 127.01, dwellMinutes: 0 });
+    const withoutOverride = buildSchedule([A, B]);
+    const withUnrelatedOverride = buildSchedule([A, B], "09:00", new Map([["X__Y", 1]]));
+    expect(withUnrelatedOverride.stops[1].travelMinutesFromPrev).toBe(
+      withoutOverride.stops[1].travelMinutesFromPrev
+    );
+  });
 });

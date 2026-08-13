@@ -8,6 +8,7 @@ import {
 import { findBestInsertion, insertAtBestPosition } from "./routeOptimizer";
 import { buildSchedule } from "./scheduleCalculator";
 import { toMinutes, isWithinWindow } from "./time";
+import { scoreCandidate } from "./tour-api/rankingSignal";
 import {
   DINNER_WINDOW,
   LUNCH_WINDOW,
@@ -20,13 +21,22 @@ export interface AutoSelectorResult {
   reasons: AutoAddReason[];
 }
 
+/** 한국관광공사 등 외부에서 가져온 자동보완 후보 풀. 비어있으면 기존 dummy 풀을 그대로 사용한다. */
+export interface AutoSelectorCandidates {
+  localTourism?: Place[];
+  restaurants?: Place[];
+  /** 장소명 -> 연관 관광지 점수(0~1). 없으면 scoreCandidate가 0(중립)으로 처리한다. */
+  relatedTourismScores?: Map<string, number>;
+}
+
 /**
  * 메인 루트 + 사용자가 선택한 장소를 합쳐 최종 방문 순서를 만들고,
  * 로컬 관광지 1곳 이상 / 음식점 2곳 이상이 되도록 자동 보완한다.
  */
 export function buildFinalOrder(
   selectedPlaceIds: string[],
-  startTime?: string
+  startTime?: string,
+  extraCandidates?: AutoSelectorCandidates
 ): AutoSelectorResult {
   const mainPlaces = MAIN_ROUTE_PLACE_IDS.map((id) => getPlaceById(id)).filter(
     (p): p is Place => !!p
@@ -43,10 +53,17 @@ export function buildFinalOrder(
   const autoAddedPlaceIds: string[] = [];
   const reasons: AutoAddReason[] = [];
 
-  // 1) 로컬 관광지 최소 1곳 보장
+  // 1) 로컬 관광지 최소 1곳 보장 (TourAPI 후보가 있으면 우선, 없으면 dummy로 폴백)
+  const localTourismPool = extraCandidates?.localTourism?.length
+    ? extraCandidates.localTourism
+    : LOCAL_TOURISM_PLACES;
   const hasLocalTourism = order.some((p) => p.isLocalSpot && !p.isFood);
   if (!hasLocalTourism) {
-    const candidate = pickClosestCandidate(order, LOCAL_TOURISM_PLACES);
+    const candidate = pickClosestCandidate(
+      order,
+      localTourismPool,
+      extraCandidates?.relatedTourismScores
+    );
     if (candidate) {
       order = insertAtBestPosition(order, candidate);
       autoAddedPlaceIds.push(candidate.id);
@@ -58,18 +75,26 @@ export function buildFinalOrder(
     }
   }
 
-  // 2) 음식점 최소 2곳 보장 (점심/저녁 시간대 우선 고려)
+  // 2) 음식점 최소 2곳 보장 (점심/저녁 시간대 우선 고려, TourAPI 후보 우선 사용)
+  const restaurantPool = extraCandidates?.restaurants?.length
+    ? extraCandidates.restaurants
+    : LOCAL_RESTAURANT_PLACES;
   let foodCount = order.filter((p) => p.isFood).length;
   const usedRestaurantIds = new Set(
     order.filter((p) => p.isFood).map((p) => p.id)
   );
   while (foodCount < REQUIRED_FOOD_COUNT) {
-    const remaining = LOCAL_RESTAURANT_PLACES.filter(
+    const remaining = restaurantPool.filter(
       (p) => !usedRestaurantIds.has(p.id)
     );
     if (remaining.length === 0) break;
 
-    const best = pickBestRestaurant(order, remaining, startTime);
+    const best = pickBestRestaurant(
+      order,
+      remaining,
+      startTime,
+      extraCandidates?.relatedTourismScores
+    );
     order = insertAtBestPosition(order, best.place);
     usedRestaurantIds.add(best.place.id);
     autoAddedPlaceIds.push(best.place.id);
@@ -89,12 +114,19 @@ export function buildFinalOrder(
 
 function pickClosestCandidate(
   currentOrder: Place[],
-  candidates: Place[]
+  candidates: Place[],
+  relatedTourismScores?: Map<string, number>
 ): Place | undefined {
-  let best: { place: Place; deltaKm: number } | undefined;
+  let best: { place: Place; score: number } | undefined;
   for (const c of candidates) {
     const { deltaKm } = findBestInsertion(currentOrder, c);
-    if (!best || deltaKm < best.deltaKm) best = { place: c, deltaKm };
+    // 로컬 관광지 보완에는 식사 시간대가 적용되지 않으므로 fitsMealWindow는 항상 true로 둔다.
+    const score = scoreCandidate({
+      deltaKm,
+      fitsMealWindow: true,
+      relatedTourismScore: relatedTourismScores?.get(c.nameKo),
+    });
+    if (!best || score < best.score) best = { place: c, score };
   }
   return best?.place;
 }
@@ -102,7 +134,8 @@ function pickClosestCandidate(
 function pickBestRestaurant(
   currentOrder: Place[],
   candidates: Place[],
-  startTime?: string
+  startTime?: string,
+  relatedTourismScores?: Map<string, number>
 ) {
   let best!: {
     place: Place;
@@ -120,8 +153,11 @@ function pickBestRestaurant(
     const arrivalMin = stop ? toMinutes(stop.arrival) : Infinity;
     const fitsLunch = isWithinWindow(arrivalMin, LUNCH_WINDOW);
     const fitsDinner = isWithinWindow(arrivalMin, DINNER_WINDOW);
-    // 점심/저녁 시간대에 맞지 않는 후보는 페널티를 줘서 후순위로 보냄
-    const score = deltaKm + (fitsLunch || fitsDinner ? 0 : 1000);
+    const score = scoreCandidate({
+      deltaKm,
+      fitsMealWindow: fitsLunch || fitsDinner,
+      relatedTourismScore: relatedTourismScores?.get(c.nameKo),
+    });
 
     if (!best || score < best.score) {
       best = { place: c, score, fitsLunch, fitsDinner };

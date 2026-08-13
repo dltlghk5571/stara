@@ -17,6 +17,7 @@ export default function FinalRoutePage() {
     selectedArtistIds,
     autoAddReasons,
     removalSuggestion,
+    routeGeometry,
   } = useTripPlan();
   const removePlace = useTripStore((s) => s.removePlace);
   const startTrip = useTripStore((s) => s.startTrip);
@@ -47,6 +48,7 @@ export default function FinalRoutePage() {
             title: p.nameKo,
           }))}
           showPath
+          routeGeometry={routeGeometry.length > 0 ? routeGeometry : undefined}
         />
       </div>
 

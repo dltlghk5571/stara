@@ -9,10 +9,13 @@ import { SUB_QUEST_TEMPLATES } from "@/data/quests";
  * - 도착이 운영 시작 전이면 오픈 시간까지 대기
  * - 도착이 운영 종료 후면 isOpenTimeConflict 플래그만 세우고 진행(경고 용도)
  * - 각 구간(prev->curr)에는 서브 퀘스트 풀에서 하나씩 순환 배정
+ * - legDurationOverridesSec에 구간(`${prevId}__${placeId}`)별 실제 이동시간(초, TMAP 등)이
+ *   있으면 그걸 쓰고, 없는 구간만 기존 Haversine 추정치로 계산한다(구간 단위 폴백).
  */
 export function buildSchedule(
   orderedPlaces: Place[],
-  startTime: string = TRIP_START_TIME
+  startTime: string = TRIP_START_TIME,
+  legDurationOverridesSec?: Map<string, number>
 ): ScheduleResult {
   const stops: ScheduleStop[] = [];
   let totalTravelMinutes = 0;
@@ -25,12 +28,14 @@ export function buildSchedule(
 
     if (i > 0) {
       const prev = orderedPlaces[i - 1];
-      travelMinutesFromPrev = travelMinutesBetween(prev, place);
+      const segmentId = `${prev.id}__${place.id}`;
+      const overrideSec = legDurationOverridesSec?.get(segmentId);
+      travelMinutesFromPrev =
+        overrideSec !== undefined ? overrideSec / 60 : travelMinutesBetween(prev, place);
       cursor += travelMinutesFromPrev;
       totalTravelMinutes += travelMinutesFromPrev;
 
       const template = SUB_QUEST_TEMPLATES[(i - 1) % SUB_QUEST_TEMPLATES.length];
-      const segmentId = `${prev.id}__${place.id}`;
       segmentQuest = {
         ...template,
         id: `subquest-${segmentId}`,
