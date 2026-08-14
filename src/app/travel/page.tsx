@@ -8,6 +8,7 @@ import { CATEGORY_STYLE } from "@/lib/categoryStyle";
 import { useTripPlan } from "@/store/useTripPlan";
 import { useTripStore } from "@/store/tripStore";
 import TopBar from "@/components/layout/TopBar";
+import AuthNav from "@/components/layout/AuthNav";
 import QuestChecklist from "@/components/quest/QuestChecklist";
 import QuestPhotoUpload from "@/components/quest/QuestPhotoUpload";
 import SubQuestList from "@/components/quest/SubQuestList";
@@ -72,7 +73,7 @@ export default function TravelPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <TopBar title="여행 진행 중" backHref="/stamps" />
+      <TopBar title="여행 진행 중" backHref="/stamps" rightSlot={<AuthNav />} />
 
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-5 py-6">
         <div>

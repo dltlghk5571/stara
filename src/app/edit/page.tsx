@@ -9,6 +9,7 @@ import { CATEGORY_STYLE } from "@/lib/categoryStyle";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import TopBar from "@/components/layout/TopBar";
+import AuthNav from "@/components/layout/AuthNav";
 import MapView from "@/components/map/MapView";
 import FilterBar from "@/components/reels/FilterBar";
 import ReelsPanel from "@/components/reels/ReelsPanel";
@@ -49,7 +50,7 @@ export default function EditPage() {
 
   return (
     <div className="flex h-screen flex-col">
-      <TopBar title="코스 편집" backHref="/main-route" />
+      <TopBar title="코스 편집" backHref="/main-route" rightSlot={<AuthNav />} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <div className="h-48 w-full shrink-0">

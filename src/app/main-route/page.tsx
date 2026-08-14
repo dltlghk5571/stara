@@ -5,6 +5,7 @@ import { computeRouteLegs } from "@/lib/directions/computeRouteLegs";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
 import { TRIP_START_TIME } from "@/config";
 import TopBar from "@/components/layout/TopBar";
+import AuthNav from "@/components/layout/AuthNav";
 import MapView from "@/components/map/MapView";
 import type { Place } from "@/types";
 
@@ -19,7 +20,7 @@ export default async function MainRoutePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <TopBar title="서울 메인 루트" backHref="/" />
+      <TopBar title="서울 메인 루트" backHref="/" rightSlot={<AuthNav />} />
 
       <div className="h-64 w-full shrink-0 sm:h-80">
         <MapView

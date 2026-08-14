@@ -6,6 +6,7 @@ import { CATEGORY_STYLE } from "@/lib/categoryStyle";
 import { useTripPlan } from "@/store/useTripPlan";
 import { useTripStore } from "@/store/tripStore";
 import TopBar from "@/components/layout/TopBar";
+import AuthNav from "@/components/layout/AuthNav";
 import MapView from "@/components/map/MapView";
 import ScheduleFooter from "@/components/route/ScheduleFooter";
 
@@ -35,7 +36,7 @@ export default function FinalRoutePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <TopBar title="최종 루트 확인" backHref="/edit" />
+      <TopBar title="최종 루트 확인" backHref="/edit" rightSlot={<AuthNav />} />
 
       <div className="h-64 w-full shrink-0 sm:h-80">
         <MapView

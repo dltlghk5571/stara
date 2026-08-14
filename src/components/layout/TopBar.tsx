@@ -6,9 +6,10 @@ import { ChevronLeft } from "lucide-react";
 interface Props {
   title: string;
   backHref?: string;
+  rightSlot?: React.ReactNode;
 }
 
-export default function TopBar({ title, backHref }: Props) {
+export default function TopBar({ title, backHref, rightSlot }: Props) {
   const router = useRouter();
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-3 dark:border-slate-700 dark:bg-slate-900">
@@ -20,7 +21,8 @@ export default function TopBar({ title, backHref }: Props) {
       >
         <ChevronLeft size={22} />
       </button>
-      <h1 className="text-base font-bold text-slate-900 dark:text-white">{title}</h1>
+      <h1 className="flex-1 text-base font-bold text-slate-900 dark:text-white">{title}</h1>
+      {rightSlot}
     </header>
   );
 }

@@ -4,6 +4,7 @@ import { getQuestsForPlace } from "@/data/quests";
 import { useTripPlan } from "@/store/useTripPlan";
 import { useTripStore } from "@/store/tripStore";
 import TopBar from "@/components/layout/TopBar";
+import AuthNav from "@/components/layout/AuthNav";
 import StampGrid from "@/components/stamp/StampGrid";
 
 export default function StampsPage() {
@@ -33,7 +34,7 @@ export default function StampsPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <TopBar title="스탬프북" backHref="/travel" />
+      <TopBar title="스탬프북" backHref="/travel" rightSlot={<AuthNav />} />
 
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-5 py-6">
         <div className="grid grid-cols-3 gap-3 rounded-2xl border border-slate-200 p-4 text-center text-sm dark:border-slate-700">
