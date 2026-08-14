@@ -9,6 +9,7 @@ import { useTripPlan } from "@/store/useTripPlan";
 import { useTripStore } from "@/store/tripStore";
 import TopBar from "@/components/layout/TopBar";
 import QuestChecklist from "@/components/quest/QuestChecklist";
+import QuestPhotoUpload from "@/components/quest/QuestPhotoUpload";
 import SubQuestList from "@/components/quest/SubQuestList";
 
 export default function TravelPage() {
@@ -111,6 +112,9 @@ export default function TravelPage() {
               stampClaimed={earnedStampIds.includes(`stamp-${currentStop.place.id}`)}
               onClaimStamp={() => claimStamp(currentStop.place.id)}
             />
+            <div className="mt-2">
+              <QuestPhotoUpload placeId={currentStop.place.id} />
+            </div>
           </div>
         </section>
 
