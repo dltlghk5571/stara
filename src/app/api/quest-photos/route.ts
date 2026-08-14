@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { questPhotos, users } from "@/db/schema";
+import { getOrCreateLocalUser } from "@/lib/auth/getLocalUser";
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -17,6 +18,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "placeId and photoUrl required" }, { status: 400 });
   }
 
+  await getOrCreateLocalUser(userId);
   const db = getDb();
   const [row] = await db
     .insert(questPhotos)

@@ -58,9 +58,12 @@ export default function CompletePage() {
         </ol>
       </div>
 
-      <p className="rounded-full bg-slate-100 px-4 py-2 text-xs text-slate-500 dark:bg-slate-800 dark:text-slate-400">
-        컬렉션북 기능은 추후 제공됩니다
-      </p>
+      <a
+        href="/collection"
+        className="flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-fuchsia-600 px-6 text-sm font-bold text-fuchsia-600 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950/30"
+      >
+        내 컬렉션북 보기
+      </a>
 
       <button
         type="button"
