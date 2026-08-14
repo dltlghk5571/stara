@@ -4,8 +4,8 @@ import dynamic from "next/dynamic";
 import type { MapViewProps } from "./types";
 import { MapErrorBoundary } from "./MapErrorBoundary";
 
-// Leaflet은 window에 의존하므로 반드시 클라이언트에서만 로드한다.
-const LeafletMap = dynamic(() => import("./LeafletMap"), {
+// TMap SDK는 window/document에 의존하므로 반드시 클라이언트에서만 로드한다.
+const TmapMapView = dynamic(() => import("./TmapMapView"), {
   ssr: false,
   loading: () => (
     <div className="flex h-full w-full items-center justify-center bg-slate-100 text-sm text-slate-400 dark:bg-slate-800">
@@ -18,7 +18,7 @@ const LeafletMap = dynamic(() => import("./LeafletMap"), {
 export default function MapView(props: MapViewProps) {
   return (
     <MapErrorBoundary>
-      <LeafletMap {...props} />
+      <TmapMapView {...props} />
     </MapErrorBoundary>
   );
 }

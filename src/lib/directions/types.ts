@@ -6,7 +6,7 @@ export interface Coordinate {
 export interface RouteResult {
   distanceMeters: number;
   durationSeconds: number;
-  /** [lat, lng] 순서 — Leaflet Polyline positions와 바로 호환 */
+  /** [lat, lng] 순서 */
   geometry: [number, number][];
 }
 

@@ -10,7 +10,7 @@ interface State {
   hasError: boolean;
 }
 
-/** 지도 렌더링(Leaflet) 실패 시 전체 화면이 깨지지 않도록 감싸는 경계 */
+/** 지도 렌더링(TMap) 실패 시 전체 화면이 깨지지 않도록 감싸는 경계 */
 export class MapErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false };
 
