@@ -4,8 +4,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { users } from "@/db/schema";
 import { getLocalUser } from "@/lib/auth/getLocalUser";
-
-const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
+import { normalizeUsername, validateUsername } from "@/lib/username";
 
 export async function GET() {
   const { userId } = await auth();
@@ -19,12 +18,13 @@ export async function POST(request: NextRequest) {
   if (!userId) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
 
   const body = (await request.json().catch(() => null)) as { username?: string } | null;
-  const username = body?.username?.trim().toLowerCase();
-  if (!username || !USERNAME_RE.test(username)) {
-    return NextResponse.json(
-      { error: "username must be 3-20 chars: a-z, 0-9, _" },
-      { status: 400 }
-    );
+  if (!body?.username) {
+    return NextResponse.json({ error: "username required" }, { status: 400 });
+  }
+  const username = normalizeUsername(body.username);
+  const validation = validateUsername(username);
+  if (!validation.ok) {
+    return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
   const db = getDb();
