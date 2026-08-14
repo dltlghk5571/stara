@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
+import { Loader2 } from "lucide-react";
 import TopBar from "@/components/layout/TopBar";
 
 interface LocalUser {
@@ -56,7 +57,12 @@ export default function MyCollectionPage() {
     <div className="flex min-h-screen flex-col">
       <TopBar title="내 컬렉션북" backHref="/travel" />
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-4 px-5 py-6">
-        {!isLoaded || checking ? null : !isSignedIn ? (
+        {!isLoaded || checking ? (
+          <div className="flex flex-col items-center gap-2 text-slate-400">
+            <Loader2 size={24} className="animate-spin" />
+            <p className="text-xs">불러오는 중...</p>
+          </div>
+        ) : !isSignedIn ? (
           <div className="flex flex-col items-center gap-3 text-center">
             <p className="text-sm text-slate-500 dark:text-slate-400">
               로그인하면 체크포인트 인증샷으로 컬렉션북을 만들 수 있어요

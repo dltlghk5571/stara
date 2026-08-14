@@ -30,7 +30,8 @@ export default function QuestPhotoUpload({ placeId }: Props) {
       if (!res.ok) throw new Error("save failed");
       setPreviewUrl(blob.url);
       setStatus("done");
-    } catch {
+    } catch (error) {
+      console.error("[quest-photo] upload failed:", error);
       setStatus("error");
     }
   }

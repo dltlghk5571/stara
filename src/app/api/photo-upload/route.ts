@@ -14,7 +14,12 @@ export async function POST(request: Request) {
         const { userId } = await auth();
         if (!userId) throw new Error("로그인이 필요해요");
         return {
-          allowedContentTypes: ["image/jpeg", "image/png", "image/webp"],
+          // 아이폰 카메라 기본 포맷(HEIC)도 받아야 함 — jpeg/png/webp로 제한하면
+          // "고효율성(HEIC)" 설정을 쓰는 대다수 아이폰 사용자의 업로드가 그냥 막힘.
+          // ponytail: HEIC는 저장은 되지만 Chrome 등에서 <img>로 못 띄움(Safari만 지원) —
+          // 컬렉션북/카드 이미지에서 깨져 보일 수 있음. HEIC→JPEG 변환은 지금 스코프 밖,
+          // 실사용에서 문제되면 sharp로 서버단 변환 추가.
+          allowedContentTypes: ["image/*"],
           addRandomSuffix: true,
           maximumSizeInBytes: 8 * 1024 * 1024,
         };
