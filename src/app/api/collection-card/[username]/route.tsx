@@ -17,12 +17,16 @@ export async function GET(
   const [user] = await db.select().from(users).where(eq(users.username, username)).limit(1);
   if (!user) return new Response("not found", { status: 404 });
 
-  const photos = await db
+  const allPhotos = await db
     .select()
     .from(questPhotos)
     .where(eq(questPhotos.userId, user.id))
     .orderBy(desc(questPhotos.completedAt))
     .limit(6);
+
+  // next/og(Satori)가 못 읽는 포맷 하나 때문에 카드 전체가 500나던 문제 —
+  // 업로드 단계에서 HEIC는 이제 JPEG로 변환되지만, 그 전에 저장된 것들을 위한 방어선.
+  const photos = allPhotos.filter((p) => !/\.hei[cf](\?|$)/i.test(p.photoUrl));
 
   return new ImageResponse(
     (
