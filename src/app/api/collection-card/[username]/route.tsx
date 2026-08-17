@@ -43,7 +43,7 @@ export async function GET(
       >
         <div style={{ display: "flex", flexDirection: "column", marginBottom: "48px" }}>
           <div style={{ fontSize: 32, color: "#e9d5ff" }}>STARA 컬렉션북</div>
-          <div style={{ fontSize: 56, color: "white", fontWeight: 700 }}>
+          <div style={{ display: "flex", fontSize: 56, color: "white", fontWeight: 700 }}>
             {user.displayName}의 여행 기록
           </div>
         </div>
