@@ -124,9 +124,24 @@ def _norm_key(s):
 PROVINCE_LOOKUP = {}
 for key, ko, en in PROVINCE_TABLE:
     PROVINCE_LOOKUP[key] = (key, ko, en)
-# 광역시/도의 한글명으로도 찾을 수 있게 등록
+# 광역시/도의 한글명(정식 명칭)으로도 찾을 수 있게 등록
 for key, ko, en in PROVINCE_TABLE:
     PROVINCE_LOOKUP[_norm_key(ko)] = (key, ko, en)
+
+# 카카오 API가 실제로 주소에 쓰는 줄임말("서울특별시"가 아니라 "서울")도 등록.
+# 이게 없으면 지오코딩 결과 주소로 city를 채우는 로직이 거의 항상 실패함
+# (Kakao road_address_name/address_name은 정식 명칭이 아니라 이 줄임말을 씀).
+_SHORT_PROVINCE_NAMES = {
+    "seoul": "서울", "busan": "부산", "daegu": "대구", "incheon": "인천",
+    "gwangju": "광주", "daejeon": "대전", "ulsan": "울산", "sejong": "세종",
+    "gyeonggi": "경기", "gangwon": "강원",
+    "chungcheongbuk": "충북", "chungcheongnam": "충남",
+    "jeollabuk": "전북", "jeollanam": "전남",
+    "gyeongsangbuk": "경북", "gyeongsangnam": "경남", "jeju": "제주",
+}
+for key, short_ko in _SHORT_PROVINCE_NAMES.items():
+    _, ko, en = PROVINCE_LOOKUP[key]
+    PROVINCE_LOOKUP[_norm_key(short_ko)] = (key, ko, en)
 
 
 _ADMIN_SUFFIXES = ("teukbyeoljachisi", "teukbyeoljachido", "gwangyeoksi", "do", "si", "gun", "gu")
@@ -243,20 +258,35 @@ def normalize_place_key(name):
 
 
 def is_same_place(a, b):
+    """주의: 0.6 임계값이었을 때 "KQ Entertainment(ATEEZ 소속사)"와 "SM Entertainment
+    Building"(Red Velvet 소속사)처럼 완전히 다른 기획사가 "Entertainment"라는
+    공통 단어 때문에 0.61~0.64로 걸려서 같은 장소로 잘못 합쳐진 사례가 실제로
+    발견됨. 0.82로 올려서 이런 "공통 단어 하나 때문에 유사해 보이는" 케이스를
+    거르고, 진짜 표기 차이(오타/공백 수준)만 남도록 함."""
     ka, kb = normalize_place_key(a), normalize_place_key(b)
     if not ka or not kb:
         return False
     if ka == kb:
         return True
-    if ka in kb or kb in ka:
+    if len(ka) >= 4 and len(kb) >= 4 and (ka in kb or kb in ka):
         return True
-    return difflib.SequenceMatcher(None, ka, kb).ratio() >= 0.6
+    return difflib.SequenceMatcher(None, ka, kb).ratio() >= 0.82
 
 
 def slugify(name):
     if not name:
         return "unknown"
     s = re.sub(r"[^a-zA-Z0-9가-힣]+", "_", name).strip("_").lower()
+    return s or "unknown"
+
+
+def slugify_hyphen(name):
+    """새 template(Place.id)용 - "전부 소문자·하이픈" 규칙. 한글 이름만 있는 경우엔
+    로마자 변환기가 없어서 한글을 그대로 두고 공백/특수문자만 하이픈으로 바꿈
+    (한글은 대소문자 개념이 없어 "소문자" 규칙과 충돌하지 않음)."""
+    if not name:
+        return "unknown"
+    s = re.sub(r"[^a-zA-Z0-9가-힣]+", "-", name).strip("-").lower()
     return s or "unknown"
 
 
@@ -293,6 +323,17 @@ def load_artist_allowlist():
     return allowed
 
 
+def filter_manual_exclusions(rows):
+    kept = []
+    for r in rows:
+        name = (r.get("place_name_en") or r.get("place_name_ko") or "").strip().lower()
+        artist = r.get("artist_name")
+        if (artist, name) in MANUAL_EXCLUSIONS:
+            continue
+        kept.append(r)
+    return kept
+
+
 def filter_by_allowlist(rows, allowed_keys):
     """리스트에 없는 아티스트(그룹/개인)가 붙은 place row는 제외.
     artist_name이 애초에 없는 행(특정 그룹에 귀속 안 됨)은 배제 대상이 아니라서 유지.
@@ -306,6 +347,65 @@ def filter_by_allowlist(rows, allowed_keys):
         else:
             dropped_artists.add(artist)
     return kept, dropped_artists
+
+
+NAME_MENTION_PATTERN = re.compile(r"([A-Z][A-Za-z.\-]{1,20})(?:\s*&\s*([A-Z][A-Za-z.\-]{1,20}))?'s\b")
+
+
+def load_member_group_map():
+    """artist_allowlist.json -> {정규화된 이름(그룹명 또는 멤버명): 그룹명}."""
+    path = os.path.join(BASE_DIR, "artist_allowlist.json")
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    mapping = {}
+    for entry in data:
+        group = entry["group"]
+        mapping[_artist_key(canonical_artist(group))] = group
+        for member in entry["members"]:
+            mapping[_artist_key(canonical_artist(member))] = group
+    return mapping
+
+
+def extract_mentioned_names(text):
+    """"Sehun & Xiumin's curry spot", "Jimin's father's restaurant" 같은 문장에서
+    소유격('s) 앞의 인명 후보를 뽑음. "Sehun & Xiumin's"처럼 &로 묶인 것도 둘 다 잡음."""
+    names = []
+    for m in NAME_MENTION_PATTERN.finditer(text or ""):
+        names.append(m.group(1))
+        if m.group(2):
+            names.append(m.group(2))
+    return names
+
+
+def filter_by_relation_consistency(rows, member_group_map):
+    """artist_name과 relation_text_en에 소유격으로 언급된 인물이 서로 다른
+    그룹이면 제외. (병합 버그로 엉뚱한 아티스트가 붙은 경우의 안전망 - 예:
+    "Jungwon's Happy Graduation vlog" 텍스트가 artist_name=TWICE로 잘못 붙는 경우)
+    언급된 이름이 allowlist에 아예 없는 사람(매니저, 다른 연예인 등)이면 판단
+    근거가 없으니 그대로 둠 - 확신 있을 때만 제외."""
+    kept, dropped = [], []
+    for r in rows:
+        artist = r.get("artist_name")
+        text = r.get("relation_text_en") or ""
+        if not artist or not text:
+            kept.append(r)
+            continue
+
+        artist_group = member_group_map.get(_artist_key(canonical_artist(artist)))
+        if not artist_group:
+            kept.append(r)  # allowlist 밖 아티스트는 이미 앞 단계에서 걸러짐
+            continue
+
+        mentioned_groups = {
+            member_group_map[_artist_key(name)]
+            for name in extract_mentioned_names(text)
+            if _artist_key(name) in member_group_map
+        }
+        if mentioned_groups and artist_group not in mentioned_groups:
+            dropped.append((artist, text, sorted(mentioned_groups)))
+        else:
+            kept.append(r)
+    return kept, dropped
 
 
 def split_bilingual_name(name):
@@ -367,6 +467,7 @@ def load_tour_spots():
             "artist_name": canonical_artist(str(artist).strip()),
             "city_id": city_id, "city_name_ko": city_ko, "city_name_en": city_en,
             "place_name_ko": place_ko, "place_name_en": place_en,
+            "address": str(loc).strip() if loc else None,
             "relation_text_en": str(notes).strip() if notes else None,
             "place_category": mapped_cat,
             "source_url": str(src).strip() if src else None,
@@ -417,6 +518,7 @@ def load_thisismykorea():
             "artist_name": canonical_artist((item.get("artist") or "").strip() or None),
             "city_id": city_id, "city_name_ko": city_ko, "city_name_en": city_en,
             "place_name_ko": place_ko, "place_name_en": place_en,
+            "address": addr if looks_like_address else None,
             "relation_text_en": (item.get("description") or "").strip() or None,
             "source_url": item.get("url"),
             "is_food": None,
@@ -426,6 +528,15 @@ def load_thisismykorea():
             "_source": "stara_thisismykorea.json",
         })
     return rows
+
+
+# 사람이 직접 검토하고 "이건 빼라"고 확정한 (아티스트, 장소명) 쌍.
+# 예: "Chinatown" 검색은 지역 전체를 가리키는 이름이라 카카오에 단일 POI로
+# 없고, 매번 그 이름이 들어간 딴 업체(주차장/게스트하우스 등)에 잘못 매칭됨 ->
+# 자동 매칭 로직으로 못 고치는 케이스라 수동 제외.
+MANUAL_EXCLUSIONS = {
+    ("EXO", "chinatown"),
+}
 
 
 # "장소가 아닌 목차/질문/안내성 문구" 판별 - README가 요구한 "미분류/노이즈 필터"에 해당
@@ -500,6 +611,50 @@ def load_stara_places():
     return rows
 
 
+def load_manual_places():
+    """raw_data_정인지/*.json - 팀원이 직접 블로그 등에서 확인하고 정리한 장소.
+    이미 정확한 주소/카테고리를 사람이 확인해서 넣은 소스라 다른 로더보다
+    신뢰도가 높음 (category_hint는 우리 taxonomy로 이미 분류된 값이라
+    categorize() 안 거치고 그대로 씀). 새 블로그를 추가하려면 이 폴더에
+    같은 스키마의 json 파일을 추가하면 자동으로 인식됨."""
+    import glob
+    rows = []
+    for path in glob.glob(os.path.join(BASE_DIR, "raw_data_정인지", "*.json")):
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        for item in data:
+            place_ko = (item.get("place_name_ko") or "").strip()
+            if not place_ko:
+                continue
+            city_id, city_ko, city_en, is_domestic, _ = parse_location(item.get("address"))
+
+            review_reasons = []
+            if item.get("needs_manual_check"):
+                review_reasons.append("사람이 직접 표시한 확인 필요 항목(원본 데이터 내 주소 불일치 등)")
+            if city_id is None:
+                review_reasons.append("도시 매핑 실패" if is_domestic else "국내 지명 아님")
+
+            cat = item.get("category_hint")
+            rows.append({
+                # 그룹 단위로 일관되게 (다른 소스들도 멤버 개별이 아니라 그룹명을
+                # artist_name으로 씀; 멤버 정보는 description_ko/en 안에 이미 있음)
+                "artist_name": canonical_artist(item.get("artist")),
+                "city_id": city_id, "city_name_ko": city_ko, "city_name_en": city_en,
+                "place_name_ko": place_ko, "place_name_en": None,
+                "address": item.get("address"),
+                "relation_text_ko": item.get("description_ko"),
+                "relation_text_en": item.get("description_en"),
+                "place_category": cat,
+                "source_url": item.get("url"),
+                "is_food": cat in FOOD_CATEGORIES if cat else None,
+                "is_local_spot": None,
+                "status": "needs_review" if review_reasons else "ready",
+                "_review_reason": "; ".join(review_reasons),
+                "_source": os.path.basename(path),
+            })
+    return rows
+
+
 def load_hometowns():
     """곽채원 xlsx + 정인지 CSV 합집합. (Idol, Group) 기준 중복 제거,
     누락 필드는 서로 보완."""
@@ -565,6 +720,13 @@ def load_hometowns():
 # ============================================================
 
 def merge_places(rows):
+    """같은 장소로 판단되는 행들을 묶되, relation_text/source_url처럼 "이 아티스트와
+    이 장소의 관계"를 설명하는 필드는 아티스트별로 따로 유지함.
+    예전엔 그룹의 대표 행(group[0]) 하나의 relation_text를 그룹 내 모든 아티스트에게
+    그대로 복사해서 붙였는데, 실제로 같은 장소를 여러 아티스트가 각자 다른 이유로
+    방문한 정당한 케이스(예: 파라다이스시티 - ENHYPEN 소속사 행사 vs BTS 뷔 앰버서더)에서
+    서로 다른 relation_text가 뒤섞이는 문제가 있었음. place 자체의 공통 정보
+    (이름/카테고리/이미지)만 그룹 전체에서 공유하고, 관계 설명은 아티스트 단위로 분리."""
     merged = []
     used = [False] * len(rows)
     for i, row in enumerate(rows):
@@ -582,20 +744,40 @@ def merge_places(rows):
                 group.append(other)
                 used[j] = True
 
-        base = group[0]
-        artists = sorted({g["artist_name"] for g in group if g.get("artist_name")})
-        sources = sorted({g["source_url"] for g in group if g.get("source_url")})
-        reason_fragments = set()
-        for g in group:
-            for frag in (g.get("_review_reason") or "").split("; "):
-                if frag:
-                    reason_fragments.add(frag)
-        reasons = sorted(reason_fragments)
+        shared = {}
+        for field in ("place_name_ko", "place_name_en", "place_category", "image_url", "address"):
+            for g in group:
+                if g.get(field):
+                    shared[field] = g[field]
+                    break
 
-        for artist in (artists or [None]):
+        by_artist = OrderedDict()
+        for g in group:
+            by_artist.setdefault(g.get("artist_name"), []).append(g)
+
+        for artist, artist_rows in by_artist.items():
+            base = artist_rows[0]
+            sources = sorted({g["source_url"] for g in artist_rows if g.get("source_url")})
+            relations_en = sorted({g["relation_text_en"] for g in artist_rows if g.get("relation_text_en")})
+            relations_ko = sorted({g["relation_text_ko"] for g in artist_rows if g.get("relation_text_ko")})
+            reason_fragments = set()
+            for g in artist_rows:
+                for frag in (g.get("_review_reason") or "").split("; "):
+                    if frag:
+                        reason_fragments.add(frag)
+            # "카테고리 미분류" 사유는 place 단위 속성이라, 그룹 내 다른 아티스트의
+            # 행에서 카테고리가 이미 채워졌다면(shared) 이 아티스트에게도 더 이상
+            # 유효한 사유가 아님 - 제거.
+            if shared.get("place_category"):
+                reason_fragments = {f for f in reason_fragments if not f.startswith("카테고리 미분류")}
+            reasons = sorted(reason_fragments)
+
             merged_row = dict(base)
+            merged_row.update(shared)
             merged_row["artist_name"] = artist
             merged_row["source_url"] = "; ".join(sources) if sources else base.get("source_url")
+            merged_row["relation_text_en"] = " / ".join(relations_en) if relations_en else base.get("relation_text_en")
+            merged_row["relation_text_ko"] = " / ".join(relations_ko) if relations_ko else base.get("relation_text_ko")
             merged_row["_review_reason"] = "; ".join(reasons)
             merged_row["status"] = "needs_review" if reasons else "ready"
             merged.append(merged_row)
@@ -639,6 +821,7 @@ def finalize(rows, is_hometown=False):
         )
         row["_review_reason"] = r.get("_review_reason", "")
         row["_source"] = r.get("_source", "")
+        row["_address"] = r.get("address", "")
         final_rows.append(row)
     return final_rows
 
@@ -697,12 +880,19 @@ def kakao_keyword_search(query, api_key):
     return resp.json().get("documents", [])
 
 
+# 관광/방문 목적지가 될 수 없는 카테고리 - 이런 매칭은 이름만 비슷하고 실제로는
+# 전혀 다른 시설인 경우가 많음 (예: "Chinatown" 검색이 "차이나타운 공영주차장"에
+# 매칭된 사례, "Citizen Park" 검색이 근처 아파트 단지에 매칭된 사례 실제 확인됨)
+NOISE_CATEGORIES = ("주차장", "부동산", "아파트", "주거시설")
+
+
 def pick_best_match(docs, city_ko):
     """도시명이 결과 주소에 포함된 것만 신뢰 (엉뚱한 지역의 동명 장소 오매칭 방지).
     주의: 이것만으로는 부족함 - "Busan Citizen Park" 검색이 "시민공원아파트"(아파트
     단지)에 매칭되는 것처럼, 도시만 맞고 실제로는 다른 장소인 오탐이 확인됨.
     그래서 이 결과를 쓰는 쪽(geocode_and_fill_names)에서 영문 일반명사성 쿼리는
     무조건 needs_review로 내려서 사람이 좌표를 눈으로 확인하게 함."""
+    docs = [d for d in docs if not any(nc in (d.get("category_name") or "") for nc in NOISE_CATEGORIES)]
     if not docs:
         return None
     if not city_ko:
@@ -794,6 +984,19 @@ def geocode_and_fill_names(rows, api_key):
         row["latitude"] = float(best["y"])
         row["longitude"] = float(best["x"])
 
+        # city가 원래 없었으면(주소 필드 자체가 없던 stara_places.json 등),
+        # 카카오가 돌려준 실제 주소를 우리 parse_location으로 파싱해서 채움.
+        if not row.get("city_id"):
+            addr = best.get("road_address_name") or best.get("address_name")
+            city_id, city_ko, city_en, _, _ = parse_location(addr)
+            if city_id:
+                row["city_id"], row["city_name_ko"], row["city_name_en"] = city_id, city_ko, city_en
+                fragments = [f for f in (row.get("_review_reason") or "").split("; ")
+                             if f and not f.startswith("도시 매핑 실패")
+                             and not f.startswith("city 정보 없음")
+                             and not f.startswith("국내 지명 아님")]
+                row["_review_reason"] = "; ".join(fragments)
+
         # 카테고리가 이걸로 새로 채워졌으면, 로딩 단계에서 붙었던
         # "카테고리 미분류(...)" 사유는 더 이상 유효하지 않으니 제거.
         if not row.get("place_category"):
@@ -849,9 +1052,91 @@ def save_outputs(rows):
     return len(json_rows), len(review_rows)
 
 
-def save_city_subset(rows, city_id, label):
-    """MVP 범위 도시만 별도 파일로 추출 (팀 내 도시별 분담용)."""
-    subset = [r for r in rows if r.get("city_id") == city_id]
+# ============================================================
+# 9. 새 template(Data_Preprocessing_Template.ts, Place interface) 변환
+# ============================================================
+#
+# 기존 template과 구조가 완전히 다름: city 필드 전부 삭제, artistIds가 배열로
+# 바뀜(장소 하나에 여러 아티스트) - 지금까지는 아티스트별로 행을 나눴는데
+# 반대로 장소 단위로 다시 묶어야 함. category도 15종 -> 5종으로 축소됨.
+# openTime/closeTime/dwellMinutes는 인터페이스상 필수(옵셔널 아님)인데 우리가
+# 수집한 적 없는 데이터라 빈 값으로 둠 - 실제 운영시간 조사가 별도로 필요함.
+
+CATEGORY_TO_TS = {
+    "음식점": "food", "카페/디저트": "food",
+    "쇼핑": "shopping",
+    "촬영지": "photo", "공원": "photo", "해변": "photo",
+    "랜드마크": "photo", "포토스팟": "photo",
+    "박물관/전시": "culture", "유적지": "culture",
+    "기획사": "culture", "공연장": "culture",
+    "테마파크": "experience", "숙박": "experience",
+    "체험/액티비티": "experience", "체험/휴양": "experience",
+}
+
+
+def transform_to_new_template(rows):
+    """장소 단위(place_id)로 다시 묶어서 새 Place 인터페이스 형태로 변환.
+    같은 장소를 여러 아티스트가 공유하면 artistIds에 다 모으고,
+    relationTextKo/En도 아티스트별 설명을 합쳐서 하나로 만듦."""
+    by_place = OrderedDict()
+    for r in rows:
+        pid = r.get("place_id")
+        if not pid:
+            continue
+        by_place.setdefault(pid, []).append(r)
+
+    result = []
+    for pid, group in by_place.items():
+        base = group[0]
+        name_ko = base.get("place_name_ko") or ""
+        name_en = base.get("place_name_en") or ""
+        place_slug = slugify_hyphen(name_en or name_ko)
+
+        artist_slugs = []
+        for g in group:
+            slug = slugify_hyphen(g.get("artist_name"))
+            if slug and slug not in artist_slugs:
+                artist_slugs.append(slug)
+        primary_artist = artist_slugs[0] if artist_slugs else "unknown"
+
+        cat_ko = base.get("place_category")
+        cat_en = CATEGORY_TO_TS.get(cat_ko, "experience")
+
+        relations_ko = [g["relation_text_ko"] for g in group if g.get("relation_text_ko")]
+        relations_en = [g["relation_text_en"] for g in group if g.get("relation_text_en")]
+
+        lat = base.get("latitude")
+        lon = base.get("longitude")
+        image_url = next((g.get("image_url") for g in group if g.get("image_url")), None)
+        address = next((g.get("_address") for g in group if g.get("_address")), None)
+        is_food = any(g.get("is_food") for g in group)
+        statuses = {g.get("status") for g in group}
+
+        result.append({
+            "id": f"{primary_artist}-{cat_en}-{place_slug}",
+            "nameKo": name_ko,
+            "nameEn": name_en,
+            "latitude": lat,
+            "longitude": lon,
+            "category": cat_en,
+            "artistIds": artist_slugs,
+            "relationTextKo": " / ".join(dict.fromkeys(relations_ko)),
+            "relationTextEn": " / ".join(dict.fromkeys(relations_en)),
+            "openTime": "",
+            "closeTime": "",
+            "dwellMinutes": None,
+            "imageUrl": image_url,
+            "isFood": is_food,
+            "isLocalSpot": False,
+            "isMainRoute": False,
+            "address": address,
+            "_status": "needs_review" if "needs_review" in statuses else "ready",
+        })
+    return result
+
+
+def save_rows_as(subset, label):
+    """이미 걸러진 행 목록을 label_dataset.csv/json + label_needs_review.csv로 저장."""
     json_rows = [{k: v for k, v in r.items() if k in TEMPLATE_FIELDS} for r in subset]
 
     with open(os.path.join(OUT_DIR, f"{label}_dataset.json"), "w", encoding="utf-8") as f:
@@ -887,18 +1172,33 @@ def main():
     sp_rows = load_stara_places()
     print(f"   {len(sp_rows)}행")
 
+    print("3b) raw_data_정인지/*.json 로딩 (직접 확인한 블로그 등)...")
+    manual_rows = load_manual_places()
+    print(f"   {len(manual_rows)}행")
+
     print("4) 아이돌 출신지 (xlsx + CSV) 병합...")
     home_rows = load_hometowns()
     print(f"   {len(home_rows)}행")
 
     print("5) 장소 데이터(1~3) 중복 병합...")
-    place_rows = merge_places(tour_rows + tmk_rows + sp_rows)
-    print(f"   병합 전 {len(tour_rows) + len(tmk_rows) + len(sp_rows)}행 -> 병합 후 {len(place_rows)}행")
+    place_rows = merge_places(tour_rows + tmk_rows + sp_rows + manual_rows)
+    print(f"   병합 전 {len(tour_rows) + len(tmk_rows) + len(sp_rows) + len(manual_rows)}행 -> 병합 후 {len(place_rows)}행")
+
+    place_rows = filter_manual_exclusions(place_rows)
 
     print("5b) 아티스트 allowlist(artist_allowlist.json) 필터링...")
     allowed_keys = load_artist_allowlist()
     place_rows, dropped_artists = filter_by_allowlist(place_rows, allowed_keys)
     print(f"   리스트 밖 아티스트 {len(dropped_artists)}종 제외: {sorted(dropped_artists)}")
+    print(f"   {len(place_rows)}행 남음")
+
+    print("5c) artist_name vs relation_text 인물 불일치 필터링...")
+    member_group_map = load_member_group_map()
+    place_rows, dropped_mismatches = filter_by_relation_consistency(place_rows, member_group_map)
+    print(f"   불일치로 {len(dropped_mismatches)}행 제외")
+    for artist, text, groups in dropped_mismatches[:20]:
+        safe_text = text.encode("ascii", "replace").decode("ascii")
+        print(f"     - artist={artist!r} vs 텍스트 속 그룹={groups} | {safe_text[:70]!r}")
     print(f"   {len(place_rows)}행 남음")
 
     print("6) template 스키마로 변환 + ID 부여...")
@@ -925,9 +1225,26 @@ def main():
     print(f"(ready: {ready} / needs_review: {review})")
 
     print("\n9) MVP 범위(인천) 추출...")
-    incheon_total, incheon_review = save_city_subset(all_rows, "incheon", "incheon")
+    # 인천 MVP는 출신지(고향) 데이터 제외 - 실제 방문 가능한 장소 퀘스트만 다룸.
+    # is_local_spot도 이 범위에선 전부 False로 통일 (인천 MVP 단계에서는
+    # "로컬 명소" 구분을 아직 안 쓰기로 함).
+    incheon_rows = [r for r in all_rows if r.get("city_id") == "incheon" and r.get("quest_type") != "hometown"]
+    for r in incheon_rows:
+        r["is_local_spot"] = False
+    incheon_total, incheon_review = save_rows_as(incheon_rows, "incheon")
     print(f"인천: 총 {incheon_total}행 (ready {incheon_total - incheon_review} / needs_review {incheon_review})")
     print("-> preprocessed/incheon_dataset.csv, incheon_dataset.json, incheon_needs_review.csv")
+
+    print("\n10) 새 template(Place 인터페이스)로 변환 - 인천만...")
+    new_places = transform_to_new_template(incheon_rows)
+    os.makedirs(OUT_DIR, exist_ok=True)
+    with open(os.path.join(OUT_DIR, "incheon_places.json"), "w", encoding="utf-8") as f:
+        json.dump([{k: v for k, v in p.items() if k != "_status"} for p in new_places],
+                   f, ensure_ascii=False, indent=2)
+    needs_review_new = sum(1 for p in new_places if p["_status"] == "needs_review")
+    print(f"장소(place) 단위로 재구성: {len(new_places)}개 (아티스트별 행 -> 장소별 행, artistIds 배열)")
+    print(f"needs_review: {needs_review_new}개")
+    print("-> preprocessed/incheon_places.json (Place[] 형태, 기존 incheon_dataset.json은 그대로 둠)")
 
 
 if __name__ == "__main__":
