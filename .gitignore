@@ -7,6 +7,7 @@ preprocessed/
 raw_data_곽채원/
 raw_data_정인지/
 아이돌_출신지_*.csv
+from drive/
 
 # 키 값은 없지만 문서 자체가 "커밋하지 말 것"이라고 명시한 인수인계 노트
 GEOCODING_HANDOFF.md
