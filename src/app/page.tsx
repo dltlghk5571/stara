@@ -1,62 +1,34 @@
 import Link from "next/link";
-import { Clock, MapPinned, Sparkles } from "lucide-react";
-import { MAIN_ROUTE_PLACE_IDS, getPlaceById } from "@/data/places";
-import { buildSchedule } from "@/lib/scheduleCalculator";
-import { SEOUL_MAIN_ROUTE } from "@/data/routes";
-import type { Place } from "@/types";
 
 export default function HomePage() {
-  const mainPlaces = MAIN_ROUTE_PLACE_IDS.map((id) => getPlaceById(id)).filter(
-    (p): p is Place => !!p
-  );
-  const schedule = buildSchedule(mainPlaces);
-  const totalMinutes = schedule.totalTravelMinutes + schedule.totalDwellMinutes;
-
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-5 py-10">
-      <header className="flex flex-col items-center gap-2 text-center">
-        <span className="rounded-full bg-fuchsia-100 px-3 py-1 text-xs font-bold tracking-wide text-fuchsia-600 dark:bg-fuchsia-950 dark:text-fuchsia-300">
-          STARA
-        </span>
-        <h1 className="bg-gradient-to-r from-fuchsia-600 to-indigo-500 bg-clip-text text-4xl font-extrabold text-transparent">
-          스타 따라 STARA
-        </h1>
-        <p className="max-w-sm text-sm text-slate-500 dark:text-slate-400">
-          좋아하는 K-pop 아티스트의 발자취를 따라, 서울을 게임처럼 여행하세요.
-        </p>
-      </header>
-
-      <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">
-        <div className="flex h-32 items-center justify-center bg-gradient-to-br from-fuchsia-500 via-purple-500 to-indigo-500">
-          <MapPinned size={44} className="text-white/90" />
-        </div>
-        <div className="flex flex-col gap-4 p-5">
-          <div>
-            <p className="text-xs font-semibold text-fuchsia-500">서울 대표 코스</p>
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">
-              {SEOUL_MAIN_ROUTE.nameKo}
-            </h2>
-          </div>
-
-          <div className="flex gap-4 text-sm text-slate-600 dark:text-slate-300">
-            <div className="flex items-center gap-1.5">
-              <Clock size={16} className="text-fuchsia-500" />
-              약 {Math.round(totalMinutes / 60)}시간 소요
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Sparkles size={16} className="text-fuchsia-500" />
-              주요 체크포인트 {mainPlaces.length}곳
-            </div>
-          </div>
-
-          <Link
-            href="/onboarding/artists"
-            className="flex min-h-11 items-center justify-center rounded-xl bg-fuchsia-600 text-sm font-bold text-white transition-colors hover:bg-fuchsia-700"
-          >
-            내 루트 만들기
-          </Link>
-        </div>
-      </section>
-    </main>
+    <Link
+      href="/onboarding/artists"
+      className="font-jakarta relative flex min-h-screen flex-1 flex-col items-center justify-center gap-6 overflow-hidden bg-stara-navy px-6 text-center"
+      style={{
+        backgroundImage:
+          "radial-gradient(circle at 80% 0%, rgba(255,143,122,.35), transparent 45%), radial-gradient(circle at 10% 90%, rgba(142,216,255,.25), transparent 45%)",
+      }}
+    >
+      <span className="flex h-24 w-24 items-center justify-center rounded-[28px] bg-gradient-to-br from-stara-coral via-[#ff7a63] to-stara-navy text-4xl shadow-[0_20px_40px_-14px_rgba(255,143,122,0.5)]">
+        🎬
+      </span>
+      <h1 className="font-fraunces text-3xl font-extrabold text-stara-bg">
+        STAR<span className="text-stara-coral">A</span>
+      </h1>
+      <p className="font-space-mono text-[11px] uppercase tracking-[0.16em] text-slate-400">
+        Discover Korea,
+        <br />
+        one scene at a time
+      </p>
+      <div className="mt-2 flex gap-1.5">
+        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-stara-coral" />
+        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-stara-coral [animation-delay:150ms]" />
+        <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-stara-coral [animation-delay:300ms]" />
+      </div>
+      <span className="font-space-mono absolute bottom-10 text-[10px] text-slate-500">
+        tap to continue →
+      </span>
+    </Link>
   );
 }
