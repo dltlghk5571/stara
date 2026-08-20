@@ -67,7 +67,7 @@ export default function RootLayout({
           document.write가 동작한다. next/script는 strategy와 무관하게 클라이언트 JS로
           createElement('script') 하기 때문에 이 SDK엔 안 맞는다.
           children 뒤에 둬서 지도가 필요 없는 페이지(로그인 등)는 이 스크립트를 기다리지 않고 먼저 그려지게 한다.
-          ponytail: 그래도 페이지 전체가 결국 이 요청 하나를 물고 있음 — main-route/edit/final 전용
+          ponytail: 그래도 페이지 전체가 결국 이 요청 하나를 물고 있음 — /trip, /edit 전용
           레이아웃으로 옮기면 그 페이지들 밖에선 아예 안 불러오게 할 수 있음, 필요해지면 그때.
         */}
         <script

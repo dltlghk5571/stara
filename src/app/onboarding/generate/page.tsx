@@ -40,8 +40,8 @@ function GenerateInner() {
     if (!region) return;
     const option = options[optionIndex];
     if (!option) return;
-    setMainRoute(option.places, region.id, artistIds);
-    router.push("/main-route");
+    setMainRoute(option.places, region.id, artistIds, `${region.nameKo} · ${option.labelKo}`);
+    router.push("/trip");
   }
 
   return (

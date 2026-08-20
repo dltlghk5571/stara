@@ -55,7 +55,7 @@ export default function MyCollectionPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <TopBar title="내 컬렉션북" backHref="/travel" />
+      <TopBar title="내 컬렉션북" backHref="/trip" />
       <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-4 px-5 py-6">
         {!isLoaded || checking ? (
           <div className="flex flex-col items-center gap-2 text-slate-400">

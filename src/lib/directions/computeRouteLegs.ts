@@ -1,4 +1,4 @@
-// route.ts(HTTP, 클라이언트용)와 main-route 서버 컴포넌트가 공유하는 구간 계산 로직.
+// /api/directions(route.ts)가 쓰는 구간 계산 로직. 클라이언트는 useRouteDirections 훅으로 이 API를 호출한다.
 // 방문 순서(stops)는 이미 STARA(Haversine 삽입 + 자동보완)가 결정한 것을 그대로 받는다 —
 // 여기서는 절대 순서를 바꾸거나 순열 탐색을 하지 않고, 구간(leg)별 실제 거리/시간/geometry만 구한다.
 

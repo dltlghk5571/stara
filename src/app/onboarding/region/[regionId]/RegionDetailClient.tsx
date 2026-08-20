@@ -22,9 +22,9 @@ export default function RegionDetailClient({ region, representativeArtist, artis
   const [sheetOpen, setSheetOpen] = useState(false);
   const [highlights, setHighlights] = useState<Place[] | null>(null);
 
-  // 대표 아티스트 데이터가 없는 지역(인천/부산)은 TourAPI 인기 스팟으로 대체.
+  // TourAPI 인기 스팟은 대표 아티스트 데이터 유무와 무관하게 모든 지역에서 보여준다
+  // (서울도 대표 아티스트 카드 + TourAPI 스팟을 함께 노출).
   useEffect(() => {
-    if (representativeArtist) return;
     let cancelled = false;
     fetch(`/api/tourism/nearby?lat=${region.centerLat}&lng=${region.centerLng}&radius=8000&contentTypeId=12`)
       .then((res) => (res.ok ? res.json() : { places: [] }))
@@ -37,7 +37,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
     return () => {
       cancelled = true;
     };
-  }, [region.centerLat, region.centerLng, representativeArtist]);
+  }, [region.centerLat, region.centerLng]);
 
   function handleConfirm() {
     const artistsQuery = artistsParam ? `&artists=${artistsParam}` : "";
@@ -64,7 +64,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
       </div>
 
       <div className="flex-1 px-6 py-5">
-        {representativeArtist ? (
+        {representativeArtist && (
           <div className="mb-4 flex items-center gap-3 rounded-2xl border border-stone-200 bg-white p-3 shadow-[0_8px_18px_-12px_rgba(36,59,83,0.3)]">
             <span className="font-fraunces flex h-[52px] w-[52px] shrink-0 items-center justify-center rounded-full bg-stara-coral text-[15px] font-bold text-white">
               {representativeArtist.initials}
@@ -76,30 +76,36 @@ export default function RegionDetailClient({ region, representativeArtist, artis
               </span>
             </div>
           </div>
-        ) : (
-          <div className="mb-4 rounded-2xl border border-dashed border-stone-300 bg-white/60 p-4 text-sm">
-            <p className="font-semibold">이 지역 촬영지 데이터를 계속 모으고 있어요.</p>
-            <p className="mt-1 text-xs text-stone-500">
-              지금은 TourAPI 인기 스팟으로 미리보기를 보여드릴게요.
-            </p>
-            <div className="mt-3 flex gap-2 overflow-x-auto">
-              {highlights === null && (
-                <span className="text-xs text-stone-400">불러오는 중…</span>
-              )}
-              {highlights?.length === 0 && (
-                <span className="text-xs text-stone-400">표시할 스팟이 아직 없어요.</span>
-              )}
-              {highlights?.map((p) => (
-                <span
-                  key={p.id}
-                  className="shrink-0 rounded-full bg-stara-mint/40 px-3 py-1.5 text-[11px] font-semibold"
-                >
-                  {p.nameKo}
-                </span>
-              ))}
-            </div>
-          </div>
         )}
+
+        <div className="mb-4 rounded-2xl border border-dashed border-stone-300 bg-white/60 p-4 text-sm">
+          <p className="font-semibold">
+            {representativeArtist
+              ? "TourAPI 인기 스팟도 함께 확인해보세요."
+              : "이 지역 촬영지 데이터를 계속 모으고 있어요."}
+          </p>
+          <p className="mt-1 text-xs text-stone-500">
+            {representativeArtist
+              ? "관광공사 데이터 기준 이 지역 인기 스팟이에요."
+              : "지금은 TourAPI 인기 스팟으로 미리보기를 보여드릴게요."}
+          </p>
+          <div className="mt-3 flex gap-2 overflow-x-auto">
+            {highlights === null && (
+              <span className="text-xs text-stone-400">불러오는 중…</span>
+            )}
+            {highlights?.length === 0 && (
+              <span className="text-xs text-stone-400">표시할 스팟이 아직 없어요.</span>
+            )}
+            {highlights?.map((p) => (
+              <span
+                key={p.id}
+                className="shrink-0 rounded-full bg-stara-mint/40 px-3 py-1.5 text-[11px] font-semibold"
+              >
+                {p.nameKo}
+              </span>
+            ))}
+          </div>
+        </div>
 
         <p className="mb-5 text-[12.5px] leading-relaxed text-stone-500">
           {region.descriptionKo}

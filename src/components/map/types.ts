@@ -8,6 +8,8 @@ export interface MapPin {
   order?: number;
   color: string;
   title: string;
+  /** Route 탭 등에서 진행 상태별로 핀을 다르게 그릴 때 사용(없으면 기존처럼 color만 사용). */
+  status?: "done" | "next" | "locked";
 }
 
 export interface MapViewProps {

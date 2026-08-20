@@ -1,18 +1,18 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { PartyPopper } from "lucide-react";
 import { useTripPlan } from "@/store/useTripPlan";
 import { useTripStore } from "@/store/tripStore";
 
 export default function CompletePage() {
   const router = useRouter();
+  const [step, setStep] = useState<"trophy" | "diary-prompt">("trophy");
   const completedAt = useTripStore((s) => s.completedAt);
-  const completedQuestIds = useTripStore((s) => s.completedQuestIds);
+  const activeTripName = useTripStore((s) => s.activeTripName);
   const earnedStampIds = useTripStore((s) => s.earnedStampIds);
   const resetTrip = useTripStore((s) => s.resetTrip);
-  const { orderedPlaces, schedule, selectedArtistIds } = useTripPlan();
+  const { orderedPlaces } = useTripPlan();
 
   // travel/page.tsx와 동일한 이유로, 반응형 값 대신 getState()로 실제 복원된
   // 값을 확인한 뒤에만 리다이렉트 여부를 판단한다.
@@ -24,66 +24,77 @@ export default function CompletePage() {
 
   if (!completedAt) return null;
 
-  const subQuestIds = schedule.stops
-    .map((s) => s.segmentQuest?.id)
-    .filter((id): id is string => !!id);
-  const subQuestDone = subQuestIds.filter((id) =>
-    completedQuestIds.includes(id)
-  ).length;
+  function goToDiary() {
+    // 여기서 resetTrip()을 부르면 /trip의 하이드레이션 가드가 "루트 없음"으로 보고
+    // 곧장 "/"로 돌려보내버린다 — 다이어리를 보여준 뒤, 새 루트를 시작할 때
+    // (Cover 탭의 "+ Create New Route" → setMainRoute)가 되어야 실제로 초기화된다.
+    router.push("/trip?tab=diary");
+  }
+
+  function skip() {
+    resetTrip();
+    router.push("/");
+  }
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center gap-6 px-5 py-10 text-center">
-      <PartyPopper size={52} className="text-amber-500" />
-      <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white">
-        서울 STARA 루트를 완주했습니다!
-      </h1>
+    <main className="font-jakarta text-stara-navy flex min-h-screen flex-col items-center justify-center gap-4 bg-stara-bg px-8 text-center">
+      {step === "trophy" ? (
+        <>
+          <span className="text-[52px]">🏆</span>
+          <h1 className="font-fraunces text-2xl font-bold">Route Complete!</h1>
+          <p className="text-sm text-stone-500">
+            {activeTripName ?? "이번 루트"}의 모든 체크포인트를 완료했어요.
+          </p>
+          <div className="my-4 flex h-[90px] w-[90px] items-center justify-center rounded-3xl border-[3px] border-stara-primary bg-gradient-to-br from-stara-coral to-stara-navy text-4xl shadow-[0_16px_30px_-12px_rgba(255,143,122,0.6)]">
+            🎬
+          </div>
+          <p className="mb-2 text-sm text-stone-500">
+            획득 스탬프 {earnedStampIds.length}개 · 방문 장소 {orderedPlaces.length}곳
+          </p>
+          <button
+            type="button"
+            onClick={() => setStep("diary-prompt")}
+            className="mt-2 flex min-h-11 w-full items-center justify-center rounded-2xl bg-stara-coral text-sm font-bold text-white"
+          >
+            Receive Stamp →
+          </button>
+        </>
+      ) : (
+        <>
+          <h1 className="font-fraunces text-2xl font-bold">Your trip diary is ready</h1>
+          <p className="text-sm text-stone-500">체크인한 인증샷으로 여행 다이어리를 만들었어요.</p>
 
-      <div className="grid w-full grid-cols-2 gap-3 rounded-2xl border border-slate-200 p-5 text-sm dark:border-slate-700">
-        <Stat label="방문 장소" value={`${orderedPlaces.length}곳`} />
-        <Stat label="체험한 아티스트" value={`${selectedArtistIds.length}명`} />
-        <Stat label="획득 스탬프" value={`${earnedStampIds.length}개`} />
-        <Stat label="완료한 서브 퀘스트" value={`${subQuestDone}개`} />
-      </div>
+          <div className="relative my-5 flex w-full items-center gap-3 rounded-2xl border border-stone-200 bg-white p-3.5 text-left shadow-[0_10px_22px_-14px_rgba(36,59,83,0.3)]">
+            <span className="font-space-mono absolute -left-2 -top-2 rounded-full bg-stara-mint px-2 py-0.5 text-[9px] font-bold shadow">
+              NEW!
+            </span>
+            <span className="flex h-[60px] w-[60px] shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-stara-coral to-stara-navy text-2xl">
+              📔
+            </span>
+            <div>
+              <b className="text-sm">{activeTripName ?? "STARA Trip"}</b>
+              <p className="font-space-mono mt-0.5 text-[9px] text-stone-500">
+                {orderedPlaces.length}개 체크포인트 · {earnedStampIds.length}장의 사진
+              </p>
+            </div>
+          </div>
 
-      <div className="w-full rounded-2xl border border-slate-200 p-5 text-left dark:border-slate-700">
-        <p className="mb-2 text-sm font-bold text-slate-700 dark:text-slate-200">
-          최종 여행 경로 요약
-        </p>
-        <ol className="flex flex-col gap-1 text-sm text-slate-500 dark:text-slate-400">
-          {orderedPlaces.map((p, i) => (
-            <li key={p.id}>
-              {i + 1}. {p.nameKo}
-            </li>
-          ))}
-        </ol>
-      </div>
-
-      <a
-        href="/collection"
-        className="flex min-h-11 w-full items-center justify-center rounded-xl border-2 border-fuchsia-600 px-6 text-sm font-bold text-fuchsia-600 hover:bg-fuchsia-50 dark:hover:bg-fuchsia-950/30"
-      >
-        내 컬렉션북 보기
-      </a>
-
-      <button
-        type="button"
-        onClick={() => {
-          resetTrip();
-          router.push("/");
-        }}
-        className="flex min-h-11 items-center justify-center rounded-xl bg-fuchsia-600 px-6 text-sm font-bold text-white hover:bg-fuchsia-700"
-      >
-        처음으로 돌아가기
-      </button>
+          <button
+            type="button"
+            onClick={goToDiary}
+            className="flex min-h-11 w-full items-center justify-center rounded-2xl bg-stara-navy text-sm font-bold text-white"
+          >
+            View Diary
+          </button>
+          <button
+            type="button"
+            onClick={skip}
+            className="flex min-h-11 w-full items-center justify-center rounded-2xl border-2 border-stone-200 text-sm font-bold"
+          >
+            Skip for now
+          </button>
+        </>
+      )}
     </main>
-  );
-}
-
-function Stat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-xs text-slate-400">{label}</p>
-      <p className="text-lg font-bold text-slate-800 dark:text-slate-100">{value}</p>
-    </div>
   );
 }

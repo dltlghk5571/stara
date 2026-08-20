@@ -24,6 +24,10 @@ interface TripState {
   selectedArtistIds: string[];
   /** 온보딩 지역 선택 화면에서 고른 지역. */
   selectedRegionId: string | null;
+  /** 진행 중인 여행을 구분하는 id. quest_photos.tripId로도 저장되어 다이어리에서 루트별로 묶는 데 쓰인다. */
+  activeTripId: string | null;
+  /** 다이어리 탭에 보여줄 사람이 읽을 수 있는 루트 이름(예: "서울 · 포토 & 감성"). */
+  activeTripName: string | null;
 }
 
 interface TripActions {
@@ -37,7 +41,12 @@ interface TripActions {
   setTripStartTime: (time: string) => void;
   setTripEndTime: (time: string) => void;
   /** 온보딩에서 루트안을 확정할 때 호출 — 새 여행을 시작하며 메인 루트를 앉힌다. */
-  setMainRoute: (places: Place[], regionId: string, artistIds: string[]) => void;
+  setMainRoute: (
+    places: Place[],
+    regionId: string,
+    artistIds: string[],
+    tripName: string
+  ) => void;
 }
 
 const initialState: TripState = {
@@ -51,6 +60,8 @@ const initialState: TripState = {
   mainRoutePlaces: null,
   selectedArtistIds: [],
   selectedRegionId: null,
+  activeTripId: null,
+  activeTripName: null,
 };
 
 export const useTripStore = create<TripState & TripActions>()(
@@ -98,12 +109,14 @@ export const useTripStore = create<TripState & TripActions>()(
       resetTrip: () => set(initialState),
       setTripStartTime: (time) => set({ tripStartTime: time }),
       setTripEndTime: (time) => set({ tripEndTime: time }),
-      setMainRoute: (places, regionId, artistIds) =>
+      setMainRoute: (places, regionId, artistIds, tripName) =>
         set({
           ...initialState,
           mainRoutePlaces: places.map((p) => ({ ...p, isMainRoute: true })),
           selectedRegionId: regionId,
           selectedArtistIds: artistIds,
+          activeTripId: crypto.randomUUID(),
+          activeTripName: tripName,
         }),
     }),
     {

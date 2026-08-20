@@ -13,6 +13,8 @@ export async function POST(request: NextRequest) {
     placeId?: string;
     photoUrl?: string;
     note?: string;
+    tripId?: string;
+    tripName?: string;
   } | null;
   if (!body?.placeId || !body?.photoUrl) {
     return NextResponse.json({ error: "placeId and photoUrl required" }, { status: 400 });
@@ -22,7 +24,14 @@ export async function POST(request: NextRequest) {
   const db = getDb();
   const [row] = await db
     .insert(questPhotos)
-    .values({ userId, placeId: body.placeId, photoUrl: body.photoUrl, note: body.note })
+    .values({
+      userId,
+      placeId: body.placeId,
+      photoUrl: body.photoUrl,
+      note: body.note,
+      tripId: body.tripId,
+      tripName: body.tripName,
+    })
     .returning();
 
   return NextResponse.json({ photo: row });

@@ -27,10 +27,19 @@ function waitForTmap(): Promise<void> {
   });
 }
 
+/** status가 있으면(Route 탭) 상태별 스타일을 우선하고, 없으면 기존처럼 color를 그대로 쓴다. */
 function pinIconUrl(pin: MapPin): string {
   const label = pin.order ?? "";
+  if (pin.status === "locked") {
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+      <path d="M15 1 C7 1 1 7 1 15 C1 24 15 29 15 29 C15 29 29 24 29 15 C29 7 23 1 15 1 Z" fill="none" stroke="#b9b19a" stroke-width="2" stroke-dasharray="3 3"/>
+      <text x="15" y="19" font-size="12" font-weight="700" font-family="sans-serif" fill="#b9b19a" text-anchor="middle">${label}</text>
+    </svg>`;
+    return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+  }
+  const fill = pin.status === "next" ? "#ff8f7a" : pin.status === "done" ? "#8ee7c8" : pin.color;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
-    <path d="M15 1 C7 1 1 7 1 15 C1 24 15 29 15 29 C15 29 29 24 29 15 C29 7 23 1 15 1 Z" fill="${pin.color}" stroke="white" stroke-width="2"/>
+    <path d="M15 1 C7 1 1 7 1 15 C1 24 15 29 15 29 C15 29 29 24 29 15 C29 7 23 1 15 1 Z" fill="${fill}" stroke="white" stroke-width="2"/>
     <text x="15" y="19" font-size="12" font-weight="700" font-family="sans-serif" fill="white" text-anchor="middle">${label}</text>
   </svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;

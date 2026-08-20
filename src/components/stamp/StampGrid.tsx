@@ -2,7 +2,8 @@
 
 import { Lock, Stamp as StampIcon } from "lucide-react";
 import type { Place } from "@/types";
-import { CATEGORY_STYLE } from "@/lib/categoryStyle";
+
+const ROTATIONS = ["-rotate-3", "rotate-1", "rotate-3", "-rotate-1"];
 
 interface Props {
   orderedPlaces: Place[];
@@ -11,33 +12,27 @@ interface Props {
 
 export default function StampGrid({ orderedPlaces, earnedStampIds }: Props) {
   return (
-    <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-      {orderedPlaces.map((place) => {
+    <div className="font-jakarta grid grid-cols-3 gap-3.5">
+      {orderedPlaces.map((place, i) => {
         const stampId = `stamp-${place.id}`;
         const earned = earnedStampIds.includes(stampId);
-        const style = CATEGORY_STYLE[place.category];
         return (
           <div
             key={place.id}
-            className="flex flex-col items-center gap-1.5 rounded-xl border border-slate-200 p-3 text-center dark:border-slate-700"
+            className={`flex aspect-square flex-col items-center justify-center gap-1 rounded-2xl p-2 text-center transition ${
+              earned
+                ? `${ROTATIONS[i % ROTATIONS.length]} border-2 border-stara-mint bg-white shadow-[0_6px_14px_-8px_rgba(36,59,83,0.35)]`
+                : "border-2 border-dashed border-stone-300"
+            }`}
           >
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-full"
-              style={{
-                backgroundColor: earned ? style.color : "#e2e8f0",
-              }}
-            >
-              {earned ? (
-                <StampIcon size={24} className="text-white" />
-              ) : (
-                <Lock size={20} className="text-slate-400" />
-              )}
-            </div>
+            {earned ? (
+              <StampIcon size={22} className="text-stara-coral" />
+            ) : (
+              <Lock size={18} className="text-stone-300" />
+            )}
             <span
-              className={`line-clamp-2 text-xs ${
-                earned
-                  ? "font-semibold text-slate-700 dark:text-slate-200"
-                  : "text-slate-400"
+              className={`line-clamp-2 text-[9.5px] font-bold leading-tight ${
+                earned ? "text-stara-navy" : "text-stone-300"
               }`}
             >
               {place.nameKo}
