@@ -27,12 +27,17 @@ const DEFAULT_MAIN_PLACES = MAIN_ROUTE_PLACE_IDS.map(getPlaceById).filter(
   (p): p is Place => !!p
 );
 
+/** /main-route 등에서 "지금 확정된 메인 루트"만 필요할 때 쓴다. */
+export function useMainRoutePlaces(): Place[] {
+  const storedMainRoutePlaces = useTripStore((s) => s.mainRoutePlaces);
+  return storedMainRoutePlaces ?? DEFAULT_MAIN_PLACES;
+}
+
 export function useTripPlan() {
   const selectedPlaceIds = useTripStore((s) => s.selectedPlaceIds);
   const tripStartTime = useTripStore((s) => s.tripStartTime);
-  const storedMainRoutePlaces = useTripStore((s) => s.mainRoutePlaces);
-
-  const mainPlaces = storedMainRoutePlaces ?? DEFAULT_MAIN_PLACES;
+  const tripEndTime = useTripStore((s) => s.tripEndTime);
+  const mainPlaces = useMainRoutePlaces();
   const selectedNonMainPlaces = selectedPlaceIds
     .map(getPlaceById)
     .filter((p): p is Place => !!p && !p.isMainRoute);
@@ -60,7 +65,7 @@ export function useTripPlan() {
   }, [legs]);
 
   return useMemo(() => {
-    const schedule = buildSchedule(orderedPlaces, tripStartTime, legDurationOverridesSec);
+    const schedule = buildSchedule(orderedPlaces, tripStartTime, legDurationOverridesSec, tripEndTime);
 
     const selectedArtistIds = Array.from(
       new Set(orderedPlaces.flatMap((p) => p.artistIds))
@@ -80,7 +85,7 @@ export function useTripPlan() {
       removalSuggestion,
       routeGeometry: geometry,
     };
-  }, [orderedPlaces, autoAddedPlaceIds, reasons, selectedPlaceIds, tripStartTime, legDurationOverridesSec, geometry]);
+  }, [orderedPlaces, autoAddedPlaceIds, reasons, selectedPlaceIds, tripStartTime, tripEndTime, legDurationOverridesSec, geometry]);
 }
 
 /** 오후 9시를 초과했을 때, 제거하면 이동시간을 가장 많이 아낄 수 있는 사용자 선택 장소를 제안 */

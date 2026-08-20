@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <Link
-      href="/onboarding/artists"
+      href={`/sign-in?redirect_url=${encodeURIComponent("/onboarding/artists")}`}
       className="font-jakarta relative flex min-h-screen flex-1 flex-col items-center justify-center gap-6 overflow-hidden bg-stara-navy px-6 text-center"
       style={{
         backgroundImage:

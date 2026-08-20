@@ -1,26 +1,29 @@
+"use client";
+
 import Link from "next/link";
-import { MAIN_ROUTE_PLACE_IDS, getPlaceById } from "@/data/places";
 import { buildSchedule } from "@/lib/scheduleCalculator";
-import { computeRouteLegs } from "@/lib/directions/computeRouteLegs";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
-import { TRIP_START_TIME } from "@/config";
+import { useTripStore } from "@/store/tripStore";
+import { useMainRoutePlaces } from "@/store/useTripPlan";
+import { useRouteDirections } from "@/store/useRouteDirections";
+import { getRegionById } from "@/data/regions";
 import TopBar from "@/components/layout/TopBar";
 import AuthNav from "@/components/layout/AuthNav";
 import MapView from "@/components/map/MapView";
-import type { Place } from "@/types";
 
-export default async function MainRoutePage() {
-  const mainPlaces = MAIN_ROUTE_PLACE_IDS.map((id) => getPlaceById(id)).filter(
-    (p): p is Place => !!p
-  );
-  const schedule = buildSchedule(mainPlaces);
-  const { geometry } = await computeRouteLegs(
-    mainPlaces.map((p) => ({ id: p.id, lat: p.latitude, lng: p.longitude }))
-  );
+export default function MainRoutePage() {
+  const mainPlaces = useMainRoutePlaces();
+  const tripStartTime = useTripStore((s) => s.tripStartTime);
+  const tripEndTime = useTripStore((s) => s.tripEndTime);
+  const selectedRegionId = useTripStore((s) => s.selectedRegionId);
+  const { geometry } = useRouteDirections(mainPlaces);
+
+  const schedule = buildSchedule(mainPlaces, tripStartTime, undefined, tripEndTime);
+  const region = selectedRegionId ? getRegionById(selectedRegionId) : undefined;
 
   return (
     <div className="flex min-h-screen flex-col">
-      <TopBar title="서울 메인 루트" backHref="/" rightSlot={<AuthNav />} />
+      <TopBar title={region ? `${region.nameKo} 메인 루트` : "메인 루트"} backHref="/" rightSlot={<AuthNav />} />
 
       <div className="h-64 w-full shrink-0 sm:h-80">
         <MapView
@@ -41,7 +44,7 @@ export default async function MainRoutePage() {
         <div className="grid grid-cols-2 gap-3 rounded-2xl border border-slate-200 p-4 text-sm dark:border-slate-700">
           <div>
             <p className="text-xs text-slate-400">시작</p>
-            <p className="font-bold">{TRIP_START_TIME}</p>
+            <p className="font-bold">{tripStartTime}</p>
           </div>
           <div>
             <p className="text-xs text-slate-400">종료 예상</p>

@@ -136,7 +136,7 @@ export default function FinalRoutePage() {
         disabled={schedule.isOverLimit}
         className="m-3 flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-fuchsia-600 text-sm font-bold text-white transition-colors hover:bg-fuchsia-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
       >
-        {schedule.isOverLimit ? "오후 9시를 초과해 시작할 수 없어요" : "여행 시작"}
+        {schedule.isOverLimit ? "설정한 종료 시각을 초과해 시작할 수 없어요" : "여행 시작"}
       </button>
     </div>
   );

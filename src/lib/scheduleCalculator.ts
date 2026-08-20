@@ -15,7 +15,8 @@ import { SUB_QUEST_TEMPLATES } from "@/data/quests";
 export function buildSchedule(
   orderedPlaces: Place[],
   startTime: string = TRIP_START_TIME,
-  legDurationOverridesSec?: Map<string, number>
+  legDurationOverridesSec?: Map<string, number>,
+  endTimeLimit: string = TRIP_END_LIMIT
 ): ScheduleResult {
   const stops: ScheduleStop[] = [];
   let totalTravelMinutes = 0;
@@ -70,7 +71,7 @@ export function buildSchedule(
   });
 
   const endMinutes = cursor;
-  const limitMinutes = toMinutes(TRIP_END_LIMIT);
+  const limitMinutes = toMinutes(endTimeLimit);
 
   return {
     stops,

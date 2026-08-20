@@ -10,6 +10,8 @@ interface Props {
   onRemoveSuggestion?: () => void;
   startTime?: string;
   onStartTimeChange?: (time: string) => void;
+  endTime?: string;
+  onEndTimeChange?: (time: string) => void;
 }
 
 /** 장소를 추가·삭제할 때마다 실시간으로 갱신되는 종료시각/이동시간 요약 바 */
@@ -19,21 +21,37 @@ export default function ScheduleFooter({
   onRemoveSuggestion,
   startTime,
   onStartTimeChange,
+  endTime,
+  onEndTimeChange,
 }: Props) {
+  const editable = Boolean(startTime && onStartTimeChange);
   return (
     <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
       <div className="flex items-center justify-between text-sm">
-        {startTime && onStartTimeChange ? (
-          <label className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
-            <Clock size={16} />
-            출발
-            <input
-              type="time"
-              value={startTime}
-              onChange={(e) => onStartTimeChange(e.target.value)}
-              className="min-h-8 rounded-lg border border-slate-200 bg-transparent px-1.5 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200"
-            />
-          </label>
+        {editable ? (
+          <div className="flex items-center gap-3">
+            <label className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
+              <Clock size={16} />
+              시작
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => onStartTimeChange!(e.target.value)}
+                className="min-h-8 rounded-lg border border-slate-200 bg-transparent px-1.5 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200"
+              />
+            </label>
+            {endTime && onEndTimeChange && (
+              <label className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
+                종료
+                <input
+                  type="time"
+                  value={endTime}
+                  onChange={(e) => onEndTimeChange(e.target.value)}
+                  className="min-h-8 rounded-lg border border-slate-200 bg-transparent px-1.5 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200"
+                />
+              </label>
+            )}
+          </div>
         ) : (
           <div className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
             <Clock size={16} />
@@ -44,7 +62,7 @@ export default function ScheduleFooter({
           이동 {schedule.totalTravelMinutes}분 · 체류 {schedule.totalDwellMinutes}분
         </span>
       </div>
-      {startTime && onStartTimeChange && (
+      {editable && (
         <p className="mt-1 text-xs text-slate-400">종료 예상 {schedule.endTime}</p>
       )}
 
@@ -53,7 +71,8 @@ export default function ScheduleFooter({
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           <div className="flex-1">
             <p className="font-semibold">
-              오후 9시를 {schedule.overLimitMinutes}분 초과할 예정이에요.
+              {endTime ? `종료 시각(${endTime})` : "종료 예정 시각"}을{" "}
+              {schedule.overLimitMinutes}분 초과할 예정이에요.
             </p>
             {removalSuggestion && (
               <p className="mt-1">

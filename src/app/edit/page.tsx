@@ -24,6 +24,8 @@ export default function EditPage() {
   const removePlace = useTripStore((s) => s.removePlace);
   const tripStartTime = useTripStore((s) => s.tripStartTime);
   const setTripStartTime = useTripStore((s) => s.setTripStartTime);
+  const tripEndTime = useTripStore((s) => s.tripEndTime);
+  const setTripEndTime = useTripStore((s) => s.setTripEndTime);
   const { orderedPlaces, selectedPlaceIds, schedule, removalSuggestion } = useTripPlan();
 
   function toggleCategory(c: PlaceCategory) {
@@ -87,6 +89,8 @@ export default function EditPage() {
         removalSuggestion={removalSuggestion}
         startTime={tripStartTime}
         onStartTimeChange={setTripStartTime}
+        endTime={tripEndTime}
+        onEndTimeChange={setTripEndTime}
       />
       <Link
         href="/final"
