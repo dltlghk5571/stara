@@ -22,6 +22,8 @@
     python build_dataset.py                        # 지오코딩 없이 (빠름, 반복 작업용)
     python build_dataset.py --geocode               # 좌표/한글 상호명/카테고리까지 채움
     python build_dataset.py --geocode --city=incheon # 한 도시만 출력
+    python build_dataset.py --city=incheon --owner=정인지 # 도시 분담 시 담당자 이름을 파일명에 표시
+      -> preprocessed/incheon.정인지.generated.cities.json 등
 
 주의:
     - place_id/artist_id는 최종 조립 단계(7단계)에서만 부여됨. place_category를
@@ -1278,9 +1280,12 @@ def main():
         print("6) 지오코딩 건너뜀 (실행하려면: python build_dataset.py --geocode)")
 
     city_filter = None
+    owner_filter = None
     for arg in sys.argv:
         if arg.startswith("--city="):
             city_filter = arg.split("=", 1)[1].strip()
+        elif arg.startswith("--owner="):
+            owner_filter = arg.split("=", 1)[1].strip()
     if city_filter:
         place_rows = [r for r in place_rows if r.get("city_id") == city_filter]
         print(f"   --city={city_filter} 필터 적용: {len(place_rows)}행")
@@ -1292,7 +1297,8 @@ def main():
     # 않는다 - 한 번 이 스크립트가 빈 결과로 정본 파일을 덮어써서 복구한 적이
     # 있어서(지오코딩 없이 돌리면 좌표가 없어 전부 걸러짐), 재발 방지.
     # 검수 후 정본으로 승격하려면 사람이 직접 파일을 바꿔치기할 것.
-    prefix = f"{city_filter}." if city_filter else ""
+    prefix_parts = [p for p in (city_filter, owner_filter) if p]
+    prefix = "".join(f"{p}." for p in prefix_parts)
     label = f"{prefix}generated."
     stats = save_schema(places, city_registry, artist_registry, label)
     print(f"   cities: {stats['cities']} / artists: {stats['artists']} / places: {stats['places']}")
