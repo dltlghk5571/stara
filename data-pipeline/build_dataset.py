@@ -991,16 +991,34 @@ def geocode_and_fill_names(rows, api_key):
 # 아티스트는 한글명 자리에 영문명을 임시로 넣고 needs_ko_name으로 표시함 -
 # 틀린 한글명을 지어내는 것보다 "아직 모른다"고 표시하는 게 안전함.
 
+# 2026-08-20 팀 회의에서 카테고리 체계를 food/shopping/culture/activity/
+# landmark_observatory/kpop 6종으로 확정 (기존 photo/experience 폐지).
+# "숙박"은 의도적으로 여기 없음 - 숙소류는 카테고리가 아니라 스코프 자체에서
+# 제외 대상이라, build_schema()에서 이 행 자체를 드롭한다(ACCOMMODATION_LABELS 참고).
 CATEGORY_TO_TS = {
     "음식점": "food", "카페/디저트": "food",
     "쇼핑": "shopping",
-    "촬영지": "photo", "공원": "photo", "해변": "photo",
-    "랜드마크": "photo", "포토스팟": "photo",
-    "박물관/전시": "culture", "유적지": "culture",
-    "기획사": "culture", "공연장": "culture",
-    "테마파크": "experience", "숙박": "experience",
-    "체험/액티비티": "experience", "체험/휴양": "experience",
+    "박물관/전시": "culture", "유적지": "culture", "공연장": "culture",
+    "기획사": "kpop",  # 소속사 사옥(하이브 인사이트 등)은 culture가 아니라 kpop
+    "공원": "activity", "해변": "activity", "테마파크": "activity",
+    "체험/액티비티": "activity", "체험/휴양": "activity",
+    # 순수 포토존은 별도 카테고리 없이 landmark_observatory로 흡수(회의 결정)
+    "랜드마크": "landmark_observatory", "포토스팟": "landmark_observatory",
+    "촬영지": "landmark_observatory",
 }
+
+VALID_PLACE_CATEGORIES = {"food", "shopping", "culture", "activity", "landmark_observatory", "kpop"}
+
+# raw_data_정인지/*.json의 category_hint처럼 이미 최종 영문 카테고리값이 들어오는
+# 소스도 있어서, 그 경우는 번역 없이 그대로 통과시킨다(둘 다 안 걸리면 activity로 폴백 -
+# 예전 "experience" 캐치올 자리를 대신함).
+def resolve_category(cat_ko):
+    if cat_ko in VALID_PLACE_CATEGORIES:
+        return cat_ko
+    return CATEGORY_TO_TS.get(cat_ko, "activity")
+
+
+ACCOMMODATION_LABELS = {"숙박", "accommodation", "resort", "hotel", "hostel", "guesthouse", "펜션", "풀빌라", "게스트하우스"}
 
 
 GROUP_KO_NAMES = {
@@ -1029,8 +1047,8 @@ MEMBER_KO_NAMES = {
     ("bigbang", "gdragon"): "지드래곤", ("bigbang", "taeyang"): "태양",
 }
 
-DWELL_MINUTES_BY_CATEGORY = {"food": 50, "photo": 25, "shopping": 50}
-# culture/experience는 spec에 평균 기준이 없어서 의도적으로 비움 (None)
+DWELL_MINUTES_BY_CATEGORY = {"food": 50, "landmark_observatory": 25, "shopping": 50}
+# culture/activity/kpop은 spec에 평균 기준이 없어서 의도적으로 비움 (None)
 
 
 def looks_like_url(s):
@@ -1099,6 +1117,7 @@ def build_schema(place_rows, member_group_map):
     city_registry = {}
     artist_registry = {}
     dropped_no_coords = []
+    dropped_accommodation = []
 
     for (city_id, name_ko, name_en), group in by_place.items():
         if not city_id:
@@ -1113,12 +1132,21 @@ def build_schema(place_rows, member_group_map):
             })
             continue
 
+        cat_ko = next((g.get("place_category") for g in group if g.get("place_category")), None)
+        if isinstance(cat_ko, str) and cat_ko.strip().lower() in ACCOMMODATION_LABELS:
+            # 숙소류(호텔/리조트/펜션/풀빌라)는 카테고리가 아니라 스코프 자체에서
+            # 제외 - 좌표/영업시간이 확인돼도 상관없이 뺀다(2026-08-20 회의 결정)
+            dropped_accommodation.append({
+                "city_id": city_id, "place_name_ko": name_ko, "place_name_en": name_en,
+                "artists": sorted({g.get("artist_name") for g in group if g.get("artist_name")}),
+            })
+            continue
+
         needs_name_review = not (name_ko and name_en)
         final_name_ko = name_ko or name_en
         final_name_en = name_en or name_ko
 
-        cat_ko = next((g.get("place_category") for g in group if g.get("place_category")), None)
-        cat_en = CATEGORY_TO_TS.get(cat_ko, "experience")
+        cat_en = resolve_category(cat_ko)
 
         resolved = resolve_artist_ids(group, member_group_map)
         artist_ids = [aid for aid, _, _ in resolved]
@@ -1183,7 +1211,7 @@ def build_schema(place_rows, member_group_map):
         city_en = next((g.get("city_name_en") for g in group if g.get("city_name_en")), None)
         city_registry[city_id] = (city_ko, city_en)
 
-    return places, city_registry, artist_registry, dropped_no_coords
+    return places, city_registry, artist_registry, dropped_no_coords, dropped_accommodation
 
 
 def save_schema(places, city_registry, artist_registry, label):
@@ -1291,7 +1319,7 @@ def main():
         print(f"   --city={city_filter} 필터 적용: {len(place_rows)}행")
 
     print("7) 최종 조립 - cities/artists/places.json...")
-    places, city_registry, artist_registry, dropped_no_coords = build_schema(place_rows, member_group_map)
+    places, city_registry, artist_registry, dropped_no_coords, dropped_accommodation = build_schema(place_rows, member_group_map)
     # 자동 생성 결과는 항상 .generated.json으로 따로 저장하고, 사람이 손으로
     # 검수/보완한 cities.json/artists.json/places.json은 절대 자동으로 덮어쓰지
     # 않는다 - 한 번 이 스크립트가 빈 결과로 정본 파일을 덮어써서 복구한 적이
@@ -1305,6 +1333,7 @@ def main():
     print(f"   (자동 생성본 - 정본 cities.json/artists.json/places.json은 건드리지 않음. "
           f"검수 후 필요하면 사람이 직접 교체할 것)")
     print(f"   좌표 없어서 제외된 곳: {len(dropped_no_coords)}건")
+    print(f"   숙소류라서 제외된 곳: {len(dropped_accommodation)}건")
     print(f"   review 필요: {stats['needs_review']}건 -> preprocessed/{label}places_needs_review.csv")
     print(f"   한글 아티스트명 미확인(임시로 영문명 사용): {len(stats['needs_ko_name'])}종 {stats['needs_ko_name']}")
     print(f"-> preprocessed/{label}cities.json, {label}artists.json, {label}places.json")

@@ -38,8 +38,22 @@ export interface Artist {
   artist_name_en: string;  // required
 }
 
-export type PlaceCategory = "photo" | "food" | "culture" | "shopping" | "experience";
-// 지금은 이 5종만 쓴다. "공연장" 등 애매한 유형은 임시로 culture에 태깅.
+export type PlaceCategory =
+  | "food"                 // 식당 / 카페·디저트 / 베이커리
+  | "shopping"              // 스토어(굿즈·MD 포함) / 시장·거리 / 편집숍·패션
+  | "culture"               // 박물관·전시·갤러리 / 역사·전통 / 공연·라이브
+  | "activity"              // 공원·자연 / 테마파크·체험 / 레저·스포츠
+  | "landmark_observatory"  // 전망대·뷰포인트 / 상징 건축물·거리
+  | "kpop";                 // 오피셜한 케이팝 관련 장소(소속사 사옥 등)
+// 2026-08-20 팀 회의에서 이 6종으로 확정 (기존 photo/experience 폐지).
+// "장소와 아티스트의 관계"가 아니라 "장소 자체의 성격"으로 분류한다 - 예를 들어
+// 쇼핑몰에서 MV를 찍었어도 카테고리는 "photo"가 아니라 "shopping". MV 촬영지 /
+// 멤버 연고지 / 소속사 공식 공간 / 팬 목격담 같은 "관계" 정보는 카테고리가 아니라
+// relation_text에 담는다.
+// 세부 규칙: 숙박(호텔/리조트/펜션/풀빌라)은 카테고리가 아니라 이번 스코프에서
+// 아예 제외 대상 - places.json에 넣지 않는다. 소속사 사옥은 culture가 아니라
+// kpop. 순수 포토존(다른 기능 없이 사진 찍는 용도로만 존재하는 곳)은 별도
+// 카테고리를 만들지 않고 landmark_observatory로 흡수.
 // 이 밖의 값을 쓰면 나중에 import 스크립트가 깨짐.
 
 export type PlaceStatus = "draft" | "verified" | "published";
@@ -66,8 +80,8 @@ export interface Place {
                                    //   24시간 운영은 "00:00"-"23:59"
   close_time: string | null;      // optional - 위와 동일
   dwell_minutes: number | null;   // computed - 모르면 카테고리 평균으로 추정
-                                   //   (음식점 45-60 · 포토스팟 20-30 · 쇼핑 40-60).
-                                   //   culture/experience는 평균 기준이 아직 없음 - 정해지기 전엔 null.
+                                   //   (food 45-60 · landmark_observatory 20-30 · shopping 40-60).
+                                   //   culture/activity/kpop은 평균 기준이 아직 없음 - 정해지기 전엔 null.
   quest_type: string | null;      // optional - 비우면 카테고리 기본 퀘스트로 폴백
   quest_text_ko: string | null;   // optional - 장소별 창작 콘텐츠, 사실 인용 아님
   quest_text_en: string | null;   // optional
