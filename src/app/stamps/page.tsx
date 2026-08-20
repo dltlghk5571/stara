@@ -13,7 +13,7 @@ export default function StampsPage() {
   const { orderedPlaces, schedule } = useTripPlan();
 
   const requiredQuestIds = orderedPlaces.flatMap((p) =>
-    getQuestsForPlace(p.id)
+    getQuestsForPlace(p)
       .filter((q) => q.required)
       .map((q) => q.id)
   );

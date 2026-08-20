@@ -50,10 +50,10 @@ export default function HomePage() {
           </div>
 
           <Link
-            href="/main-route"
+            href="/onboarding/artists"
             className="flex min-h-11 items-center justify-center rounded-xl bg-fuchsia-600 text-sm font-bold text-white transition-colors hover:bg-fuchsia-700"
           >
-            서울 코스 만들기
+            내 루트 만들기
           </Link>
         </div>
       </section>

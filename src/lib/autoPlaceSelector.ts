@@ -32,15 +32,22 @@ export interface AutoSelectorCandidates {
 /**
  * 메인 루트 + 사용자가 선택한 장소를 합쳐 최종 방문 순서를 만들고,
  * 로컬 관광지 1곳 이상 / 음식점 2곳 이상이 되도록 자동 보완한다.
+ *
+ * mainRoutePlaces를 생략하면 기존 서울 고정 루트(MAIN_ROUTE_PLACE_IDS)를 그대로
+ * 쓴다 — 온보딩에서 TourAPI로 생성한 루트를 골랐을 때만 그 장소들을 넘겨서
+ * 메인 루트 자체를 바꿔치기한다.
  */
 export function buildFinalOrder(
   selectedPlaceIds: string[],
   startTime?: string,
-  extraCandidates?: AutoSelectorCandidates
+  extraCandidates?: AutoSelectorCandidates,
+  mainRoutePlaces?: Place[]
 ): AutoSelectorResult {
-  const mainPlaces = MAIN_ROUTE_PLACE_IDS.map((id) => getPlaceById(id)).filter(
-    (p): p is Place => !!p
-  );
+  const mainPlaces =
+    mainRoutePlaces ??
+    MAIN_ROUTE_PLACE_IDS.map((id) => getPlaceById(id)).filter(
+      (p): p is Place => !!p
+    );
   const selectedPlaces = selectedPlaceIds
     .map((id) => getPlaceById(id))
     .filter((p): p is Place => !!p && !p.isMainRoute);

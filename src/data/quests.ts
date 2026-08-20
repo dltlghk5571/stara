@@ -7,8 +7,7 @@
 // 실제 콘텐츠로 교체하려면 QUEST_TEXT_BY_CATEGORY / SUB_QUEST_TEMPLATES 의
 // 텍스트만 수정하면 됩니다.
 // ─────────────────────────────────────────────────────────
-import type { PlaceCategory, Quest, QuestType } from "@/types";
-import { PLACES } from "./places";
+import type { Place, Quest, QuestType, PlaceCategory } from "@/types";
 
 const QUEST_TEXT_BY_CATEGORY: Record<
   PlaceCategory,
@@ -65,24 +64,28 @@ const QUEST_TEXT_BY_CATEGORY: Record<
   },
 };
 
-export const QUESTS: Quest[] = PLACES.map((place) => {
+/**
+ * 장소의 필수 체크포인트 퀘스트를 즉석에서 계산한다. place.category만 있으면
+ * 되므로, 정적 PLACES 배열에 없는 TourAPI(kto-*) 장소에도 항상 동일하게 동작한다
+ * (이전엔 PLACES로만 미리 빌드해둔 QUESTS 테이블을 조회했기 때문에, TourAPI 장소는
+ * 필수 퀘스트가 0개로 잡혀 스탬프가 조건 없이 통과되는 버그가 있었다).
+ */
+export function getQuestsForPlace(place: Place): Quest[] {
   const t = QUEST_TEXT_BY_CATEGORY[place.category];
-  return {
-    id: `q-${place.id}`,
-    placeId: place.id,
-    type: t.type,
-    titleKo: t.titleKo,
-    titleEn: t.titleEn,
-    descriptionKo: `[${place.nameKo}] ${t.descKo}`,
-    descriptionEn: `[${place.nameEn}] ${t.descEn}`,
-    required: true,
-    rewardType: "stamp",
-    stampId: `stamp-${place.id}`,
-  } satisfies Quest;
-});
-
-export function getQuestsForPlace(placeId: string): Quest[] {
-  return QUESTS.filter((q) => q.placeId === placeId);
+  return [
+    {
+      id: `q-${place.id}`,
+      placeId: place.id,
+      type: t.type,
+      titleKo: t.titleKo,
+      titleEn: t.titleEn,
+      descriptionKo: `[${place.nameKo}] ${t.descKo}`,
+      descriptionEn: `[${place.nameEn}] ${t.descEn}`,
+      required: true,
+      rewardType: "stamp",
+      stampId: `stamp-${place.id}`,
+    },
+  ];
 }
 
 /** 이동 구간(핀 사이)에 배치되는 보너스 서브 퀘스트 템플릿 풀 */

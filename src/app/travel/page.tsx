@@ -67,7 +67,7 @@ export default function TravelPage() {
 
   const currentStop = schedule.stops[currentIndex];
   const nextStop = schedule.stops[currentIndex + 1];
-  const requiredQuests = getQuestsForPlace(currentStop.place.id).filter(
+  const requiredQuests = getQuestsForPlace(currentStop.place).filter(
     (q) => q.required
   );
 
@@ -111,7 +111,7 @@ export default function TravelPage() {
               completedQuestIds={completedQuestIds}
               onToggle={toggleQuest}
               stampClaimed={earnedStampIds.includes(`stamp-${currentStop.place.id}`)}
-              onClaimStamp={() => claimStamp(currentStop.place.id)}
+              onClaimStamp={() => claimStamp(currentStop.place)}
             />
             <div className="mt-2">
               <QuestPhotoUpload placeId={currentStop.place.id} />

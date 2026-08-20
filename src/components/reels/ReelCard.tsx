@@ -27,7 +27,7 @@ export default function ReelCard({
     .map((id) => getArtistById(id)?.name)
     .filter(Boolean)
     .join(", ");
-  const quests = getQuestsForPlace(place.id);
+  const quests = getQuestsForPlace(place);
 
   return (
     <div className="flex h-full w-full snap-start flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-slate-900">

@@ -23,13 +23,16 @@ export interface RemovalSuggestion {
  * 2) 그 순서의 구간들에 대해서만 TMAP 실제 이동시간을 요청하고, 도착하면 일정만 다시 계산
  *    (TMAP 실패/키없음이면 서버가 이미 구간별로 Haversine 값을 채워서 돌려준다)
  */
+const DEFAULT_MAIN_PLACES = MAIN_ROUTE_PLACE_IDS.map(getPlaceById).filter(
+  (p): p is Place => !!p
+);
+
 export function useTripPlan() {
   const selectedPlaceIds = useTripStore((s) => s.selectedPlaceIds);
   const tripStartTime = useTripStore((s) => s.tripStartTime);
+  const storedMainRoutePlaces = useTripStore((s) => s.mainRoutePlaces);
 
-  const mainPlaces = MAIN_ROUTE_PLACE_IDS.map(getPlaceById).filter(
-    (p): p is Place => !!p
-  );
+  const mainPlaces = storedMainRoutePlaces ?? DEFAULT_MAIN_PLACES;
   const selectedNonMainPlaces = selectedPlaceIds
     .map(getPlaceById)
     .filter((p): p is Place => !!p && !p.isMainRoute);
@@ -41,12 +44,13 @@ export function useTripPlan() {
 
   const { orderedPlaces, autoAddedPlaceIds, reasons } = useMemo(
     () =>
-      buildFinalOrder(selectedPlaceIds, tripStartTime, {
-        localTourism,
-        restaurants,
-        relatedTourismScores,
-      }),
-    [selectedPlaceIds, tripStartTime, localTourism, restaurants, relatedTourismScores]
+      buildFinalOrder(
+        selectedPlaceIds,
+        tripStartTime,
+        { localTourism, restaurants, relatedTourismScores },
+        mainPlaces
+      ),
+    [selectedPlaceIds, tripStartTime, localTourism, restaurants, relatedTourismScores, mainPlaces]
   );
 
   const { legs, geometry } = useRouteDirections(orderedPlaces);

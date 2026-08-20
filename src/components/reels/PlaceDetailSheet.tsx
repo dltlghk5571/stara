@@ -15,7 +15,7 @@ interface Props {
 export default function PlaceDetailSheet({ place, onClose }: Props) {
   const style = CATEGORY_STYLE[place.category];
   const artists = place.artistIds.map((id) => getArtistById(id)).filter(Boolean);
-  const quests = getQuestsForPlace(place.id);
+  const quests = getQuestsForPlace(place);
 
   return (
     <div
