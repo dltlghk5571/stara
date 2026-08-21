@@ -45,21 +45,21 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
 
   if (places.length === 0) {
     return (
-      <div className="flex h-full items-center justify-center p-6 text-center text-sm text-slate-400">
+      <div className="font-jakarta flex h-full items-center justify-center p-6 text-center text-sm text-stone-400">
         조건에 맞는 장소가 없습니다. 필터를 조정해보세요.
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
-      <div className="flex items-center gap-2 px-4 py-2 text-xs text-slate-400">
-        <span className="font-semibold text-slate-600 dark:text-slate-300">
+    <div className="font-jakarta flex min-h-0 flex-1 flex-col">
+      <div className="flex items-center gap-2 px-4 py-2 text-xs text-stone-400">
+        <span className="font-bold text-stara-navy">
           {index + 1} / {places.length}
         </span>
-        <div className="h-1 flex-1 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+        <div className="h-1 flex-1 overflow-hidden rounded-full bg-stone-200">
           <div
-            className="h-full rounded-full bg-fuchsia-500 transition-all"
+            className="h-full rounded-full bg-stara-coral transition-all"
             style={{ width: `${((index + 1) / places.length) * 100}%` }}
           />
         </div>

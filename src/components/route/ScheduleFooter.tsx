@@ -26,51 +26,51 @@ export default function ScheduleFooter({
 }: Props) {
   const editable = Boolean(startTime && onStartTimeChange);
   return (
-    <div className="shrink-0 border-t border-slate-200 bg-white px-4 py-3 dark:border-slate-700 dark:bg-slate-900">
+    <div className="font-jakarta shrink-0 border-t border-stone-200 bg-white px-4 py-3">
       <div className="flex items-center justify-between text-sm">
         {editable ? (
           <div className="flex items-center gap-3">
-            <label className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
+            <label className="flex items-center gap-1.5 font-bold text-stara-navy">
               <Clock size={16} />
               시작
               <input
                 type="time"
                 value={startTime}
                 onChange={(e) => onStartTimeChange!(e.target.value)}
-                className="min-h-8 rounded-lg border border-slate-200 bg-transparent px-1.5 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200"
+                className="min-h-8 rounded-lg border border-stone-200 bg-transparent px-1.5 text-sm font-bold text-stara-navy"
               />
             </label>
             {endTime && onEndTimeChange && (
-              <label className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
+              <label className="flex items-center gap-1.5 font-bold text-stara-navy">
                 종료
                 <input
                   type="time"
                   value={endTime}
                   onChange={(e) => onEndTimeChange(e.target.value)}
-                  className="min-h-8 rounded-lg border border-slate-200 bg-transparent px-1.5 text-sm font-semibold text-slate-700 dark:border-slate-700 dark:text-slate-200"
+                  className="min-h-8 rounded-lg border border-stone-200 bg-transparent px-1.5 text-sm font-bold text-stara-navy"
                 />
               </label>
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-200">
+          <div className="flex items-center gap-1.5 font-bold text-stara-navy">
             <Clock size={16} />
             종료 예상 {schedule.endTime}
           </div>
         )}
-        <span className="text-xs text-slate-400">
+        <span className="font-space-mono text-xs text-stone-400">
           이동 {schedule.totalTravelMinutes}분 · 체류 {schedule.totalDwellMinutes}분
         </span>
       </div>
       {editable && (
-        <p className="mt-1 text-xs text-slate-400">종료 예상 {schedule.endTime}</p>
+        <p className="mt-1 text-xs text-stone-400">종료 예상 {schedule.endTime}</p>
       )}
 
       {schedule.isOverLimit && (
-        <div className="mt-2 flex items-start gap-2 rounded-xl bg-rose-50 p-2.5 text-xs text-rose-700 dark:bg-rose-950/40 dark:text-rose-300">
+        <div className="mt-2 flex items-start gap-2 rounded-2xl bg-rose-50 p-2.5 text-xs text-rose-700">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           <div className="flex-1">
-            <p className="font-semibold">
+            <p className="font-bold">
               {endTime ? `종료 시각(${endTime})` : "종료 예정 시각"}을{" "}
               {schedule.overLimitMinutes}분 초과할 예정이에요.
             </p>
@@ -82,7 +82,7 @@ export default function ScheduleFooter({
                   <button
                     type="button"
                     onClick={onRemoveSuggestion}
-                    className="ml-2 min-h-6 rounded-full bg-rose-600 px-2 py-0.5 font-semibold text-white"
+                    className="ml-2 min-h-6 rounded-full bg-rose-600 px-2 py-0.5 font-bold text-white"
                   >
                     이 장소 제거
                   </button>

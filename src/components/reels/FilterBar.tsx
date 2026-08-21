@@ -20,7 +20,7 @@ export default function FilterBar({
   onToggleCategory,
 }: Props) {
   return (
-    <div className="flex flex-col gap-2 border-b border-slate-200 bg-white/80 p-2.5 backdrop-blur dark:border-slate-700 dark:bg-slate-900/80">
+    <div className="font-jakarta flex flex-col gap-2 border-b border-stone-200 bg-white/90 p-2.5 backdrop-blur">
       <div className="flex gap-1.5 overflow-x-auto pb-1">
         {USER_FACING_CATEGORIES.map((c) => {
           const active = selectedCategories.includes(c);
@@ -30,11 +30,11 @@ export default function FilterBar({
               key={c}
               type="button"
               onClick={() => onToggleCategory(c)}
-              className="min-h-9 shrink-0 rounded-full border px-3 text-xs font-semibold transition-colors"
+              className="min-h-9 shrink-0 rounded-full border-2 px-3 text-xs font-bold transition-colors"
               style={
                 active
                   ? { backgroundColor: style.color, borderColor: style.color, color: "white" }
-                  : { borderColor: "#e2e8f0", color: "#64748b" }
+                  : { borderColor: "#e7e2d4", color: "#78716c" }
               }
             >
               {style.labelKo}
@@ -50,10 +50,10 @@ export default function FilterBar({
               key={a.id}
               type="button"
               onClick={() => onToggleArtist(a.id)}
-              className={`min-h-9 shrink-0 rounded-full border px-3 text-xs font-semibold transition-colors ${
+              className={`min-h-9 shrink-0 rounded-full border-2 px-3 text-xs font-bold transition-colors ${
                 active
-                  ? "border-fuchsia-500 bg-fuchsia-500 text-white"
-                  : "border-slate-200 text-slate-500 dark:border-slate-700 dark:text-slate-400"
+                  ? "border-stara-coral bg-stara-coral text-white"
+                  : "border-stone-200 text-stone-500"
               }`}
             >
               {a.name}
