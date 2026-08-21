@@ -41,16 +41,20 @@ export function buildFinalOrder(
   selectedPlaceIds: string[],
   startTime?: string,
   extraCandidates?: AutoSelectorCandidates,
-  mainRoutePlaces?: Place[]
+  mainRoutePlaces?: Place[],
+  customPlaces: Place[] = []
 ): AutoSelectorResult {
   const mainPlaces =
     mainRoutePlaces ??
     MAIN_ROUTE_PLACE_IDS.map((id) => getPlaceById(id)).filter(
       (p): p is Place => !!p
     );
-  const selectedPlaces = selectedPlaceIds
-    .map((id) => getPlaceById(id))
-    .filter((p): p is Place => !!p && !p.isMainRoute);
+  const selectedPlaces = [
+    ...selectedPlaceIds
+      .map((id) => getPlaceById(id))
+      .filter((p): p is Place => !!p && !p.isMainRoute),
+    ...customPlaces,
+  ];
 
   let order: Place[] = [...mainPlaces];
   for (const place of selectedPlaces) {

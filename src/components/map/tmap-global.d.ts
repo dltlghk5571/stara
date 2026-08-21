@@ -5,7 +5,7 @@ declare global {
   interface Window {
     Tmapv2?: {
       Map: new (el: HTMLElement, options: Record<string, unknown>) => TmapMapInstance;
-      LatLng: new (lat: number, lng: number) => unknown;
+      LatLng: new (lat: number, lng: number) => TmapLatLngInstance;
       LatLngBounds: new () => { extend: (latLng: unknown) => void };
       Size: new (width: number, height: number) => unknown;
       Marker: new (options: Record<string, unknown>) => TmapMarkerInstance;
@@ -14,10 +14,20 @@ declare global {
   }
 }
 
+interface TmapLatLngInstance {
+  lat: () => number;
+  lng: () => number;
+}
+
+interface TmapClickEvent {
+  latLng: TmapLatLngInstance;
+}
+
 interface TmapMapInstance {
   setCenter: (latLng: unknown) => void;
   setZoom: (zoom: number) => void;
   fitBounds: (bounds: unknown) => void;
+  addListener?: (event: "click", handler: (evt: TmapClickEvent) => void) => void;
 }
 
 interface TmapMarkerInstance {

@@ -19,5 +19,7 @@ export interface MapViewProps {
   /** TMAP 등에서 받은 실제 경로 좌표([lat,lng][]). 없으면 pins를 순서대로 이은 직선을 그린다. */
   routeGeometry?: [number, number][];
   onPinClick?: (id: string) => void;
+  /** 지도의 빈 곳을 탭했을 때 좌표를 받는다(장소 탭-추가 플로우용). */
+  onMapClick?: (lat: number, lng: number) => void;
   className?: string;
 }

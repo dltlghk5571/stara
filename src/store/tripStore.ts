@@ -10,6 +10,9 @@ import type { Place } from "@/types";
 // 항상 동일하게 재계산 가능하므로(useTripPlan 훅) 중복 저장하지 않는다.
 interface TripState {
   selectedPlaceIds: string[];
+  /** 지도 탭/검색으로 직접 추가한 장소(TourAPI 등 정적 PLACES 배열에 없는 장소) — id만으론
+   *  getPlaceById로 못 찾으므로 selectedPlaceIds와 별도로 전체 객체를 들고 있는다. */
+  customPlaces: Place[];
   completedQuestIds: string[];
   earnedStampIds: string[];
   startedAt: string | null;
@@ -33,6 +36,8 @@ interface TripState {
 interface TripActions {
   addPlace: (placeId: string) => void;
   removePlace: (placeId: string) => void;
+  addCustomPlace: (place: Place) => void;
+  removeCustomPlace: (placeId: string) => void;
   toggleQuest: (questId: string) => void;
   claimStamp: (place: Place) => boolean;
   startTrip: () => void;
@@ -51,6 +56,7 @@ interface TripActions {
 
 const initialState: TripState = {
   selectedPlaceIds: [],
+  customPlaces: [],
   completedQuestIds: [],
   earnedStampIds: [],
   startedAt: null,
@@ -79,6 +85,18 @@ export const useTripStore = create<TripState & TripActions>()(
       removePlace: (placeId) =>
         set((s) => ({
           selectedPlaceIds: s.selectedPlaceIds.filter((id) => id !== placeId),
+        })),
+
+      addCustomPlace: (place) =>
+        set((s) =>
+          s.customPlaces.some((p) => p.id === place.id)
+            ? s
+            : { customPlaces: [...s.customPlaces, place] }
+        ),
+
+      removeCustomPlace: (placeId) =>
+        set((s) => ({
+          customPlaces: s.customPlaces.filter((p) => p.id !== placeId),
         })),
 
       toggleQuest: (questId) =>

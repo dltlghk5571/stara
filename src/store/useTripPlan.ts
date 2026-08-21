@@ -35,6 +35,7 @@ export function useMainRoutePlaces(): Place[] {
 
 export function useTripPlan() {
   const selectedPlaceIds = useTripStore((s) => s.selectedPlaceIds);
+  const customPlaces = useTripStore((s) => s.customPlaces);
   const tripStartTime = useTripStore((s) => s.tripStartTime);
   const tripEndTime = useTripStore((s) => s.tripEndTime);
   const mainPlaces = useMainRoutePlaces();
@@ -44,6 +45,7 @@ export function useTripPlan() {
   const { localTourism, restaurants } = useTourismCandidates([
     ...mainPlaces,
     ...selectedNonMainPlaces,
+    ...customPlaces,
   ]);
   const relatedTourismScores = useRelatedTourismSignal(mainPlaces);
 
@@ -53,9 +55,10 @@ export function useTripPlan() {
         selectedPlaceIds,
         tripStartTime,
         { localTourism, restaurants, relatedTourismScores },
-        mainPlaces
+        mainPlaces,
+        customPlaces
       ),
-    [selectedPlaceIds, tripStartTime, localTourism, restaurants, relatedTourismScores, mainPlaces]
+    [selectedPlaceIds, tripStartTime, localTourism, restaurants, relatedTourismScores, mainPlaces, customPlaces]
   );
 
   const { legs, geometry } = useRouteDirections(orderedPlaces);
@@ -71,8 +74,9 @@ export function useTripPlan() {
       new Set(orderedPlaces.flatMap((p) => p.artistIds))
     );
 
+    const removableIds = [...selectedPlaceIds, ...customPlaces.map((p) => p.id)];
     const removalSuggestion = schedule.isOverLimit
-      ? findRemovalSuggestion(orderedPlaces, selectedPlaceIds)
+      ? findRemovalSuggestion(orderedPlaces, removableIds)
       : null;
 
     return {
@@ -85,7 +89,7 @@ export function useTripPlan() {
       removalSuggestion,
       routeGeometry: geometry,
     };
-  }, [orderedPlaces, autoAddedPlaceIds, reasons, selectedPlaceIds, tripStartTime, tripEndTime, legDurationOverridesSec, geometry]);
+  }, [orderedPlaces, autoAddedPlaceIds, reasons, selectedPlaceIds, customPlaces, tripStartTime, tripEndTime, legDurationOverridesSec, geometry]);
 }
 
 /** 오후 9시를 초과했을 때, 제거하면 이동시간을 가장 많이 아낄 수 있는 사용자 선택 장소를 제안 */

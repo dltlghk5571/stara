@@ -51,7 +51,7 @@ const MY_LOCATION_ICON = `data:image/svg+xml,${encodeURIComponent(
   </svg>`
 )}`;
 
-export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick, className }: MapViewProps) {
+export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick, onMapClick, className }: MapViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<InstanceType<NonNullable<Window["Tmapv2"]>["Map"]> | null>(null);
   const markersRef = useRef<InstanceType<NonNullable<Window["Tmapv2"]>["Marker"]>[]>([]);
@@ -62,6 +62,12 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
   const [myLocation, setMyLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(false);
   const [locError, setLocError] = useState<string | null>(null);
+
+  // 매 렌더마다 새로 만들어지는 콜백이어도 리스너를 재등록할 필요 없이 항상 최신 핸들러를 쓰도록 ref로 보관.
+  const onMapClickRef = useRef(onMapClick);
+  useEffect(() => {
+    onMapClickRef.current = onMapClick;
+  }, [onMapClick]);
 
   // 스크립트 로드 + 지도 인스턴스 생성 (마운트당 1회)
   useEffect(() => {
@@ -84,6 +90,15 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
     // ponytail: TMap SDK에 공식 destroy API가 없어 언마운트 시 map 인스턴스는 정리하지 않음
     // (컨테이너 DOM이 제거되면서 GC됨) — 페이지 이동이 잦아지면 재검토
   }, []);
+
+  // 지도 클릭(빈 곳 탭) — removeListener가 SDK에 없어 map 인스턴스당 한 번만 등록하고,
+  // 항상 최신 핸들러를 쓰도록 ref를 통해 호출한다(위 onMapClickRef 참고).
+  useEffect(() => {
+    if (!ready || !mapRef.current) return;
+    mapRef.current.addListener?.("click", (evt) => {
+      onMapClickRef.current?.(evt.latLng.lat(), evt.latLng.lng());
+    });
+  }, [ready]);
 
   // 마커 동기화
   useEffect(() => {
