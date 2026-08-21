@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, Map as MapIcon, Sparkles, Stamp as StampIcon } from "lucide-react";
 import { useTripStore } from "@/store/tripStore";
@@ -158,9 +158,9 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
 
       <nav className="fixed bottom-0 left-0 right-0 flex border-t border-stone-200 bg-white/95 px-1.5 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 backdrop-blur">
         <TabButton icon={<BookOpen size={18} />} label="Cover" active={tab === "cover"} onClick={() => setTab("cover")} />
-        <TabButton icon={<StampIcon size={18} />} label="Stamps" active={tab === "stamps"} onClick={() => setTab("stamps")} />
-        <TabButton icon={<MapIcon size={18} />} label="Route" active={tab === "route"} onClick={() => setTab("route")} />
         <TabButton icon={<Sparkles size={18} />} label="Diary" active={tab === "diary"} onClick={() => setTab("diary")} />
+        <TabButton icon={<MapIcon size={18} />} label="Route" active={tab === "route"} onClick={() => setTab("route")} />
+        <TabButton icon={<StampIcon size={18} />} label="Stamps" active={tab === "stamps"} onClick={() => setTab("stamps")} />
       </nav>
 
       {missionPlace && (
@@ -408,7 +408,7 @@ function RouteTab({
 function DiaryTab({ groups }: { groups: TripGroup[] }) {
   const [activeKey, setActiveKey] = useState(groups[0]?.key ?? null);
   const active = groups.find((g) => g.key === activeKey) ?? groups[0];
-  const [lightbox, setLightbox] = useState<DiaryPhoto | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
 
   if (groups.length === 0) {
     return (
@@ -449,7 +449,7 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
                 <button
                   key={photo.id}
                   type="button"
-                  onClick={() => setLightbox(photo)}
+                  onClick={() => setViewerIndex(active.photos.findIndex((p) => p.id === photo.id))}
                   className={`relative mx-auto w-[82%] rounded-sm bg-white p-2.5 pb-8 text-left shadow-[0_10px_22px_-12px_rgba(36,59,83,0.4)] ${
                     i % 2 === 0 ? "-rotate-2" : "rotate-1"
                   }`}
@@ -472,18 +472,103 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
         ))}
       </div>
 
-      {lightbox && (
-        <div
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/90 p-6"
-          onClick={() => setLightbox(null)}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={lightbox.photoUrl} alt="" className="w-full max-w-md rounded-xl" />
-          {lightbox.note && (
-            <p className="font-caveat text-lg text-white">&ldquo;{lightbox.note}&rdquo;</p>
-          )}
-        </div>
+      {viewerIndex !== null && (
+        <DiaryViewer
+          photos={active.photos}
+          index={viewerIndex}
+          onIndexChange={setViewerIndex}
+          onClose={() => setViewerIndex(null)}
+        />
       )}
+    </div>
+  );
+}
+
+function DiaryViewer({
+  photos,
+  index,
+  onIndexChange,
+  onClose,
+}: {
+  photos: DiaryPhoto[];
+  index: number;
+  onIndexChange: (i: number) => void;
+  onClose: () => void;
+}) {
+  const photo = photos[index];
+  const touchStartX = useRef<number | null>(null);
+
+  const goPrev = useCallback(() => {
+    if (index > 0) onIndexChange(index - 1);
+  }, [index, onIndexChange]);
+  const goNext = useCallback(() => {
+    if (index < photos.length - 1) onIndexChange(index + 1);
+  }, [index, onIndexChange, photos.length]);
+
+  useEffect(() => {
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "ArrowLeft") goPrev();
+      if (e.key === "ArrowRight") goNext();
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [goPrev, goNext, onClose]);
+
+  if (!photo) return null;
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/90 p-6"
+      onClick={onClose}
+      onTouchStart={(e) => {
+        touchStartX.current = e.touches[0].clientX;
+      }}
+      onTouchEnd={(e) => {
+        if (touchStartX.current === null) return;
+        const delta = e.changedTouches[0].clientX - touchStartX.current;
+        touchStartX.current = null;
+        if (delta > 50) goPrev();
+        else if (delta < -50) goNext();
+      }}
+    >
+      <span className="font-space-mono text-[10px] text-white/60">
+        {index + 1} / {photos.length}
+      </span>
+
+      <div className="relative flex w-full max-w-md items-center justify-center" onClick={(e) => e.stopPropagation()}>
+        {index > 0 && (
+          <button
+            type="button"
+            onClick={goPrev}
+            aria-label="이전 사진"
+            className="absolute left-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-lg text-white"
+          >
+            ‹
+          </button>
+        )}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={photo.photoUrl} alt="" className="w-full rounded-xl" />
+        {index < photos.length - 1 && (
+          <button
+            type="button"
+            onClick={goNext}
+            aria-label="다음 사진"
+            className="absolute right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-lg text-white"
+          >
+            ›
+          </button>
+        )}
+      </div>
+
+      <div className="text-center">
+        {photo.note && (
+          <p className="font-caveat text-lg text-white">&ldquo;{photo.note}&rdquo;</p>
+        )}
+        <p className="font-space-mono mt-1 text-[9px] text-white/50">
+          {getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}
+        </p>
+      </div>
     </div>
   );
 }
