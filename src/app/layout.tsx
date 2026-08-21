@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Fraunces, Plus_Jakarta_Sans, Caveat, Space_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import "@/styles/prototype.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -11,32 +12,6 @@ const geistSans = Geist({
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
-
-// 온보딩(/onboarding/*) 화면 전용 — 새 프로토타입 디자인 시스템의 폰트.
-// 기존 페이지는 계속 Geist를 쓰고, 온보딩 페이지만 이 CSS 변수를 클래스로 입힌다.
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
-  subsets: ["latin"],
-  weight: ["400", "600", "700", "800"],
-});
-
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-});
-
-const caveat = Caveat({
-  variable: "--font-caveat",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
-});
-
-const spaceMono = Space_Mono({
-  variable: "--font-space-mono",
-  subsets: ["latin"],
-  weight: ["400", "700"],
 });
 
 const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
@@ -55,10 +30,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="ko"
-      className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} ${plusJakartaSans.variable} ${caveat.variable} ${spaceMono.variable} h-full antialiased`}
-    >
+    <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <head>
+        {/* stara_full_prototype_en.html 이 쓰는 것과 동일한 구글 폰트 — 프로토타입 CSS가
+            'Fraunces'/'Plus Jakarta Sans'/'Caveat'/'Space Mono'를 문자열로 그대로 참조하므로
+            next/font/google(스코프드 이름 생성)이 아니라 원본과 같은 방식으로 로드해야 매칭된다. */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body className="flex min-h-full flex-col overflow-x-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
         <ClerkProvider>{children}</ClerkProvider>
         {/*

@@ -20,8 +20,8 @@ export default function FilterBar({
   onToggleCategory,
 }: Props) {
   return (
-    <div className="font-jakarta flex flex-col gap-2 border-b border-stone-200 bg-white/90 p-2.5 backdrop-blur">
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+    <div className="filter-bar">
+      <div className="filter-row">
         {USER_FACING_CATEGORIES.map((c) => {
           const active = selectedCategories.includes(c);
           const style = CATEGORY_STYLE[c];
@@ -30,19 +30,15 @@ export default function FilterBar({
               key={c}
               type="button"
               onClick={() => onToggleCategory(c)}
-              className="min-h-9 shrink-0 rounded-full border-2 px-3 text-xs font-bold transition-colors"
-              style={
-                active
-                  ? { backgroundColor: style.color, borderColor: style.color, color: "white" }
-                  : { borderColor: "#e7e2d4", color: "#78716c" }
-              }
+              className={`filter-chip${active ? " active" : ""}`}
+              style={active ? { background: style.color } : undefined}
             >
               {style.labelKo}
             </button>
           );
         })}
       </div>
-      <div className="flex gap-1.5 overflow-x-auto pb-1">
+      <div className="filter-row">
         {artists.map((a) => {
           const active = selectedArtistIds.includes(a.id);
           return (
@@ -50,11 +46,8 @@ export default function FilterBar({
               key={a.id}
               type="button"
               onClick={() => onToggleArtist(a.id)}
-              className={`min-h-9 shrink-0 rounded-full border-2 px-3 text-xs font-bold transition-colors ${
-                active
-                  ? "border-stara-coral bg-stara-coral text-white"
-                  : "border-stone-200 text-stone-500"
-              }`}
+              className={`filter-chip${active ? " active" : ""}`}
+              style={active ? { background: "var(--coral)" } : undefined}
             >
               {a.name}
             </button>

@@ -45,23 +45,20 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
 
   if (places.length === 0) {
     return (
-      <div className="font-jakarta flex h-full items-center justify-center p-6 text-center text-sm text-stone-400">
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", textAlign: "center", fontSize: "13px", color: "var(--gray)" }}>
         조건에 맞는 장소가 없습니다. 필터를 조정해보세요.
       </div>
     );
   }
 
   return (
-    <div className="font-jakarta flex min-h-0 flex-1 flex-col">
-      <div className="flex items-center gap-2 px-4 py-2 text-xs text-stone-400">
-        <span className="font-bold text-stara-navy">
+    <div style={{ display: "flex", minHeight: 0, flex: 1, flexDirection: "column", width: "100%" }}>
+      <div className="candidate-progress">
+        <b>
           {index + 1} / {places.length}
-        </span>
-        <div className="h-1 flex-1 overflow-hidden rounded-full bg-stone-200">
-          <div
-            className="h-full rounded-full bg-stara-coral transition-all"
-            style={{ width: `${((index + 1) / places.length) * 100}%` }}
-          />
+        </b>
+        <div className="track">
+          <div className="fill" style={{ width: `${((index + 1) / places.length) * 100}%` }} />
         </div>
       </div>
 
@@ -72,10 +69,10 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
         tabIndex={0}
         role="listbox"
         aria-label="추천 장소 카드"
-        className="flex-1 snap-y snap-mandatory overflow-y-auto overscroll-contain px-4 pb-4 outline-none [touch-action:pan-y]"
+        style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain", padding: "0 16px 16px", outline: "none", touchAction: "pan-y" }}
       >
         {places.map((place) => (
-          <div key={place.id} className="h-full w-full snap-start py-2">
+          <div key={place.id} style={{ height: "100%", width: "100%", padding: "8px 0" }}>
             <ReelCard
               place={place}
               isSelected={selectedPlaceIds.includes(place.id)}

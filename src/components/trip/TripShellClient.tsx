@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Map as MapIcon, Sparkles, Stamp as StampIcon } from "lucide-react";
+import { useUser } from "@clerk/nextjs";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import { getPlaceById } from "@/data/places";
@@ -28,7 +28,7 @@ export interface TripGroup {
   photos: DiaryPhoto[];
 }
 
-type Tab = "cover" | "stamps" | "route" | "diary";
+type Tab = "cover" | "diary" | "route" | "stamps";
 
 interface Props {
   initialDiaryGroups: TripGroup[];
@@ -37,6 +37,7 @@ interface Props {
 
 export default function TripShellClient({ initialDiaryGroups, initialTab }: Props) {
   const router = useRouter();
+  const { user } = useUser();
   const [tab, setTab] = useState<Tab>(initialTab ?? "cover");
   const [missionPlace, setMissionPlace] = useState<Place | null>(null);
   const [sessionPhotos, setSessionPhotos] = useState<DiaryPhoto[]>([]);
@@ -56,8 +57,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
   // /travel, /complete와 동일한 하이드레이션 가드 패턴: zustand persist가 localStorage에서
   // 복원되기 전 첫 렌더는 항상 초기값을 반환하므로(useSyncExternalStore가 SSR 스냅샷을
   // 우선함), 반응형 값이 아니라 getState()로 실제 복원된 값을 effect 안에서 다시 확인한
-  // 뒤에만 리다이렉트/자동시작한다. 화면 표시용 값(startedAt/mainRoutePlaces)은 하이드레이션이
-  // 끝나는 다음 렌더에서 스스로 올바른 값으로 갱신된다.
+  // 뒤에만 리다이렉트/자동시작한다.
   useEffect(() => {
     const state = useTripStore.getState();
     if (!state.mainRoutePlaces && !state.startedAt) {
@@ -98,39 +98,89 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
   }
 
   const diaryGroups = mergeSessionIntoGroups(initialDiaryGroups, sessionPhotos, activeTripId, activeTripName);
+  const holderName = user?.fullName || user?.username || "STARA Traveler";
 
   return (
-    <div className="font-jakarta text-stara-navy flex min-h-screen flex-col bg-stara-bg">
-      <div className="flex items-center justify-between px-5 pb-3 pt-11">
-        <span className="font-fraunces text-[15px] font-semibold">
-          STAR<span className="text-stara-coral">A</span>
-        </span>
-        {activeTripName && (
-          <span className="font-space-mono rounded-full bg-stara-secondary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide">
-            {activeTripName}
-          </span>
-        )}
+    <div id="tv-app" className="tl-view">
+      <div className="appbar">
+        <div className="brand">
+          STAR<span>A</span>
+        </div>
+        {activeTripName && <div className="route-chip">{activeTripName.toUpperCase()}</div>}
       </div>
 
-      <div className="flex-1 overflow-y-auto pb-24">
+      <div className="pages">
         {tab === "cover" && (
-          <CoverTab
-            tripName={activeTripName}
-            earned={earnedStampIds.length}
-            total={orderedPlaces.length}
-            onCreateNew={() => router.push("/onboarding/artists")}
-            onEditRoute={() => router.push("/edit")}
-            onViewRoute={() => setTab("route")}
-          />
+          <div className="page" id="page-cover">
+            <div className="cover-wrap">
+              <div className="cover">
+                <div className="kicker">Your Travel Passport</div>
+                <div className="emblem">
+                  <span className="glyph">🎬</span>
+                </div>
+                <div style={{ textAlign: "center" }}>
+                  <div className="cover-title">
+                    K-Content Travel
+                    <br />
+                    Passport
+                  </div>
+                  <div className="cover-sub">&ldquo;Play the scene. Keep the story.&rdquo;</div>
+                </div>
+                <div className="cover-footer">
+                  <div>
+                    <div className="label">HOLDER</div>
+                    <div className="holder">{holderName}</div>
+                  </div>
+                  <div className="stat">
+                    <b>
+                      {earnedStampIds.length} / {orderedPlaces.length}
+                    </b>
+                    <div className="label">STAMPS</div>
+                  </div>
+                </div>
+              </div>
+              <div className="home-ctas">
+                <button className="btn btn-primary" onClick={() => router.push("/onboarding/artists")}>
+                  + Create New Route
+                </button>
+                <button className="btn btn-secondary" onClick={() => setTab("route")}>
+                  🗺️ View Current Quests
+                </button>
+                <button
+                  className="btn btn-outline"
+                  onClick={() => router.push("/edit")}
+                  style={{ marginTop: "-2px" }}
+                >
+                  루트 직접 편집하기
+                </button>
+              </div>
+            </div>
+          </div>
         )}
 
         {tab === "stamps" && (
-          <div className="px-5 pt-2">
-            <h1 className="font-fraunces text-xl font-bold">Mission Stamps</h1>
-            <p className="mb-4 mt-1 text-xs text-stone-500">
-              미션을 완료할 때마다 스탬프가 쌓여요.
-            </p>
-            <StampGrid orderedPlaces={orderedPlaces} earnedStampIds={earnedStampIds} />
+          <div className="page" id="page-stamps">
+            <div className="stamp-page">
+              <div className="section-title">Mission Stamps</div>
+              <div className="section-sub">미션을 완료할 때마다 스탬프가 쌓여요.</div>
+              <StampGrid orderedPlaces={orderedPlaces} earnedStampIds={earnedStampIds} />
+              <div className="progress-bar">
+                <div className="progress-track">
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${orderedPlaces.length ? (earnedStampIds.length / orderedPlaces.length) * 100 : 0}%`,
+                    }}
+                  />
+                </div>
+                <div className="progress-num">
+                  {orderedPlaces.length
+                    ? Math.round((earnedStampIds.length / orderedPlaces.length) * 100)
+                    : 0}
+                  %
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -139,7 +189,6 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
             orderedPlaces={orderedPlaces}
             statusOf={statusOf}
             allDone={allDone}
-            currentIndex={currentIndex}
             segmentQuest={
               currentIndex >= 0 ? schedule.stops[currentIndex]?.segmentQuest : undefined
             }
@@ -156,12 +205,12 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
         {tab === "diary" && <DiaryTab groups={diaryGroups} />}
       </div>
 
-      <nav className="fixed bottom-0 left-0 right-0 flex border-t border-stone-200 bg-white/95 px-1.5 pb-[calc(env(safe-area-inset-bottom)+8px)] pt-2 backdrop-blur">
-        <TabButton icon={<BookOpen size={18} />} label="Cover" active={tab === "cover"} onClick={() => setTab("cover")} />
-        <TabButton icon={<Sparkles size={18} />} label="Diary" active={tab === "diary"} onClick={() => setTab("diary")} />
-        <TabButton icon={<MapIcon size={18} />} label="Route" active={tab === "route"} onClick={() => setTab("route")} />
-        <TabButton icon={<StampIcon size={18} />} label="Stamps" active={tab === "stamps"} onClick={() => setTab("stamps")} />
-      </nav>
+      <div className="navbar">
+        <NavBtn icon="📘" label="Cover" active={tab === "cover"} onClick={() => setTab("cover")} />
+        <NavBtn icon="🗒️" label="Diary" active={tab === "diary"} onClick={() => setTab("diary")} />
+        <NavBtn icon="🗺️" label="Route" active={tab === "route"} onClick={() => setTab("route")} />
+        <NavBtn icon="🏅" label="Stamps" active={tab === "stamps"} onClick={() => setTab("stamps")} />
+      </div>
 
       {missionPlace && (
         <MissionSheet
@@ -195,101 +244,22 @@ function mergeSessionIntoGroups(
   return merged;
 }
 
-function TabButton({
+function NavBtn({
   icon,
   label,
   active,
   onClick,
 }: {
-  icon: React.ReactNode;
+  icon: string;
   label: string;
   active: boolean;
   onClick: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={`flex flex-1 flex-col items-center gap-0.5 py-1.5 text-[10px] font-semibold ${
-        active ? "text-stara-coral" : "text-stone-400"
-      }`}
-    >
-      {icon}
+    <button type="button" className={`navbtn${active ? " active" : ""}`} onClick={onClick}>
+      <div className="ic">{icon}</div>
       {label}
     </button>
-  );
-}
-
-function CoverTab({
-  tripName,
-  earned,
-  total,
-  onCreateNew,
-  onEditRoute,
-  onViewRoute,
-}: {
-  tripName: string | null;
-  earned: number;
-  total: number;
-  onCreateNew: () => void;
-  onEditRoute: () => void;
-  onViewRoute: () => void;
-}) {
-  return (
-    <div className="px-5 pt-2">
-      <div className="relative flex flex-col items-center justify-between overflow-hidden rounded-[22px] bg-gradient-to-br from-stara-coral via-[#ff7a63] to-stara-navy px-6 py-7 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.15)]">
-        <p className="font-space-mono text-[10px] uppercase tracking-[0.24em] text-orange-100">
-          Your Travel Passport
-        </p>
-        <div className="my-4 flex h-20 w-20 items-center justify-center rounded-full border-2 border-dashed border-white/55 text-3xl">
-          🎬
-        </div>
-        <p className="font-fraunces text-center text-xl font-bold leading-tight text-white">
-          K-Content Travel
-          <br />
-          Passport
-        </p>
-        <p className="font-fraunces mt-1.5 text-xs italic text-orange-100">
-          &ldquo;Play the scene. Keep the story.&rdquo;
-        </p>
-        <div className="mt-5 flex w-full items-end justify-between border-t border-dashed border-white/40 pt-3">
-          <div>
-            <p className="font-space-mono text-[8px] tracking-wide text-orange-50">ROUTE</p>
-            <p className="font-caveat text-lg font-bold text-white">{tripName ?? "STARA Trip"}</p>
-          </div>
-          <div className="text-right">
-            <b className="font-fraunces block text-[17px] text-white">
-              {earned} / {total}
-            </b>
-            <p className="font-space-mono text-[8px] tracking-wide text-orange-50">STAMPS</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-col gap-2.5">
-        <button
-          type="button"
-          onClick={onCreateNew}
-          className="flex min-h-11 items-center justify-center rounded-2xl bg-stara-coral text-sm font-bold text-white shadow-lg shadow-orange-200 dark:shadow-none"
-        >
-          + Create New Route
-        </button>
-        <button
-          type="button"
-          onClick={onViewRoute}
-          className="flex min-h-11 items-center justify-center rounded-2xl border-2 border-stara-navy text-[13.5px] font-bold"
-        >
-          🗺️ View Current Quests
-        </button>
-        <button
-          type="button"
-          onClick={onEditRoute}
-          className="text-center text-xs font-semibold text-stone-400 underline"
-        >
-          루트 직접 편집하기
-        </button>
-      </div>
-    </div>
   );
 }
 
@@ -297,7 +267,6 @@ function RouteTab({
   orderedPlaces,
   statusOf,
   allDone,
-  currentIndex,
   segmentQuest,
   completedQuestIds,
   onToggleSubQuest,
@@ -307,7 +276,6 @@ function RouteTab({
   orderedPlaces: Place[];
   statusOf: (i: number) => "done" | "next" | "locked";
   allDone: boolean;
-  currentIndex: number;
   segmentQuest?: Quest;
   completedQuestIds: string[];
   onToggleSubQuest: (questId: string) => void;
@@ -315,13 +283,20 @@ function RouteTab({
   onFinish: () => void;
 }) {
   return (
-    <div className="px-5 pt-2">
-      <h1 className="font-fraunces text-xl font-bold">Quests &amp; Map</h1>
-      <p className="mb-3 mt-1 text-xs text-stone-500">
-        다음 체크포인트를 탭해서 미션을 진행하세요.
-      </p>
+    <div className="page" id="page-route">
+      <div className="route-header">
+        <div>
+          <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 600, fontSize: "15px" }}>
+            Quests &amp; Map
+          </div>
+          <div className="route-title">다음 체크포인트를 탭해서 미션을 진행하세요</div>
+        </div>
+        <div className="route-counter">
+          🏅 {orderedPlaces.filter((_, i) => statusOf(i) === "done").length}/{orderedPlaces.length}
+        </div>
+      </div>
 
-      <div className="h-56 overflow-hidden rounded-2xl border border-stone-200">
+      <div className="map" style={{ overflow: "hidden" }}>
         <MapView
           pins={orderedPlaces.map((p, i) => ({
             id: p.id,
@@ -341,65 +316,40 @@ function RouteTab({
       </div>
 
       {segmentQuest && (
-        <div className="mt-3">
-          <SubQuestList
-            quest={segmentQuest}
-            completedQuestIds={completedQuestIds}
-            onToggle={onToggleSubQuest}
-          />
+        <div style={{ padding: "0 20px", marginTop: "10px" }}>
+          <SubQuestList quest={segmentQuest} completedQuestIds={completedQuestIds} onToggle={onToggleSubQuest} />
         </div>
       )}
 
-      <div className="mt-4 flex flex-col gap-2">
+      <div className="quest-list">
+        <div className="quest-list-title">Quest List</div>
         {orderedPlaces.map((p, i) => {
           const status = statusOf(i);
           return (
-            <button
+            <div
               key={p.id}
-              type="button"
+              className={`quest ${status}`}
               onClick={() => onOpenMission(i)}
-              disabled={status !== "next"}
-              className={`flex items-center gap-3 rounded-2xl border p-3 text-left ${
-                status === "next"
-                  ? "border-stara-coral bg-white shadow-[0_6px_14px_-10px_rgba(255,143,122,0.6)]"
-                  : status === "done"
-                    ? "border-stone-200 bg-white"
-                    : "border-dashed border-stone-300 bg-transparent opacity-60"
-              }`}
+              style={status !== "next" ? { cursor: "default" } : undefined}
             >
-              <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${
-                  status === "done"
-                    ? "bg-stara-mint text-stara-navy"
-                    : status === "next"
-                      ? "bg-stara-coral text-white"
-                      : "border-2 border-dashed border-stone-300 text-stone-400"
-                }`}
-              >
-                {i + 1}
-              </span>
-              <span>
-                <span className="block text-[13px] font-bold">{p.nameKo}</span>
-                <span className="font-space-mono block text-[9px] text-stone-500">
+              <div className="quest-ic">{status === "locked" ? "🔒" : status === "done" ? "✓" : "⏳"}</div>
+              <div>
+                <div className="quest-name">{p.nameKo}</div>
+                <div className="quest-status">
                   {status === "done" ? "✓ Completed" : status === "next" ? "Up next · tap to view" : "🔒 Locked"}
-                </span>
-              </span>
-            </button>
+                </div>
+              </div>
+            </div>
           );
         })}
       </div>
 
       {allDone && orderedPlaces.length > 0 && (
-        <button
-          type="button"
-          onClick={onFinish}
-          className="mt-4 flex min-h-11 w-full items-center justify-center rounded-2xl bg-stara-coral text-sm font-bold text-white"
-        >
-          모든 체크포인트 완료 — 여행 마무리하기
-        </button>
-      )}
-      {currentIndex === -1 && orderedPlaces.length === 0 && (
-        <p className="mt-4 text-center text-xs text-stone-400">아직 루트가 없어요.</p>
+        <div style={{ padding: "16px 20px 0" }}>
+          <button className="btn btn-coral" onClick={onFinish}>
+            모든 체크포인트 완료 — 여행 마무리하기
+          </button>
+        </div>
       )}
     </div>
   );
@@ -412,11 +362,13 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
 
   if (groups.length === 0) {
     return (
-      <div className="px-5 pt-2 text-center">
-        <h1 className="font-fraunces text-xl font-bold">Diary</h1>
-        <p className="mt-6 text-sm text-stone-400">
-          첫 미션을 완료하면 다이어리가 채워져요.
-        </p>
+      <div className="page" id="page-diary">
+        <div className="stamp-page" style={{ textAlign: "center" }}>
+          <div className="section-title">Diary</div>
+          <div className="section-sub" style={{ marginTop: "12px" }}>
+            첫 미션을 완료하면 다이어리가 채워져요.
+          </div>
+        </div>
       </div>
     );
   }
@@ -424,50 +376,38 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
   const days = groupByDay(active.photos);
 
   return (
-    <div className="pt-2">
-      <div className="flex gap-2 overflow-x-auto px-5 pb-3">
+    <div className="page" id="page-diary">
+      <div className="diary-routes">
         {groups.map((g) => (
-          <button
+          <div
             key={g.key}
-            type="button"
+            className={`diary-route-tab${g.key === active.key ? " active" : ""}`}
             onClick={() => setActiveKey(g.key)}
-            className={`font-space-mono shrink-0 whitespace-nowrap rounded-full border-2 border-stara-navy px-3 py-1.5 text-[10px] ${
-              g.key === active.key ? "bg-stara-navy text-stara-bg" : "opacity-50"
-            }`}
           >
             {g.name}
-          </button>
+          </div>
         ))}
       </div>
 
-      <div className="px-5">
+      <div className="diary-board">
         {days.map(([day, photos]) => (
           <div key={day}>
-            <p className="font-caveat mb-3 text-xl font-bold text-stara-coral">{day}</p>
-            <div className="mb-6 flex flex-col gap-6">
-              {photos.map((photo, i) => (
-                <button
-                  key={photo.id}
-                  type="button"
-                  onClick={() => setViewerIndex(active.photos.findIndex((p) => p.id === photo.id))}
-                  className={`relative mx-auto w-[82%] rounded-sm bg-white p-2.5 pb-8 text-left shadow-[0_10px_22px_-12px_rgba(36,59,83,0.4)] ${
-                    i % 2 === 0 ? "-rotate-2" : "rotate-1"
-                  }`}
-                >
-                  <span className="absolute -top-2 left-1/2 h-3.5 w-3.5 -translate-x-1/2 rounded-full bg-stara-coral shadow" />
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photo.photoUrl} alt="" className="block w-full rounded-sm" />
-                  {photo.note && (
-                    <p className="font-caveat mt-2 text-center text-base text-stara-navy">
-                      {photo.note}
-                    </p>
-                  )}
-                  <p className="font-space-mono absolute bottom-2 left-0 right-0 text-center text-[8px] text-stone-500">
-                    {getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}
-                  </p>
-                </button>
-              ))}
-            </div>
+            <div className="diary-day">{day}</div>
+            {photos.map((photo, i) => (
+              <div
+                key={photo.id}
+                className={`pin-card ${i % 2 === 0 ? "rot-l" : "rot-r"}`}
+                onClick={() => setViewerIndex(active.photos.findIndex((p) => p.id === photo.id))}
+              >
+                <div className="pushpin"></div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={photo.photoUrl} alt="" />
+                {photo.note && <div className="pin-cap">{photo.note}</div>}
+                <div className="pin-meta">
+                  <span>{getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}</span>
+                </div>
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -519,8 +459,7 @@ function DiaryViewer({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex flex-col items-center justify-center gap-4 bg-black/90 p-6"
-      onClick={onClose}
+      className="lightbox open"
       onTouchStart={(e) => {
         touchStartX.current = e.touches[0].clientX;
       }}
@@ -532,42 +471,47 @@ function DiaryViewer({
         else if (delta < -50) goNext();
       }}
     >
-      <span className="font-space-mono text-[10px] text-white/60">
-        {index + 1} / {photos.length}
-      </span>
+      <button className="lightbox-close" onClick={onClose}>
+        ✕
+      </button>
 
-      <div className="relative flex w-full max-w-md items-center justify-center" onClick={(e) => e.stopPropagation()}>
+      <div style={{ position: "relative", width: "100%", maxWidth: "420px", display: "flex", alignItems: "center", justifyContent: "center" }}>
         {index > 0 && (
           <button
             type="button"
             onClick={goPrev}
             aria-label="이전 사진"
-            className="absolute left-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-lg text-white"
+            style={{
+              position: "absolute", left: "8px", zIndex: 10, width: "36px", height: "36px",
+              borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", border: "none", fontSize: "18px",
+            }}
           >
             ‹
           </button>
         )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={photo.photoUrl} alt="" className="w-full rounded-xl" />
+        <img src={photo.photoUrl} alt="" />
         {index < photos.length - 1 && (
           <button
             type="button"
             onClick={goNext}
             aria-label="다음 사진"
-            className="absolute right-2 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-lg text-white"
+            style={{
+              position: "absolute", right: "8px", zIndex: 10, width: "36px", height: "36px",
+              borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", border: "none", fontSize: "18px",
+            }}
           >
             ›
           </button>
         )}
       </div>
 
-      <div className="text-center">
-        {photo.note && (
-          <p className="font-caveat text-lg text-white">&ldquo;{photo.note}&rdquo;</p>
-        )}
-        <p className="font-space-mono mt-1 text-[9px] text-white/50">
-          {getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}
-        </p>
+      <div className="lightbox-meta">
+        <div className="lightbox-loc">{getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}</div>
+        <div className="lightbox-time">
+          {index + 1} / {photos.length}
+        </div>
+        {photo.note && <div className="lightbox-cap">&ldquo;{photo.note}&rdquo;</div>}
       </div>
     </div>
   );

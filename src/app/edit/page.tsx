@@ -1,13 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { Search, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { ARTISTS } from "@/data/artists";
 import { ARTIST_PLACES, getPlaceById } from "@/data/places";
 import { USER_FACING_CATEGORIES, type PlaceCategory } from "@/types";
 import type { Place } from "@/types";
-import { CATEGORY_STYLE } from "@/lib/categoryStyle";
 import { haversineKm } from "@/lib/distance";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
@@ -37,6 +35,7 @@ async function findNearestPlace(lat: number, lng: number): Promise<Place | null>
 }
 
 export default function EditPage() {
+  const router = useRouter();
   const [selectedCategories, setSelectedCategories] =
     useState<PlaceCategory[]>(USER_FACING_CATEGORIES);
   const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>([]);
@@ -120,135 +119,111 @@ export default function EditPage() {
   ];
 
   return (
-    <div className="font-jakarta flex h-screen flex-col bg-stara-bg">
+    <div id="tv-manual" className="tl-view" style={{ minHeight: "100vh" }}>
       <TopBar title="코스 편집" backHref="/trip" rightSlot={<AuthNav />} />
 
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <div className="shrink-0 px-4 pt-3">
-          <p className="font-fraunces text-base font-bold text-stara-navy">Build Your Own Route</p>
-          <p className="text-xs text-stone-500">지도를 탭하거나 검색해서 스탑을 추가하세요.</p>
-        </div>
-
-        <div className="relative mx-4 mt-3 flex shrink-0 items-center gap-2 rounded-2xl border-2 border-stone-200 bg-white px-3 py-2.5">
-          <Search size={16} className="shrink-0 text-stone-400" />
-          <input
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-            placeholder="장소 검색…"
-            className="flex-1 bg-transparent text-sm outline-none"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => {
-                setSearchQuery("");
-                setSearchResults(null);
-              }}
-              aria-label="검색어 지우기"
-              className="text-stone-400"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-
-        {searchResults !== null && (
-          <div className="mx-4 mt-2 flex max-h-40 shrink-0 flex-col gap-1.5 overflow-y-auto rounded-2xl border border-stone-200 bg-white p-2">
-            {searching && <p className="p-2 text-xs text-stone-400">검색 중…</p>}
-            {!searching && searchResults.length === 0 && (
-              <p className="p-2 text-xs text-stone-400">검색 결과가 없어요.</p>
-            )}
-            {searchResults.map((place) => (
-              <button
-                key={place.id}
-                type="button"
-                onClick={() => {
-                  setPendingPlace(place);
-                  setSearchResults(null);
-                  setSearchQuery("");
-                }}
-                className="rounded-xl px-3 py-2 text-left text-sm font-semibold text-stara-navy hover:bg-stara-mint/20"
-              >
-                {place.nameKo}
-                {place.address && (
-                  <span className="block text-xs font-normal text-stone-400">{place.address}</span>
-                )}
-              </button>
-            ))}
+      <div className="ph-header" style={{ paddingBottom: 0 }}>
+        <div>
+          <div className="flow-h1" style={{ fontSize: "18px" }}>
+            Build Your Own Route
           </div>
-        )}
-
-        <div className="relative mx-4 mt-3 h-48 shrink-0 overflow-hidden rounded-2xl border border-stone-200">
-          <MapView
-            pins={orderedPlaces.map((p, i) => ({
-              id: p.id,
-              lat: p.latitude,
-              lng: p.longitude,
-              order: i + 1,
-              color: CATEGORY_STYLE[p.category].color,
-              title: p.nameKo,
-            }))}
-            showPath
-            onMapClick={handleMapClick}
-          />
-          {mapNotice && (
-            <div className="font-space-mono pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-stara-navy px-3 py-1.5 text-[10px] text-white shadow-lg">
-              {mapNotice}
-            </div>
-          )}
+          <div className="flow-sub">지도를 탭하거나 검색해서 스탑을 추가하세요</div>
         </div>
+      </div>
 
-        {userAddedStops.length > 0 && (
-          <div className="mt-3 shrink-0">
-            <p className="px-4 text-xs font-bold text-stone-500">
-              선택된 스탑 ({userAddedStops.length})
-            </p>
-            <div className="mt-2 flex gap-2.5 overflow-x-auto px-4 pb-1">
-              {userAddedStops.map((place) => (
-                <div
-                  key={place.id}
-                  className="relative w-28 shrink-0 rounded-2xl border border-stone-200 bg-white p-2.5"
-                >
-                  <button
-                    type="button"
-                    onClick={() => removeStop(place.id)}
-                    aria-label="스탑 제거"
-                    className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-stara-bg bg-stara-navy text-white"
-                  >
-                    <X size={11} />
-                  </button>
-                  <div
-                    className="flex h-12 w-full items-center justify-center rounded-xl text-lg"
-                    style={{ backgroundColor: `${CATEGORY_STYLE[place.category].color}30` }}
-                  >
-                    📍
-                  </div>
-                  <p className="mt-1.5 line-clamp-2 text-[11px] font-bold leading-tight text-stara-navy">
-                    {place.nameKo}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <p className="shrink-0 px-4 pb-1 pt-3 text-xs font-bold text-stone-500">추천 장소 둘러보기</p>
-        <FilterBar
-          artists={ARTISTS}
-          selectedArtistIds={selectedArtistIds}
-          onToggleArtist={toggleArtist}
-          selectedCategories={selectedCategories}
-          onToggleCategory={toggleCategory}
+      <div className="search-row">
+        <span>🔍</span>
+        <input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+          placeholder="Search a location…"
         />
-        <div className="min-h-0 flex-1">
-          <ReelsPanel
-            places={candidatePlaces}
-            baseOrder={orderedPlaces}
-            selectedPlaceIds={selectedPlaceIds}
-            onToggle={togglePlace}
-          />
+      </div>
+
+      {searchResults !== null && (
+        <div style={{ margin: "0 20px 12px", background: "#fff", border: "1px solid #f2ede0", borderRadius: "14px", padding: "6px", maxHeight: "160px", overflowY: "auto" }}>
+          {searching && <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>검색 중…</p>}
+          {!searching && searchResults.length === 0 && (
+            <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>검색 결과가 없어요.</p>
+          )}
+          {searchResults.map((place) => (
+            <div
+              key={place.id}
+              onClick={() => {
+                setPendingPlace(place);
+                setSearchResults(null);
+                setSearchQuery("");
+              }}
+              style={{ padding: "8px 10px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 700, color: "var(--navy)" }}
+            >
+              {place.nameKo}
+              {place.address && (
+                <span style={{ display: "block", fontSize: "10.5px", fontWeight: 400, color: "var(--gray)" }}>
+                  {place.address}
+                </span>
+              )}
+            </div>
+          ))}
         </div>
+      )}
+
+      <div className="manual-map">
+        <MapView
+          pins={orderedPlaces.map((p, i) => ({
+            id: p.id,
+            lat: p.latitude,
+            lng: p.longitude,
+            order: i + 1,
+            color: "#243b53",
+            title: p.nameKo,
+          }))}
+          showPath
+          onMapClick={handleMapClick}
+        />
+        {mapNotice && (
+          <div
+            style={{
+              position: "absolute", bottom: "10px", left: "50%", transform: "translateX(-50%)",
+              background: "var(--navy)", color: "#fff", padding: "6px 12px", borderRadius: "100px",
+              fontFamily: "'Space Mono', monospace", fontSize: "10px", pointerEvents: "none", zIndex: 5,
+            }}
+          >
+            {mapNotice}
+          </div>
+        )}
+      </div>
+
+      <div className="locations-title">Selected Stops ({userAddedStops.length})</div>
+      <div className="locations-scroll">
+        {userAddedStops.map((place) => (
+          <div key={place.id} className="loc-card">
+            <div className="remove" onClick={() => removeStop(place.id)}>
+              ✕
+            </div>
+            <div className="thumb">📍</div>
+            <div className="name">{place.nameKo}</div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ padding: "16px 20px 0" }}>
+        <div className="locations-title" style={{ padding: 0 }}>추천 장소 둘러보기</div>
+      </div>
+      <FilterBar
+        artists={ARTISTS}
+        selectedArtistIds={selectedArtistIds}
+        onToggleArtist={toggleArtist}
+        selectedCategories={selectedCategories}
+        onToggleCategory={toggleCategory}
+      />
+      <div style={{ minHeight: "420px", flex: 1, display: "flex" }}>
+        <ReelsPanel
+          places={candidatePlaces}
+          baseOrder={orderedPlaces}
+          selectedPlaceIds={selectedPlaceIds}
+          onToggle={togglePlace}
+        />
       </div>
 
       <ScheduleFooter
@@ -262,45 +237,26 @@ export default function EditPage() {
         endTime={tripEndTime}
         onEndTimeChange={setTripEndTime}
       />
-      <Link
-        href="/trip?tab=route"
-        className="font-jakarta m-3 flex min-h-11 shrink-0 items-center justify-center rounded-2xl bg-stara-coral text-sm font-bold text-white shadow-lg shadow-orange-200 dark:shadow-none"
-      >
-        루트로 돌아가기
-      </Link>
+      <div className="manual-footer" style={{ marginTop: 0 }}>
+        <button className="btn btn-coral" onClick={() => router.push("/trip?tab=route")}>
+          루트로 돌아가기
+        </button>
+      </div>
 
-      {pendingPlace && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-6"
-          onClick={() => setPendingPlace(null)}
-        >
-          <div
-            className="w-full max-w-xs rounded-2xl bg-white p-5 text-center shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <p className="text-sm font-bold text-stara-navy">
-              {pendingPlace.nameKo}을(를) 추가할까요?
-            </p>
-            <p className="mt-1 text-xs text-stone-500">이 장소를 루트에 스탑으로 추가해요.</p>
-            <div className="mt-4 flex gap-2">
-              <button
-                type="button"
-                onClick={() => setPendingPlace(null)}
-                className="flex min-h-10 flex-1 items-center justify-center rounded-xl border border-stone-200 text-sm font-bold"
-              >
-                취소
-              </button>
-              <button
-                type="button"
-                onClick={confirmAdd}
-                className="flex min-h-10 flex-1 items-center justify-center rounded-xl bg-stara-coral text-sm font-bold text-white"
-              >
-                추가하기
-              </button>
-            </div>
+      <div className={`confirm-add-overlay${pendingPlace ? " open" : ""}`} onClick={() => setPendingPlace(null)}>
+        <div className="confirm-add-card" onClick={(e) => e.stopPropagation()}>
+          <div className="q">{pendingPlace?.nameKo}을(를) 추가할까요?</div>
+          <div className="sub">이 장소를 루트에 스탑으로 추가해요.</div>
+          <div className="confirm-add-actions">
+            <button className="btn btn-outline" onClick={() => setPendingPlace(null)}>
+              Cancel
+            </button>
+            <button className="btn btn-coral" onClick={confirmAdd}>
+              Yes, add it
+            </button>
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

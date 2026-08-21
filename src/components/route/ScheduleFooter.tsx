@@ -26,63 +26,53 @@ export default function ScheduleFooter({
 }: Props) {
   const editable = Boolean(startTime && onStartTimeChange);
   return (
-    <div className="font-jakarta shrink-0 border-t border-stone-200 bg-white px-4 py-3">
-      <div className="flex items-center justify-between text-sm">
+    <div className="schedule-footer">
+      <div className="row">
         {editable ? (
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-1.5 font-bold text-stara-navy">
+          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+            <label className="time-field">
               <Clock size={16} />
               시작
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => onStartTimeChange!(e.target.value)}
-                className="min-h-8 rounded-lg border border-stone-200 bg-transparent px-1.5 text-sm font-bold text-stara-navy"
-              />
+              <input type="time" value={startTime} onChange={(e) => onStartTimeChange!(e.target.value)} />
             </label>
             {endTime && onEndTimeChange && (
-              <label className="flex items-center gap-1.5 font-bold text-stara-navy">
+              <label className="time-field">
                 종료
-                <input
-                  type="time"
-                  value={endTime}
-                  onChange={(e) => onEndTimeChange(e.target.value)}
-                  className="min-h-8 rounded-lg border border-stone-200 bg-transparent px-1.5 text-sm font-bold text-stara-navy"
-                />
+                <input type="time" value={endTime} onChange={(e) => onEndTimeChange(e.target.value)} />
               </label>
             )}
           </div>
         ) : (
-          <div className="flex items-center gap-1.5 font-bold text-stara-navy">
+          <div className="time-field">
             <Clock size={16} />
             종료 예상 {schedule.endTime}
           </div>
         )}
-        <span className="font-space-mono text-xs text-stone-400">
+        <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "11px", color: "var(--gray)" }}>
           이동 {schedule.totalTravelMinutes}분 · 체류 {schedule.totalDwellMinutes}분
         </span>
       </div>
       {editable && (
-        <p className="mt-1 text-xs text-stone-400">종료 예상 {schedule.endTime}</p>
+        <p style={{ marginTop: "4px", fontSize: "11px", color: "var(--gray)" }}>종료 예상 {schedule.endTime}</p>
       )}
 
       {schedule.isOverLimit && (
-        <div className="mt-2 flex items-start gap-2 rounded-2xl bg-rose-50 p-2.5 text-xs text-rose-700">
-          <AlertTriangle size={16} className="mt-0.5 shrink-0" />
-          <div className="flex-1">
-            <p className="font-bold">
+        <div className="warning">
+          <AlertTriangle size={16} />
+          <div style={{ flex: 1 }}>
+            <p style={{ fontWeight: 700 }}>
               {endTime ? `종료 시각(${endTime})` : "종료 예정 시각"}을{" "}
               {schedule.overLimitMinutes}분 초과할 예정이에요.
             </p>
             {removalSuggestion && (
-              <p className="mt-1">
+              <p style={{ marginTop: "4px" }}>
                 &apos;{removalSuggestion.place.nameKo}&apos; 를 제거하면 약{" "}
                 {Math.round(removalSuggestion.detourMinutes)}분을 절약할 수 있어요.
                 {onRemoveSuggestion && (
                   <button
                     type="button"
                     onClick={onRemoveSuggestion}
-                    className="ml-2 min-h-6 rounded-full bg-rose-600 px-2 py-0.5 font-bold text-white"
+                    style={{ marginLeft: "8px", borderRadius: "100px", background: "#e11d48", padding: "2px 10px", fontWeight: 700, color: "#fff", border: "none" }}
                   >
                     이 장소 제거
                   </button>

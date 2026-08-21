@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { upload } from "@vercel/blob/client";
-import { Camera, Loader2 } from "lucide-react";
 import { useTripStore } from "@/store/tripStore";
 import { getQuestsForPlace } from "@/data/quests";
 import type { DiaryPhoto } from "@/components/trip/TripShellClient";
@@ -16,7 +15,7 @@ interface Props {
 }
 
 /**
- * 체크포인트 미션 시트 — 사진 첨부가 필수다. 제출하면 업로드 → quest_photos 저장 →
+ * 미션 시트 — 사진 첨부가 필수다. 제출하면 업로드 → quest_photos 저장 →
  * 필수 퀘스트 완료 처리 → 스탬프 확정까지 한 번에 처리한다(기존엔 사진 업로드와
  * 퀘스트 체크가 서로 무관했음 — 이 컴포넌트가 그 둘을 하나로 묶는다).
  */
@@ -102,87 +101,76 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
     }
   }
 
+  if (status === "success") {
+    return (
+      <div className="modal-overlay open">
+        <div className="modal-card">
+          <div className="modal-emoji">🎉</div>
+          <div className="modal-title">Mission Complete!</div>
+          <div className="modal-sub">인증샷이 확인됐어요.</div>
+          <div className="modal-stamp-preview">🏅</div>
+          <button className="btn btn-coral" onClick={() => savedPhoto && onComplete(savedPhoto)}>
+            Receive Stamp →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/55"
-      onClick={status === "success" ? undefined : onClose}
-    >
-      <div
-        className="font-jakarta w-full max-w-md rounded-t-3xl bg-white p-6 pb-8"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-stone-200" />
+    <div className="sheet-overlay open" onClick={onClose}>
+      <div className="sheet" onClick={(e) => e.stopPropagation()}>
+        <div className="handle"></div>
+        <div className="sheet-q" style={{ textAlign: "left", fontSize: "18px" }}>
+          {quest?.titleKo ?? place.nameKo}
+        </div>
+        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "10px", color: "var(--coral)", fontWeight: 700, marginTop: "2px" }}>
+          📍 {place.nameKo}
+        </div>
+        <div style={{ fontSize: "12.5px", color: "var(--gray)", lineHeight: 1.55, margin: "12px 0 18px" }}>
+          {quest?.descriptionKo}
+        </div>
 
-        {status === "success" ? (
-          <div className="flex flex-col items-center gap-2 py-4 text-center">
-            <span className="text-[46px]">🎉</span>
-            <p className="font-fraunces text-xl font-bold">Mission Complete!</p>
-            <p className="text-xs text-stone-500">인증샷이 확인됐어요.</p>
-            <button
-              type="button"
-              onClick={() => savedPhoto && onComplete(savedPhoto)}
-              className="mt-5 flex min-h-11 w-full items-center justify-center rounded-2xl bg-stara-coral text-sm font-bold text-white"
-            >
-              Receive Stamp →
-            </button>
-          </div>
-        ) : (
-          <>
-            <p className="text-left text-lg font-bold">{quest?.titleKo ?? place.nameKo}</p>
-            <p className="mt-1 text-xs text-stone-500">{quest?.descriptionKo}</p>
+        <label className={`photo-dropzone${previewUrl ? " captured" : ""}`}>
+          {previewUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={previewUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          ) : (
+            <>
+              <div className="ic">📷</div>
+              <div className="t">Tap to add a photo</div>
+            </>
+          )}
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+            style={{ display: "none" }}
+            disabled={status === "uploading"}
+            onChange={(e) => {
+              const f = e.target.files?.[0];
+              if (f) handleFile(f);
+            }}
+          />
+        </label>
 
-            <label
-              className={`mt-4 flex h-32 cursor-pointer flex-col items-center justify-center gap-1.5 overflow-hidden rounded-2xl border-2 ${
-                previewUrl ? "border-stara-coral" : "border-dashed border-stara-coral"
-              }`}
-            >
-              {previewUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={previewUrl} alt="" className="h-full w-full object-cover" />
-              ) : (
-                <>
-                  <Camera size={26} className="text-stara-coral" />
-                  <span className="text-[11.5px] font-bold text-stara-coral">사진 첨부하기</span>
-                </>
-              )}
-              <input
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-                className="hidden"
-                disabled={status === "uploading"}
-                onChange={(e) => {
-                  const f = e.target.files?.[0];
-                  if (f) handleFile(f);
-                }}
-              />
-            </label>
+        <input
+          type="text"
+          className="field"
+          value={caption}
+          onChange={(e) => setCaption(e.target.value)}
+          placeholder="한마디 남기기 (선택)"
+          maxLength={80}
+        />
 
-            <input
-              type="text"
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="한마디 남기기 (선택)"
-              maxLength={80}
-              className="mt-3 h-11 w-full rounded-xl border border-stone-200 px-3 text-sm outline-none focus:border-stara-coral"
-            />
-
-            {status === "error" && (
-              <p className="mt-2 text-xs font-semibold text-rose-500">
-                제출에 실패했어요. 다시 시도해주세요.
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!file || status === "uploading"}
-              className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-2xl bg-stara-coral text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-40"
-            >
-              {status === "uploading" && <Loader2 size={16} className="animate-spin" />}
-              {status === "uploading" ? "제출 중…" : "Submit Mission"}
-            </button>
-          </>
+        {status === "error" && (
+          <p style={{ color: "#e11d48", fontSize: "12px", fontWeight: 700, marginBottom: "10px" }}>
+            제출에 실패했어요. 다시 시도해주세요.
+          </p>
         )}
+
+        <button className="btn btn-coral" disabled={!file || status === "uploading"} onClick={handleSubmit}>
+          {status === "uploading" ? "제출 중…" : "Submit Mission"}
+        </button>
       </div>
     </div>
   );
