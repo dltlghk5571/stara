@@ -73,9 +73,19 @@ export interface Place {
   latitude: number;               // required - WGS84, 소수점 6자리까지 (지도 우클릭 복사값)
   longitude: number;              // required - WGS84, 소수점 6자리까지
   relation_text_ko: string;       // required - "왜 여기가 성지인지", 사실 기반 한 문장.
-                                   //   ** 가장 중요한 규칙: source_url 없이 작성 금지 **
+                                   //   ** 가장 중요한 규칙: 근거 없이 작성 금지 **
+                                   //   (근거 = URL 링크 또는 "인물+구체적 콘텐츠명"이
+                                   //   담긴 추적 가능한 인용 - source_url 참고)
   relation_text_en: string;       // required - 같은 내용의 영문 한 문장
-  source_url: string;             // required - relation_text의 실제 근거 링크
+  source_url: string;             // required - relation_text의 실제 근거. 실제 URL이
+                                   //   가장 좋지만, 링크가 없어도 "인물+구체적 콘텐츠명"이
+                                   //   담긴 추적 가능한 인용이면 인정한다(2026-08-25 정책 -
+                                   //   케이팝 팬덤 특유의 "단서로 성지 추적" 문화 반영).
+                                   //   그 경우 "[콘텐츠 인용 - 링크 미확인] {relation_text}"
+                                   //   형태로 저장. 콘텐츠 근거 자체가 없는 맨주장
+                                   //   (예: "지민 아버지의 식당")은 여전히 "PENDING".
+                                   //   두 경우 다 status는 draft 그대로 - verified 승격에는
+                                   //   여전히 사람이 확인한 실제 링크가 필요함
   open_time: string | null;       // optional - "HH:mm" 24시간제, 모르면 null (추정 금지).
                                    //   24시간 운영은 "00:00"-"23:59"
   close_time: string | null;      // optional - 위와 동일

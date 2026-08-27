@@ -7,22 +7,74 @@ STARA는 지역별 K-콘텐츠(아티스트) 관광 코스를 제공하는 여�
 공식 API 없이 여러 소스(관광 사이트 스크랩, 팀원이 직접 확인한 블로그 등)를
 모아서 하나의 스키마로 정제하는 방식으로 진행 중이다.
 
-담당(정인지): 데이터 수집 및 전처리. 현재는 인천 데이터를 맡고 있고,
-다른 도시는 팀원이 별도로 진행한다.
+담당(정인지): 데이터 수집 및 전처리. 2026-08-24부로 계획 변경 — MVP 대상
+도시(서울/부산/인천) 전체를 정인지가 전담한다(원래 서울/부산은 팀원 담당
+예정이었음). MVP 자체는 3개 도시로 한정하지만, 공모전 제출 시점엔 전국
+서비스로 낼 계획이라 나머지 지역 데이터도 미리 가볍게 점검해두는 중 —
+아래 "MVP 이후: 전국 확장 준비" 절 참고.
 
 ## 파이프라인 개요
 
 원본 소스에서 서비스에 반영 가능한 상태까지 스크립트 두 개로 이어진다.
 `build_dataset.py`로 원본 → 정제 → (선택)지오코딩 → 좌표 있는 최종 스키마까지
 만들고, 그 결과를 `fill_hours.py`로 넘겨 영업시간(open_time/close_time)까지
-보강한다.
+보강한다. 2026-08-24부터 두 스크립트 모두 같은 `--city=`/`--owner=` 규칙을
+쓰도록 통일해서, 도시별 후보 파일을 만든 뒤 **같은 도시 지정으로 그 파일에
+바로 영업시간까지 보강**할 수 있다(정본으로 최종 병합하기 전 단계).
+검수 게이트는 유지 — `build_dataset.py` 결과를 검수 없이 바로
+`fill_hours.py`에 넣지 않는다(검수 전 노이즈 후보에도 Google API 호출이
+나가서 유료 쿼터만 낭비하게 됨. 자세한 이유는 아래 "영업시간 보강" 절 참고).
 
 ```bash
-python build_dataset.py --geocode --city=incheon --owner=정인지  # 원본 -> 좌표/카테고리까지 채움
-python fill_hours.py --dry-run     # (선택) API 호출 없이 대상/쿼리만 미리보기
-python fill_hours.py --limit 5     # 일부만 실제 호출해서 결과 확인
-python fill_hours.py               # 나머지 전체 실행 (이미 채워진 항목은 자동 스킵)
+# 1) 도시별 후보 생성 (원본 -> 좌표/카테고리까지 채움)
+python build_dataset.py --geocode --city=seoul --owner=정인지
+# -> preprocessed/generated_{cities,artists,places}_seoul_정인지.json
+#    (파일명 규칙 2026-08-25 확정: "generated_{종류}_{도시}_{작성자}.{확장자}" -
+#    종류가 맨 앞, 도시/작성자는 뒤쪽, 구분자는 전부 언더바)
+
+# 2) 사람이 검수 - generated_places_needs_review_seoul_정인지.csv 확인하면서
+#    노이즈/오탐 행을 generated_places_seoul_정인지.json에서 직접 정리
+
+# 3) 검수 끝난 같은 파일에 영업시간 보강 (build_dataset.py와 동일한 --city=/--owner=)
+python fill_hours.py --city=seoul --owner=정인지 --dry-run   # (선택) 미리보기
+python fill_hours.py --city=seoul --owner=정인지 --limit 5   # 일부만 실제 호출
+python fill_hours.py --city=seoul --owner=정인지             # 전체 실행
+
+# 3.5) (선택) MVP 3개 도시를 한꺼번에 미리보기 - preprocessed/preview/
+#      아래 "preview 스냅샷" 절 참고
+python fill_hours.py --preview --dry-run
+python fill_hours.py --preview
+
+# 3.6) (선택) "실제 출처 URL 없음" 행에 NAVER 검색으로 링크 자동 채우기
+#      아래 "NAVER API HUB 연동" 절 참고
+python naver_hub.py fill-sources --city=seoul --owner=정인지 --dry-run
+python naver_hub.py fill-sources --city=seoul --owner=정인지
+
+# 4) 도시별 결과를 정본(preprocessed/final/cities.json/artists.json/places.json)에
+#    병합 - 아직 자동화 안 됨, 사람이 직접 merge
 ```
+
+### preview 스냅샷 — `preprocessed/preview/`
+
+`generated_places_{city}_{owner}.json`을 도시별로 검수하는 동안, MVP 3개
+도시(서울/부산/인천)를 합쳐서 "지금 당장 걱정 없이 볼 수 있는 것만" 훑어보고
+싶을 때를 위한 중간 스냅샷이다(final/처럼 사람이 손으로 병합한 정본은
+아님) — 각 도시의 `generated_places_needs_review_{city}_{owner}.csv`에서
+`_review_notes`가 비어있는(=아직 검수 플래그가 안 남은) 행만 모아 세
+도시를 합친 것. 2026-08-26에 만들어졌지만 이 README/스킬 문서에 반영이
+안 돼 있었어서(2026-08-27 발견 시점 기준) 이번에 정리해서 남긴다 - 정확한
+생성 방식은 세 도시의 review CSV 건수와 대조해서 역으로 확인한 것이라,
+실제로 다른 기준으로 만들어졌다면 이 절을 고쳐야 한다.
+
+- `generated_places_*`에서 그대로 가져온 스냅샷이라 `open_time`/`close_time`은
+  비어있다 - `fill_hours.py --preview`로 채운다(정본과 별개 실행 - 캐시는
+  `place_id` 기준 전역 공유라서 이미 정본/도시별 파일에서 조회한 place는
+  재호출 없이 캐시로 채워짐).
+- review 플래그가 있던 행은 애초에 여기 없으므로, 이 파일에 있다고 "검수
+  완료"는 아니고 "이번 스냅샷 기준으로는 플래그가 없었다"는 뜻일 뿐이다.
+  도시별 원본(`generated_places_{city}_{owner}.json`)에서 review 플래그가
+  새로 생기거나 없어지면 이 스냅샷은 다시 만들어야 최신 상태가 된다(자동
+  동기화 없음).
 
 `--geocode`를 쓰려면 `.env`에 `KAKAO_REST_API_KEY`가 있어야 한다
 (`.env.example` 참고 — Map-It 프로젝트와 같은 Kakao 앱 키 재사용).
@@ -46,13 +98,47 @@ API 응답은 `preprocessed/.geocode_cache.json`에 캐시되어서, 재실행�
 4. **필터링** — `artist_allowlist.json`(구독자 수 기준으로 엄선된 그룹만 통과) +
    relation_text 속 인물과 artist_name이 실제로 같은 그룹인지 교차 검증
 5. **지오코딩(`--geocode`)** — Kakao 키워드 장소검색으로 한글 상호명·좌표·카테고리 보강.
-   영문 쿼리로 찾은 매칭은 오탐 위험이 있어서 자동으로 검수 대상 표시됨
-6. **저장** — 전체 결과(`preprocessed/dataset.json`, 여러 도시 통합, 구 스키마)와
-   인천 전용 결과(`preprocessed/cities.json` / `artists.json` / `places.json`, 신 스키마)를 따로 저장
-7. **영업시간 보강(`fill_hours.py`)** — 좌표가 확정된 place에 대해 Google
+   영문 쿼리로 찾은 매칭은 오탐 위험이 있어서 자동으로 검수 대상 표시됨.
+   그중 케이팝 성지가 절대 될 수 없는 업종(병원/치과/부동산/학원/은행/
+   관공서 등, `NOISE_CATEGORIES` 참고)으로 매칭된 건 아예 결과에서
+   자동으로 제외함(2026-08-25 확장 - "UN Village"가 치과의원에 매칭된
+   사례처럼, 사람이 눈으로 확인해야 했던 오매칭 중 상당수가 사실 이
+   카테고리 필터 하나로 기계적으로 걸러지는 것들이었음). 다만 이름은
+   비슷한데 카테고리 자체는 그럴듯한 경우(예: "아차산"을 검색했는데 이름이
+   비슷한 실내 클라이밍짐 지점에 매칭)는 이 필터로 못 잡아서 여전히
+   "영문명으로 검색한 매칭" 검수가 필요함 — 진짜 같은 장소인지 확인하려면
+   결국 웹 검색 + 문맥 이해가 필요한데, 이 배치 스크립트엔 웹 검색 API가
+   연결돼 있지 않아서(Claude가 대화 중에 쓰는 WebSearch는 스크립트가 직접
+   호출할 수 없음) 완전 자동화는 안 됨 — 100% 자동화가 불가능한 지점을
+   명확히 좁힌 것으로 이해하면 됨.
+6. **지오코딩 후 중복 재병합** — 3단계 중복 병합은 city_id가 아직 안 채워진
+   상태에서 도는데, 주소 필드 자체가 없는 소스(`stara_places.json` 등)
+   유래 행은 이때 다른 소스의 같은 실제 장소와 못 합쳐지고 남아있다가
+   지오코딩에서 각자 다른(때론 틀린) 좌표를 받는 문제가 있었음
+   (2026-08-24 서울 검수 중 발견 — "서울숲"이 실제 서울숲과 5.6km 떨어진
+   "홍릉시험림"으로 잘못 매칭된 채 별개 행으로 남아있었음). city_id가 다
+   채워진 뒤 3단계 병합을 한 번 더 돌리는 걸로 수정. 같은 검수 중에
+   `build_schema()`가 5단계 지오코딩이 남긴 "영문명으로 검색한 매칭(확인
+   필요)" 같은 사유를 최종 `places_needs_review.csv`로 아예 안 넘기고
+   있던 것도 발견해서 같이 고침(서울 기준 175건 중 103건이 이 사유였는데
+   지금까지 review CSV에 전혀 안 보이고 있었음 - 좌표 정확도가 최우선인
+   프로젝트에서 가장 위험한 신호가 리포트에서 누락되고 있었던 것).
+7. **저장** — 과거엔 전체 결과를 `preprocessed/dataset.json`(여러 도시 통합,
+   구 스키마)에도 저장했으나 현재 build_dataset.py는 더 이상 이 파일을 만들지
+   않고, 남아있던 산출물도 2026-08-25에 정리해서 지금은 존재하지 않음 - 지금은
+   도시별 후보(`preprocessed/generated_*.json`, 신 스키마)만 저장. 검수+영업시간
+   보강까지 끝나 병합된 도시만 `preprocessed/final/cities.json` / `artists.json` /
+   `places.json`(정본)에 들어감(2026-08-25부터 `preprocessed/` 바로 밑이 아니라
+   `final/` 하위로 분리 - 검수 중인 파일들과 뒤섞이면 뭐가 끝난 건지 안 보여서)
+8. **영업시간 보강(`fill_hours.py`)** — 좌표가 확정된 place에 대해 Google
    Places API (New)로 open_time/close_time을 채움. 무료 쿼터 관리를 위한
    캐싱/재실행 멱등성 때문에 build_dataset.py와는 별도 스크립트로 분리해뒀음
    (아래 "영업시간 보강" 절 참고)
+9. **(선택) 출처 URL 보강(`naver_hub.py`)** — "실제 출처 URL 없음"이 걸린
+   행에 대해 NAVER 블로그/웹문서 검색으로 후보 링크를 자동으로 찾아준다
+   (2026-08-27 추가, 아래 "NAVER API HUB 연동" 절 참고). fill_hours.py와
+   같은 이유로 별도 스크립트 — 자동으로 찾은 링크도 사람이 열어서 확인하는
+   절차는 그대로 필요하므로 이 단계 이후에도 검수는 끝나지 않는다.
 
 `extract_places.py`는 별도 도구로 남아있다 (네이버 블로그 URL을 입력하면
 정규식+형태소분석으로 장소/아티스트 후보를 뽑아냄). 지금은 링크 하나씩 사람이
@@ -66,6 +152,22 @@ open_time/close_time은 비어 있다. 이 값은 Google Places API (New) Text
 Search로 채운다. (TourAPI 연동은 백엔드에서 별도로 처리하므로 이 스크립트
 범위 밖.)
 
+- **`build_dataset.py`와 하나로 자동 연결된 파이프라인이 아니다** — 별도
+  스크립트로 사람이 순서대로 실행한다. 의도적인 분리다: `build_dataset.py`
+  결과(특히 지오코딩만 하고 사람 검수 전인 `generated_places_*.json`)를
+  검수 없이 바로 여기 넣으면, 나중에 지워질 노이즈/오탐 후보에도 유료
+  Google API 호출이 나가서 쿼터만 낭비하게 된다. 그래서 "검수 → 영업시간
+  보강" 순서를 강제하도록 일부러 안 이어붙였다.
+- 2026-08-24부터 `build_dataset.py`와 동일한 `--city=`/`--owner=` 플래그를
+  받는다. 지정하면 정본(`preprocessed/final/places.json` 등) 대신
+  `preprocessed/generated_places_{city}_{owner}.json`(과 짝이 되는
+  cities/review/backup 파일)을 대상으로 함 — 도시별 후보를 검수한 뒤 정본
+  병합 전에 그 파일에 바로 영업시간까지 채우고 싶을 때 사용. 플래그 없이
+  실행하면 기존과 동일하게 정본 파일을 대상으로 함(인천 때 쓰던 방식 그대로
+  하위 호환).
+- `--preview`는 세 번째 대상 — `preprocessed/preview/places.json`(위 "preview
+  스냅샷" 절 참고, MVP 3개 도시를 review 플래그 없는 행만 합친 스냅샷)에
+  채운다. `--city`/`--owner`와 같이 못 씀. 2026-08-27에 추가.
 - `.env`에 `GOOGLE_PLACES_API_KEY` 필요 (`.env.example` 참고 — Places API
   (New) 활성화 + 빌링 연결된 키여야 함)
 - 원본 응답은 `./cache/{place_id}.json`에 캐싱 — 재실행해도 이미 조회한
@@ -76,18 +178,81 @@ Search로 채운다. (TourAPI 연동은 백엔드에서 별도로 처리하므�
 - 매칭된 좌표가 기존 좌표에서 500m 넘게 떨어져 있으면 오매칭으로 보고
   채우지 않음
 - 자동으로 못 채운 항목(매칭 실패/좌표 이탈/영업시간 정보 없음)은
-  `preprocessed/review_needed.json`에 사유와 함께 기록 — 사람이 확인
+  `preprocessed/final/review_needed.json`(도시 지정 시엔
+  `preprocessed/generated_review_needed_{city}_{owner}.json`)에 사유와
+  함께 기록 — 사람이 확인
 - 요일별로 영업시간이 다르면 평일(월~금) 최빈값을 대표로 채우고, 원본
   요일별 정보는 `review_needed.json`의 `weekday_variation`에 같이 남김
 - 공원/해변/낚시터 등 상시개방 장소는 Google에 영업시간이 없는 게
   정상이라 억지로 채우지 않고 `review_needed.json`의 `always_open`에 기록,
-  값은 빈 문자열로 유지
+  값은 빈 문자열로 유지 — `place_category`가 `landmark_observatory`면
+  우선 이걸로 판단(2026-08-24 수정: 이전엔 2026-08-20에 이미 폐지된 옛
+  카테고리값 `photo`를 그대로 참조하고 있어서 죽은 코드였음), 그 외엔
+  이름에 상시개방 힌트 키워드가 있으면 보조로 판단
 - 실행 전에 `--dry-run`(호출 없이 대상만 확인)이나 `--limit N`(일부만 실제
   호출)으로 먼저 확인하고 전체 실행하는 걸 권장
+- FieldMask는 딱 필요한 필드만 요청함. `regularOpeningHours` 자체가 이미
+  최상위 과금 등급(Enterprise SKU)을 발동시켜서, 같이 요청하는
+  `displayName`/`formattedAddress`/`location`/`businessStatus`는 그보다
+  낮은 등급이라 추가 비용이 없음 — Places API (New)는 요청 필드 개수가
+  아니라 "요청한 필드 중 가장 비싼 등급" 하나로 과금됨. `reviews`/`photos`/
+  `rating`처럼 한 단계 더 비싼 등급 필드는 쓸 일이 없으니 넣지 않았음
+- 이 스크립트는 반드시 로컬/서버 배치 환경에서만 실행 — 프론트엔드에 API
+  키를 노출하면 안 됨. `GOOGLE_PLACES_API_KEY`는 Google Cloud Console에서
+  IP 제한을 걸어둘 것(서버/배치용 키라 브라우저 키의 "HTTP 리퍼러" 제한이
+  아니라 "IP 주소" 제한이 맞는 방식) — 처음 키 발급 때 403 에러 때문에
+  제한을 풀어둔 상태이니 다시 걸어두는 걸 권장
+
+### NAVER API HUB 연동 — `naver_hub.py` (2026-08-27)
+
+`needs_review`에 쌓인 사유 중 "실제 출처 URL 없음"이 압도적으로 많아서(2026-08-27
+기준 서울 37 · 부산 2 · 인천 9, 전체 남은 리뷰의 절반 이상) 사람이 하나씩 링크를
+찾아 채우는 대신 NAVER 검색으로 자동화. 상세 사양은
+[`naver-api-hub-integration.md`](naver-api-hub-integration.md) 참고 — 실제
+코드베이스를 보기 전에 정리된 문서라 실행 시 이상하면 이 README/코드가 기준.
+
+- **구 `developers.naver.com` 검색 API는 2026-07-31부로 신규 등록 중단** — NCP
+  콘솔에서 발급받는 API HUB로 이관됨(인증 헤더도 `X-NCP-APIGW-API-KEY-ID`/
+  `X-NCP-APIGW-API-KEY`로 바뀜, 예전 `X-Naver-Client-Id` 예제 코드는 안 통함).
+- **우선순위 1 (✅ 2026-08-27 실행 완료)**: 블로그/웹문서 검색으로
+  `source_url` 자동 채우기. 쿼리는 `artist_id`(`"bts"`)가 아니라 실제 검색에
+  쓰이는 한글 표기(`"방탄소년단"`, 팬 블로그는 이렇게 쓰지 `artist_id`로 안 씀 —
+  정인지 지적으로 첫 실행 뒤 수정)를 `generated_artists_{city}_{owner}.json`에서
+  찾아 조합한다. 최종 실행 결과(수정 전/후 합산): 대상 45건 중 14건 자동
+  발견(서울 13 · 인천 1), 31건 못 찾음(`not_found`) — 도메인 필터(blog.naver.com/
+  tistory.com)와 본문 내 장소명 등장 조건이 둘 다 걸려야 채택하는 보수적
+  기준이라 히트율 자체는 낮지만, 채운 14건도 전부 `auto_found_unverified`
+  상태로 review CSV에 남아있어 사람이 링크 열어 확인하는 절차는 그대로 필요.
+
+  ```bash
+  python naver_hub.py fill-sources --city=seoul --owner=정인지 --dry-run   # 대상만 확인
+  python naver_hub.py fill-sources --city=seoul --owner=정인지            # 실제 실행
+  ```
+
+  찾으면 `generated_places_{city}_{owner}.json`의 `source_url`을 채우고,
+  review CSV에 `_source_status`(`auto_found_unverified`/`not_found`)·
+  `_source_type`(`naver_blog`/`tistory`) 컬럼을 추가한다. **행은 절대 자동으로
+  안 지운다** — 자동으로 찾은 링크가 실제로 맞는 내용인지는 사람이 열어봐야
+  하기 때문(기존 출처 검증 게이트 원칙과 동일, `status`도 `draft` 그대로 유지).
+- **우선순위 2 (✅ 2026-08-27 selftest로 검증 완료, 사용 가능)**: 지역 검색으로
+  카카오 좌표 교차검증(`naver_hub.naver_local_recheck()`, `verify-english-
+  query-matches` 스킬에 `naver_local_recheck` 방법으로 연결해둠). **문서에
+  적힌 "mapx/mapy는 KATEC(TM128) 좌표계" 설명은 틀렸다** — 키 발급 후
+  `python naver_hub.py selftest`를 교보문고 광화문점으로 돌려서 실측한 결과,
+  그냥 위경도를 10^7배 정수로 표현한 값이었다(`raw_mapx=1269781271` ->
+  `126.9781271`, 실제 위치와 일치). `naver_hub.py`가 이미 이 방식(÷10^7)으로
+  올바르게 변환해서 반환하므로 pyproj는 필요 없다 — 문서(`naver-api-hub-
+  integration.md`) 쪽 정정은 아직 안 함, 코드/스킬만 실측 기준으로 고쳐둔 상태.
+- `.env`에 `NAVER_HUB_CLIENT_ID`/`NAVER_HUB_CLIENT_SECRET` 필요
+  (`.env.example` 참고, NCP 콘솔 > API HUB > Application에서 발급 — 429는
+  지수 백오프로 재시도).
+- Search API(HUB)는 통합 기준 월 최대 775,000건까지 현재 한시적으로
+  무료(NCP 크레딧과 무관, 크레딧 안 깎임). 반면 Naver Map API(지오코딩 등)는
+  무료 이용량이 없어 첫 호출부터 크레딧이 차감되니 대량 처리엔 쓰지 말 것.
 
 ## 최종 스키마 — `Data_Preprocessing_Template.ts`
 
-`preprocessed/cities.json` / `artists.json` / `places.json` 3개 파일로 나뉜다.
+`preprocessed/final/cities.json` / `artists.json` / `places.json` 3개 파일로 나뉜다.
 **하나로 합치지 않는다** — city_id/artist_id를 장소마다 반복 입력하면 오타로
 데이터가 갈라지기 때문에, 각 place는 ID로만 다른 파일을 참조한다.
 정확한 타입 정의는 `Data_Preprocessing_Template.ts` 참고.
@@ -95,8 +260,31 @@ Search로 채운다. (TourAPI 연동은 백엔드에서 별도로 처리하므�
 ### 가장 중요한 규칙 — 출처 검증 게이트
 
 **출처 없는 관계 서술은 존재할 수 없다.** `relation_text_ko/en`을 쓰려면
-`source_url`이 먼저 있어야 한다. 확인 안 된 팬 루머는 수집 대상에서 아예 제외한다.
+근거가 먼저 있어야 한다. 확인 안 된 팬 루머는 수집 대상에서 아예 제외한다.
 relation_text는 "예뻐서"가 아니라 "2024년 뮤직비디오 촬영지"처럼 사실 기반으로 쓴다.
+
+**근거 = 실제 URL 링크가 아니어도 된다(2026-08-25 정책 변경).** 케이팝
+팬덤 특성상 링크 기사 하나 없이도, 멤버가 콘텐츠에서 흘린 작은 단서 하나로
+팬들이 실제 장소를 찾아내는 경우가 흔하다. `source_url`이 진짜 링크가 아니라도
+**relation_text 자체가 "누가 + 어떤 콘텐츠에서" 나온 얘기인지 구체적으로
+밝히고 있으면**(나중에 실제로 찾아볼 수 있는 추적 가능한 인용이면) 출처
+미상으로 보지 않는다. 예: "선우가 2022-04-26 EN-log에 게시"는 링크는 없지만
+인물+콘텐츠명이 구체적이라 통과. "지민 아버지의 식당"처럼 콘텐츠 근거 자체가
+없는 맨주장, "Reportedly ~"처럼 스스로 미확인이라 밝힌 문장은 여전히 불인정.
+날짜는 필수 아님 - 인물과 구체적 콘텐츠명만 있으면 통과.
+자동 판별은 `build_dataset.py`의 `has_credible_citation()`(휴리스틱, 키워드
+목록 기반이라 완벽하지 않음 - 애매한 케이스는 사람이 직접 판단)이 처리하고,
+통과한 항목은 `source_url`에 `"[콘텐츠 인용 - 링크 미확인] {relation_text}"`
+형태로 인용 근거를 남긴다(2026-08-20 이전 인천 정본에도 이미 이런 식으로
+"ENHYPEN 자체 콘텐츠 'EN o'clock' 67화 (링크 아님 - URL 미확인)"처럼
+사람이 손으로 채운 선례가 있었음 - 이번에 그 패턴을 규칙으로 명문화하고
+자동화한 것).
+
+**단, 이 기준을 통과해도 `status`는 자동으로 안 올라간다** - `draft`
+그대로 유지되고 "출처 URL 없음" review 표시만 해제된다. `verified`/
+`published`로 승격하려면 여전히 사람이 실제 링크를 찾거나 콘텐츠를 직접
+대조해서 확인해야 한다(아래 "status 워크플로우" 참고) - "추적 가능한
+인용"은 검수 대기열에서 뺄 근거는 되지만, 검증을 대신하지는 않는다.
 
 ### status 워크플로우
 
@@ -107,8 +295,10 @@ draft (최초 입력, 출처 미확인 가능)
 ```
 
 앱은 `published`만 필터링해서 쓴다 — `draft`/`verified`는 앱에 안 들어간다.
-실제 URL이 아직 없는 항목은 `source_url: "PENDING"`으로 표시해서 나중에
-`grep`으로 쉽게 찾을 수 있게 해뒀다.
+실제 URL도 없고 추적 가능한 콘텐츠 인용도 없는 항목은 `source_url: "PENDING"`으로
+표시해서 나중에 `grep`으로 쉽게 찾을 수 있게 해뒀다. 추적 가능한 인용은 있지만
+실제 링크는 없는 항목은 `source_url`에 `"[콘텐츠 인용 - 링크 미확인] ..."`로
+표시된다(위 "출처 검증 게이트" 절 참고) - 이것도 `grep "콘텐츠 인용"`으로 찾을 수 있음.
 
 ## 팀 회의 결정사항 (2026-08-20)
 
@@ -146,44 +336,78 @@ draft (최초 입력, 출처 미확인 가능)
 `experience`로 매핑해버려서 새고 있었음. `build_schema()`에 숙소류
 드롭 로직(`ACCOMMODATION_LABELS`)을 추가해서 앞으로는 자동으로 걸러진다.
 
-### 크롤링 데이터 품질 이슈 (미해결)
+### 크롤링 데이터 품질 이슈 — ✅ 반영 완료 (2026-08-24)
 
-- `stara_places.json`(seoultourism.org) — 기사 서론/FAQ 제목이 장소명으로
-  잘못 긁힘(예: "Is Seoul Forest a BTS site?"). 아이돌 리스트 필터링 후에도
-  3건 남아있음 — 제외할지 결정 필요
-- `stara_thisismykorea.json`(french.visitkorea.or.kr) — place엔 설명문만,
-  진짜 장소명은 어디에도 없고 description엔 "Address :" 라벨만 남음(자동
-  복구 불가). 필터링 후에도 ATEEZ 관련 3건 남음 — 원본에서 수동 확인 후
-  복구할지 제외할지 결정 필요. 같은 파일에 `â€™`, `Ã©` 같은 인코딩 깨짐도 다수 있음
+원래 "3건 남음"으로 적혀있던 추정치가 실제로 원본을 다시 까보니 훨씬
+컸음 — 아래 수치는 이번에 다시 확인한 실제 값.
 
-### 아티스트명 표준화 버그 (build_dataset.py 수정 필요)
+- `stara_thisismykorea.json`(french.visitkorea.or.kr) — ATEEZ 관련 3건은
+  기록대로 필드가 밀려서 진짜 장소명이 원본 어디에도 안 남아있는 자동 복구
+  불가 상태였음. `load_thisismykorea()`에서 이 패턴(단어 12개 초과 또는
+  마침표 2개 이상)이 감지되면 needs_review로 남기지 않고 **행 자체를
+  폐기**하도록 수정. 같은 로직으로 애초에 아이돌 목록 밖이라 어차피
+  걸러졌을 다른 오염 행(손흥민/Kwon Jin-Ah & Sam Kim 등)도 같이 정리됨.
+- `stara_places.json`(seoultourism.org) — 실제로 열어보니 노이즈 제목
+  필터 통과 후에도 59건이 남았고, 그중 대부분이 "장소"가 아니라 구
+  단위 가이드("Myeongdong — The Tourist Hub"), 카테고리 헤더("K-Pop
+  Merchandise Shopping"), 케이팝과 무관한 드라마 촬영지(오징어게임/도깨비
+  등)·K-뷰티 쇼핑 가이드·일반 공연장 디렉토리였음. 게다가 **73건 중
+  31건(43%)에 `IVE` 태그가 붙어있는데, 뷰티숍/드라마 촬영지처럼 IVE와
+  전혀 무관한 항목에도 다 붙어있는 스크래핑 오염**이 발견됨(원문에 "IVE"라는
+  단어가 실제로 등장하는 건 31건 중 3건뿐).
+  → `load_stara_places()`에 `artist_mentioned_in_text()`를 추가해서,
+  **태그된 아티스트명이 그 행의 place/description 원문에 실제로 등장하는
+  경우만 인정**하도록 일반화된 규칙으로 걸러냄(IVE만의 예외처리가 아니라
+  이 소스의 artists 필드 전체를 못 믿는다는 전제로 적용). 그래도 여전히
+  "장소 여러 개를 한 행에 묶음"/"목차성 절 제목"/"특정 시즌 이벤트
+  근거"(2026 국립중앙박물관 x BLACKPINK 특별전 등, 기존 "장소 포함/제외
+  기준"에 해당) 문제는 자동 규칙으로 못 걸러서 `STARA_PLACES_DROP_TITLES`에
+  사람이 확인한 6건을 명시적으로 등록해서 제외. 결과: 73건 → 최종 13개
+  장소(대부분 DDP/한강/부크촌한옥마을/서울숲 등 MV·화보 촬영지, JYP샵/스페이스
+  오브 BTS/큐브카페 등 공식 매장)만 남음. 같은 파일에 `â€™`, `Ã©` 같은
+  인코딩 깨짐도 있었지만 위 필터링 과정에서 해당 행이 대부분 같이 정리됨.
 
-- 원본에 아티스트명이 이미 있으면 캐노니컬 매핑(방탄소년단=BTS 등)을
-  건너뛰는 버그가 있어서 "BTS"/"방탄소년단"이 따로 남는 경우가 있음 → 원본
-  유무 상관없이 항상 매핑 적용하도록 수정 필요
-- 매칭이 대소문자 구분이라 `"(G)I-DLE"`이 `"i-dle"`과 매칭 안 됨 →
-  대소문자 무시하도록 수정 필요
-- 표준 표기 기준은 **영어 정식 명칭**으로 확정(한글명/줄임말/별칭은 여기서 파생)
+### 아티스트명 표준화 — I-DLE 표기 통일 ✅ (2026-08-24)
 
-### MVP 아이돌 목록
+- 그룹 활동명이 "(G)I-DLE"에서 "I-DLE"로 바뀌어서, 원본에 `(G)I-DLE`로
+  크롤링된 것도 크롤링은 그대로 두되(원문 그대로 수집) **최종
+  캐노니컬값만 `I-DLE`로 통일**하도록 `ARTIST_ALIASES`를 수정
+  (`GROUP_KO_NAMES`의 연결 키도 `gidle` → `idle`로 같이 수정).
+- 대소문자 구분 매칭 버그는 실제로 재현해보니 `canonical_artist()`가 이미
+  비교 전에 소문자로 내려서 비교하고 있어 `(G)I-DLE`/`i-dle`/`I-DLE`/
+  `GIDLE` 전부 이미 정상적으로 같은 값으로 합쳐지고 있었음 — 이 항목은
+  실재하지 않는 버그였던 것으로 확인(README 최초 작성 시점 이후 이미
+  고쳐졌거나 애초에 오기재였던 것으로 추정). **다만 "원본에 아티스트명이
+  이미 있으면 캐노니컬 매핑을 건너뛰는 버그"는 이번에 다루지 않음** —
+  이번 세션 스코프 밖, 여전히 미해결로 아래 "알려진 갭"에 남겨둠.
+- 표준 표기 기준은 **영어 정식 명칭**으로 확정(한글명/줄임말/별칭은 여기서 파생) — 유지.
 
-회의에서 확정한 29개 그룹 목록(BLACKPINK, BTS, Stray Kids, TWICE, Seventeen,
-BIGBANG, ENHYPEN, TXT, BABYMONSTER, ITZY, EXO, i-dle, iKON, aespa, NewJeans,
-TREASURE, LE SSERAFIM, Mamamoo, NCT, 2NE1, Red Velvet, ASTRO, CORTIS, ILLIT,
-IVE, ATEEZ, NMIXX, WINNER, Girl's Generation)을 `artist_allowlist.json`과
-대조해봤고 **이미 정확히 일치함** — 별도 수정 불필요. 이 목록에 없는
-아이돌(회의에서 예시로 든 RIIZE, 손흥민, Kwon Jin-Ah & Sam Kim, BB Girl 등)은
-기존 필터링 로직으로 이미 자동 제외되고 있음.
+### MVP 아이돌 목록 — NCT 하위 유닛 통일 ✅ (2026-08-24)
 
-미해결: NCT DREAM/NCT 127처럼 목록엔 없지만 목록에 있는 상위 그룹(NCT)의
-하위 유닛인 경우 상위 그룹으로 묶어서 살릴지 제외할지 결정 필요.
+회의에서 확정한 29개 그룹 목록은 `artist_allowlist.json`과 이미 정확히
+일치함(별도 수정 불필요, 기존 결론 유지).
 
-### city 분류 문제
+NCT DREAM/NCT 127은 별도 그룹이 아니라 상위 그룹 NCT의 하위 유닛이므로
+**모두 NCT로 통일해서 수집**하기로 결정. `ARTIST_ALIASES`에
+`"NCT DREAM"`/`"NCT 127"`(공백·붙여쓰기 무관) → `"NCT"` 매핑을 추가.
+(`artist_allowlist.json`의 NCT 멤버 목록엔 이미 DREAM/127 멤버가 섞여서
+등록돼 있어서 이 결정과 일관됨.)
 
-- 서울·부산·인천 범위 밖 장소(해외/국내 다른 지역, 99건)는 제외로 확정
-- address 자체가 없어서 city를 알 수 없는 67건 — 단순 city 문제가 아니라
-  주소/GPS 정보가 없어 애초에 퀘스트 장소로 쓸 수 있는지의 문제. 제외할지
-  주소 보강을 시도할지 결정 필요
+### city 분류 문제 — 주소 보강 시도 ✅ (2026-08-24)
+
+- 서울·부산·인천 범위 밖 장소(해외/국내 다른 지역)는 계속 제외.
+- address 자체가 없어서 city를 알 수 없던 행들 — **카카오 지오코딩
+  단계(`geocode_and_fill_names`)가 이미 검색 결과 주소로 city를 역채움하는
+  로직을 갖고 있었고, 대상 목록에 city 유무를 조건으로 걸지 않아서 city
+  미상 행도 원래부터 지오코딩 대상에 포함되고 있었음**(코드상 버그는
+  없었음). 다만 이 시도가 실패해서 끝까지 city를 못 채운 행이 몇 건인지
+  드러나지 않고 조용히 버려지던 게 문제였어서, `build_schema()`에
+  `dropped_no_city` 카운터를 추가하고 `preprocessed/{label}dropped_no_city.csv`로
+  목록을 저장하도록 함(place명 + artist 포함, 원본 재확인용).
+  전체 도시 통합 실행 기준 15건까지 줄어듦(대부분 해외 촬영지처럼
+  애초에 국내가 아니거나, "Songjeong Beach"처럼 실제로는 부산인데
+  카카오 키워드 검색이 못 찾은 케이스) — 후자는 쿼리 구성 개선(예: 지역
+  힌트 없이 원문 그대로 검색되는 문제)이 필요하며 아직 미해결로 남김.
 
 ## 이 파이프라인의 스코프
 
@@ -218,9 +442,11 @@ IVE, ATEEZ, NMIXX, WINNER, Girl's Generation)을 `artist_allowlist.json`과
   (예: 파라다이스시티만 걸려있던 `bts-v`) `artists.json`에서도 같이 뺄 것 —
   장소 하나 없는 아티스트가 남아있지 않게.
 
-## 현재 진행 상황 (인천)
+## 현재 진행 상황 (MVP: 서울·부산·인천)
 
-`preprocessed/places.json` 기준 — 도시 1개(incheon), 아티스트 7개
+### 인천 — 정본 완료
+
+`preprocessed/final/places.json` 기준 — 도시 1개(incheon), 아티스트 7개
 (그룹 3 + 멤버 개별 4), 장소 13개(`food` 6 · `activity` 5 · `culture` 1 ·
 `landmark_observatory` 1). **전부 `status: draft`** — 실제로 확인 가능한
 링크(인터뷰/브이로그/공식 SNS)로 검증된 건 아직 없어서 `verified`로 올린 게
@@ -229,25 +455,252 @@ IVE, ATEEZ, NMIXX, WINNER, Girl's Generation)을 `artist_allowlist.json`과
 출처를 설명하는 텍스트뿐임 — 실제 링크를 찾으면 그 값만 바꾸면 됨.
 
 `open_time`/`close_time`은 `fill_hours.py`(위 "영업시간 보강" 절 참고)로
-9건 자동 채움. 나머지 4건은 공원/낚시터처럼 상시개방으로 추정되는 곳이라
-의도적으로 빈 값 유지 — 자세한 내역은 `preprocessed/review_needed.json` 참고.
+8건 자동 채움. 나머지 5건은 공원/낚시터처럼 상시개방으로 추정되는 곳이라
+의도적으로 빈 값 유지 — 자세한 내역은 `preprocessed/final/review_needed.json`
+참고. (이전 버전엔 "9건/나머지 4건"으로 적혀 있었는데, 강화씨사이드리조트
+삭제로 필드가 채워져 있던 항목이 하나 같이 빠지면서 생긴 오기였음 -
+2026-08-27에 실제 파일 대조해서 정정)
+
+2026-08-24에 파이프라인을 다시 태워서 정본과 대조 검증함 — 좌표·카테고리
+100% 일치, 새로 찾은 후보 없음(이미 다 반영돼있었음). 검증 중 실제로 고친
+버그 2건: `raw_data_정인지` 로더가 원본의 명시적 `member` 필드를 안 읽던
+문제(→ 수정, 아래 "크롤링 데이터 품질 이슈" 절 참고), `category_hint`에
+남아있던 폐지된 값("촬영지") 3건(→ `raw_data_정인지/incheon_naver_blog.json`
+직접 수정).
+
+### 서울 — 후보 생성 + 구조적 검수 + 콘텐츠 1차 채움 완료
+
+`preprocessed/generated_places_seoul_정인지.json` 기준 — 171개 장소(2026-08-24
+검수 이후 3건 감소, 아래 참고), 35개 아티스트. 전부 `draft`. 구조적 문제
+(이벤트성 장소 2건, 중복 좌표 병합 실패 1건, 오매칭 의심 다수)는 2026-08-24에
+정리 완료 — 자세한 내역은 위 "크롤링 데이터 품질 이슈" 절 참고.
+
+2026-08-25에 `Kpop_Tour_Spots_Combined.xlsx`의 Connection/Notes 열 등 원본
+정보를 근거로 콘텐츠 1차 채움 완료:
+
+- `relation_text_ko` 174건 전부 작성 완료(영문 relation_text 기반 번역).
+  번역 과정에서 발견한 사실관계 이슈 2건은 review CSV에 남김 - 여의도한강공원
+  항목이 원래 스트레이 키즈 곡("S-Class")을 BTS 관계 서술에 잘못 인용하고
+  있어서 그 부분은 번역에서 제외, 용마랜드도 같은 이유로 트와이스 데뷔곡
+  ("Ooh-Ahh") 언급을 제외함 - 둘 다 원본 소스에서 사실관계 재확인 필요
+- 장소명이 한쪽 언어만 있던 58건 중 55건(전부 ENHYPEN 소스) 영문명 보강 완료 -
+  체인/브랜드/공공장소 19건은 웹 검색으로 실제 상호 확인, 나머지 36건은
+  표준 로마자 표기로 채우고 review CSV에 "실제 영문 간판 미확인" 표시
+- 영문명 보강 과정에서 **좌표 완전 일치 기준으로 중복 장소 3건을 추가로
+  발견해서 병합**(같은 실제 장소가 언어가 다른 두 소스에서 각각 들어와
+  merge_places()의 문자열 유사도 병합을 피해간 케이스 - "Front Seoul"/
+  "프론트서울", "Leeum Museum of Art"/"리움미술관", "Jazz Story 2"/
+  "째즈스토리2"). 174 → 171건으로 감소한 이유가 이 병합임. 앞으로도 이런
+  케이스가 있을 수 있어 좌표 기준 중복 스캔을 주기적으로 돌리는 게 좋음
+- `source_url`이 PENDING이던 126건을 "출처 검증 게이트" 절의 새 기준(인물+구체적
+  콘텐츠명이 있으면 링크 없이도 인정)으로 재분류 - 80건은 추적 가능한 인용으로
+  인정돼 `"[콘텐츠 인용 - 링크 미확인] ..."`로 전환(review 표시 해제, status는
+  draft 유지), 46건은 콘텐츠 근거 자체가 없는 맨주장이라 여전히 PENDING
+- "영문명으로 검색한 매칭" 플래그가 103건(59%) — 대부분 이름/카테고리
+  정합성으로 봤을 때 정상으로 보이나, 확정/의심 오매칭 6건은 review CSV에
+  사유 남겨둠(좌표는 유지). 나머지는 낮은 확률로 더 있을 수 있음 - 시간
+  나면 추가 스크리닝
+
+**2026-08-26~27 업데이트**: 170건(황금돼지감자탕 1건은 동명 식당 오인으로
+확인돼 삭제). "영문명으로 검색한 매칭" 103건 → 전수 검증 완료(방법은
+`verify-english-query-matches` 스킬 참고) — confirmed_same 다수 해제,
+`bts-landmark_observatory-achasan-mountain`은 실제로 아차산이 아니라
+실내 클라이밍짐 체인에 매칭돼 있던 게 확인돼 좌표를 실제 아차산 등산로
+입구로 교체, 최종적으로 8건만 사람 확인용으로 남음(`seventeen-food-
+signature-kitchen` 등 좌표 재확인 필요 1건 포함). "실제 출처 URL 없음"은
+NAVER API HUB 연동으로 37건 중 13건 자동 채움(`auto_found_unverified`,
+사람 확인 대기).
+
+### 부산 — 후보 생성 + 구조적 검수 + 콘텐츠 채움 완료
+
+`preprocessed/generated_places_busan_정인지.json` 기준 — 13개 장소, 7개
+아티스트. `relation_text_ko` 전부 작성 완료, 장소명 전부 한/영 다 있음.
+source_url PENDING이던 것 중 대부분은 출처 검증 게이트 새 기준 통과(콘텐츠
+인용으로 전환), 1건(`bts-jimin-shopping-magnate`)만 여전히 PENDING(콘텐츠
+근거 없는 맨주장 + 오매칭 의심 둘 다 있는 케이스).
+
+이어서 같은 날 뉴진스 부산 편(`uc_seq=1417`, "뉴진스 코드 in 부산" 독점
+예능)의 한글판도 WebFetch로 읽어서: 기존 3건(해운대리버크루즈/스카이라인
+루지/마린어드벤처파크 영도)은 예능명·미션명이 담긴 더 구체적인
+relation_text로 교체하고, 새로 2건(송정해수욕장/전포공구길)을 카카오
+키워드 검색으로 직접 지오코딩해서 추가함(11 → 13건). 기사에 언급된
+"갈미조개 샤브샤브"는 카카오 검색에 정확히 일치하는 상호가 없고(같은
+주소에 이름이 다른 후보 3개만 나옴 - 아마 같은 자리의 여러 업체 중
+하나거나 상호가 바뀐 것으로 추정) 잘못 찍을 위험이 있어서 **추가하지
+않고 보류**함 - 확신 없는 매칭을 억지로 채우지 않는다는 원칙 그대로 적용.
+
+**이번엔 전체 재실행 없이 지오코딩만 따로 호출해서 직접 append하는 방식을
+씀** - 아래 "재현 가능한 함정"에서 겪은 것처럼 `build_dataset.py`를
+다시 돌리면 기존에 손으로 채운 내용이 다 날아가기 때문에, 이미 검수해둔
+도시에 몇 건만 추가할 땐 이 방식이 더 안전함(`kakao_keyword_search()`
+직접 호출 → Place 스키마로 직접 조립 → 기존 JSON에 append). 새 도시를
+처음부터 만들 때나 원본을 대량으로 바꿀 때는 여전히 전체 재실행이 맞음 -
+`.claude/skills/stara-place-review/SKILL.md`에 두 방식을 언제 쓸지 정리함.
+
+2026-08-25에 `raw_data_정인지/busan_bts_concert_course.json`
+(visitbusan.net "BTS 부산 콘서트 기념 코스" - WebFetch로 직접 읽어서 정리)을
+추가하면서 8 → 11건으로 늘었고, 그 과정에서 기존에 "의심 오매칭"으로
+플래그해뒀던 `bts-activity-busan-citizen-park`(온천천시민공원으로 잘못
+매칭됨)의 실제 정답(부산시민공원, 부산진구 시민공원로 73)을 찾아서 옛
+오매칭 행을 지우고 올바른 행으로 교체함 - review 플래그로 남겨둔 의심
+사례가 나중에 실제로 확인되는 걸로 풀린 첫 사례.
+
+**이때 발견한 재현 가능한 함정**: 같은 도시로 `build_dataset.py`를 다시
+돌리면 원본부터 새로 조립하기 때문에, 그 사이 사람이 손으로 채워둔
+`relation_text_ko` 번역과 review 사유 메모가 전부 날아간다(source_url
+신빙성 자동 판정만 코드에 있어서 살아남고, 번역/수동 메모는 코드가 아니라
+그때그때 손으로 채운 값이라 원본에 없으면 복구가 안 됨). 이번엔 직전
+번역을 기억하고 있어서 바로 복구했지만, 재실행 전에 번역 내용을
+어딘가(예: raw_data_정인지 쪽 description_ko처럼 원본에 직접) 보존해두는
+습관이 필요함 - `.claude/skills/stara-place-review/SKILL.md`에 경고 추가함.
+같은 재검증 과정에서 `has_credible_citation()`의 실제 버그도 하나 찾아
+고침 - "Vernon, ... Vernon IG"처럼 인용 키워드가 문장 맨 끝에 오면(뒤에
+공백/쉼표가 없어서) 못 잡던 문제, 그리고 " tour"가 "tour schedule"처럼
+너무 흔한 단어에도 걸리던 오탐도 같이 정리(관련 커밋: `CREDIBLE_CONTENT_
+WORD_MARKERS`로 단어 경계 매칭 분리).
+
+원본 자체가 얇아서(원시 데이터 15건 수준) 서울/인천보다
+표본이 훨씬 적음 — 추가 원본 소스 발굴이 필요할 수 있음(이번처럼 링크
+하나씩 WebFetch로 읽어서 raw_data_정인지에 추가하는 방식이 잘 통함).
+
+**2026-08-26~27 업데이트**: 13건. "영문명으로 검색한 매칭" 3건(메그네이트,
+조현화랑, 롯데월드 어드벤처 부산) 전수 검증 완료 — 조현화랑/롯데월드는
+좌표 일치 확인돼 해제, `bts-jimin-shopping-magnate`(메그네이트/현
+지밀레니얼)는 지민 아버지 카페의 실제 주소(진남로 135)와 현재 좌표가
+1~1.4km 떨어져 있는 걸 확인 — 동명의 다른 업체에 매칭됐을 가능성이 높아
+좌표 재지오코딩 필요로 남김. NAVER API HUB로 source_url 자동 채우기도
+돌렸으나 대상 2건 다 못 찾음(`not_found`).
+
+### preview 스냅샷 — 영업시간 보강 1차 완료 (2026-08-27)
+
+`preprocessed/preview/places.json`(위 "preview 스냅샷" 절 참고 — MVP 3개
+도시의 review 플래그 없는 행만 모은 122건)에 `fill_hours.py --preview`를
+돌림. 결과: 94건 자동 채움, 28건 미확정(`low_confidence` 19 ·
+`always_open` 9) — `weekday_variation` 11건은 채워진 94건에 포함된
+서브셋(평일 요일별로 시간이 달라 대표값만 채운 것). API 호출은 107건만
+써서(전체 122건 중 일부는 이전 인천 작업 때 이미 캐시돼 있어서 무료로
+재사용됨) 무료 쿼터에 여유 있음.
+
+이 과정에서 always_open 자동 분류의 실제 오탐 사례를 하나 발견해서
+직접 수정함: `exo-landmark_observatory-times-square`가 `place_category`가
+`landmark_observatory`라는 이유만으로 상시개방 처리됐는데, 실제 매칭
+결과는 "CGV Yeongdeungpo Timesquare"(영화관)였음 — 영화관은 24시간
+운영이 아니라 그냥 Google에 정기 영업시간 데이터가 없는 것뿐이라 이 항목만
+`low_confidence`로 옮김. `place_name_ko`는 "CGV 영등포타임스퀘어"인데
+`place_name_en`은 "Times Square"만 있어서(카테고리도 아마 이 불완전한
+영문명 때문에 랜드마크로 잘못 잡혔을 가능성) 이름/카테고리 자체도 같이
+재검토 필요 — `looks_always_open()`이 카테고리 하나만 보고 판단하는 한
+같은 유형의 오탐(엉뚱한 카테고리로 태깅된 장소)이 또 나올 수 있다는 뜻이라
+기록해둠.
+
+`preprocessed/preview/`가 정확히 어떤 기준으로(어느 스크립트/사람이) 만들어진
+건지는 README/CLAUDE.md/SKILL.md 어디에도 안 적혀 있었음 — 세 도시
+review CSV의 "_review_notes 없는 행 개수"와 preview 파일의 도시별 건수가
+정확히 일치하는 걸 근거로 역으로 추정한 것(서울 170-65=105, 부산 13-1=12,
+인천 13-8=5). 실제 생성 방식이 다르다면 이 절과 위 "preview 스냅샷" 절을
+다시 고칠 것.
+
+## MVP 이후: 전국 확장 준비 (2026-08-24 가벼운 구조 점검)
+
+MVP는 서울·부산·인천 3개 도시로 한정하지만, 공모전 제출 시점엔 전국
+서비스로 낼 계획이라 나머지 지역 데이터도 미리 가볍게 점검해둠(전수
+검수는 아직 안 함 - MVP 마무리가 우선).
+
+`python build_dataset.py --geocode --owner=정인지`(도시 필터 없이 전체
+실행) 기준 비MVP 지역 41건: 제주 18 · 경기 13 · 강원 4 · 경상북도 2 ·
+충청남도 2 · 대구 1 · 경상남도 1. 숙소류/이벤트장 슬립스루는 없음. 다만
+"영문명 매칭" 위험 플래그 비율이 28/41(68%)로 서울(59%)보다 높음 — 이
+지역들 소스가 상대적으로 더 raw해서로 보임.
+
+> **2026-08-27 파일 정리**: 이 41건은 원래 `preprocessed/generated_places_
+> 정인지.json`(도시 필터 없이 돌린 원본 산출물, 서울/부산/인천 199건과
+> 뒤섞여 240건짜리 파일이었음)에 있었다. 서울/부산/인천 쪽은 이후 사흘간
+> `generated_places_{city}_정인지.json`에서 따로 계속 검수·보강돼서 이
+> 원본 파일의 해당 부분은 완전히 낡은 스냅샷이 됐다 — 그 199건은 버리고
+> 비MVP 41건만 추려서 `generated_places_nonMVP_정인지.json`(과 짝이 되는
+> `generated_{artists,cities,places_needs_review}_nonMVP_정인지.*`)으로
+> 이름 바꿔 보존함. `--city=nonMVP`는 실제 build_dataset.py 옵션이
+> 아니다 — 이번 정리 때 수동으로 붙인 이름일 뿐, 이 지역들을 도시별로
+> 다시 나눠 검수하려면 원래 방식대로 `--city=jeju` 등으로 새로 돌릴 것.
+
+발견한 주요 리스크 (전국 확장 전에 짚어야 할 것):
+
+- **지오코딩이 도시 자체를 잘못 배정할 수 있음** — `bts-activity-
+  gamcheon-culture-village`가 경상북도로 분류돼 있었는데, 실제 "감천문화
+  마을"은 부산에 있는 유명 관광지임. 매칭된 곳("노하리 마을문화쉼터")도
+  이름이 전혀 다른 별개 장소라 이중 오매칭. **이 패턴이 위험한 이유**: 반대
+  방향으로도 일어날 수 있음 - 진짜 비MVP 지역 장소가 서울/부산/인천으로
+  잘못 배정돼 MVP 데이터를 오염시키거나, 반대로 진짜 MVP 지역 장소가
+  다른 지역으로 새서 도시별 필터링 시 조용히 사라질 수 있음. 전국 확장
+  전에 지오코딩 결과의 시/도 배정을 좌표 기반으로 한 번 더 교차검증하는
+  로직이 필요해 보임(현재는 카카오가 돌려준 주소 문자열 파싱에만 의존).
+- **너무 광범위한 지명이 그대로 지오코딩 쿼리로 들어가는 경우** —
+  `exo-kai-landmark_observatory-yeoju`처럼 "Yeoju"(여주시 전체)가 구체적
+  장소명 없이 그대로 쿼리로 나가서 임의 업체("루덴시아")에 매칭된 케이스.
+  원본 단계에서 도시/구 단위 지명만 있고 특정 장소명이 없는 행은 애초에
+  지오코딩 대상에서 걸러야 할 수도 있음.
+- 지역별 원본 데이터 자체가 얇음(대구 1건·경상남도 1건 등) — 전국 서비스
+  단계에선 지역별 원본 소스 발굴이 데이터 정제보다 먼저 필요한 작업이 될 듯.
 
 ## 알려진 갭 / 다음 할 일
 
-- [ ] `source_url`이 실제 링크가 아닌 8건, 진짜 URL로 교체
-- [ ] `draft` → `verified` 승격 (출처 재확인 필요)
+- [x] ~~`source_url`이 실제 링크가 아닌 건 어떻게 할지~~ → 2026-08-25 정책
+      확정("출처 검증 게이트" 절 참고) - 인물+구체적 콘텐츠명이 있으면 링크
+      없이도 인정. 서울/부산 기존 PENDING 126건 재분류(80건 인용으로 전환,
+      46건은 여전히 PENDING - 콘텐츠 근거 자체가 없는 맨주장들)
+- [ ] 인천 정본의 원래 PENDING 8건도 같은 새 기준으로 재검토(당시엔 사람이
+      손으로 인용 텍스트를 넣었던 선례가 있었는데, 지금 자동화된 기준과
+      정확히 일치하는지 재확인 필요)
+- [ ] `draft` → `verified` 승격 (여전히 사람이 실제 링크/콘텐츠를 직접
+      찾아 대조해야 함 - "콘텐츠 인용"만으로는 자동 승격 안 됨)
 - [ ] `place_name_en` 중 로마자 표기 추정치로 넣은 것들 확인
       (Jeongwon Siktak, Hwangsan Chojisa Fishing Spot 등)
 - [ ] `dwell_minutes` — culture/activity/kpop 카테고리는 평균 기준이 아직
       없어서 전부 null. 기준 정해지면 채우기
-- [ ] 인천 외 도시는 팀원이 별도 진행 중 — 위 "장소 포함/제외 기준"을 동일하게
-      적용할 것 (숙소류·콘서트장류는 처음부터 넣지 않는 게 제일 편함)
-- [ ] `build_dataset.py` 아티스트명 캐노니컬 매핑 버그 2건 수정 (원본에 이름
-      있으면 매핑 스킵 / 대소문자 구분 매칭)
-- [ ] 크롤링 데이터 품질 이슈 3건(비장소 콘텐츠 오염, 장소명 유실, 인코딩
-      깨짐) 처리 방침 결정 — 위 "크롤링 데이터 품질 이슈" 절 참고
-- [ ] NCT DREAM/NCT 127 같은 하위 유닛 처리 방침 결정
-- [ ] address 없어 city 모르는 67건 처리 방침 결정(제외 vs 주소 보강)
+- [x] ~~인천 외 도시는 팀원이 별도 진행 중~~ → 2026-08-24부로 서울·부산·인천
+      MVP 3개 도시 전부 정인지 담당으로 변경. 위 "장소 포함/제외 기준"을
+      전 도시 동일 적용.
+- [ ] `build_dataset.py` 아티스트명 캐노니컬 매핑 버그 1건 남음 (원본에 이름
+      있으면 매핑 스킵) — 대소문자 구분 매칭은 재현 안 돼서 이미 정상으로 확인됨
+- [x] ~~크롤링 데이터 품질 이슈 3건 처리 방침 결정~~ → 2026-08-24 완료
+      (전부 삭제로 반영, 위 "크롤링 데이터 품질 이슈" 절 참고)
+- [x] ~~NCT DREAM/NCT 127 같은 하위 유닛 처리 방침 결정~~ → 2026-08-24 완료
+      (상위 그룹 NCT로 통일)
+- [x] ~~address 없어 city 모르는 67건 처리 방침 결정~~ → 2026-08-24 완료
+      (카카오 지오코딩 보강 시도로 반영, `dropped_no_city` CSV로 잔여건 추적)
+- [ ] `dropped_no_city.csv`에 남은 15건(전체 도시 통합 실행 기준) 처리 —
+      대부분 해외 촬영지라 정상 제외지만, "Songjeong Beach"처럼 실제로는
+      부산인데 카카오 키워드 검색이 못 찾은 케이스가 섞여있음. 쿼리 구성
+      개선(지역 힌트 추가 등) 필요
+- [ ] `raw_data_정인지/아이돌_출신지_*.csv` 경로를 못 찾던 `load_hometowns()`
+      버그 수정(BASE_DIR 루트가 아니라 `raw_data_정인지/` 하위에 있었음) —
+      이번 세션에서 같이 고침, 정상 동작 확인함
+- [x] ~~"영문명으로 검색한 매칭" 플래그 서울/부산 전수 검증~~ → 2026-08-26
+      완료(서울 51건 중 42건 확인/해제·1건 좌표 오매칭 확정·5건 근거 부족으로
+      보류, 부산 3건 중 2건 확인/해제·1건 좌표 오매칭 확정) - 방법은
+      `.claude/skills/verify-english-query-matches/SKILL.md` 참고
+- [x] ~~"실제 출처 URL 없음" 대량 적체 해소 자동화~~ → 2026-08-27 NAVER API
+      HUB 연동으로 1차 처리(45건 중 14건 자동 발견, 위 "NAVER API HUB 연동"
+      절 참고) - 찾은 것도 사람 확인은 남아있고, 31건은 여전히 수동 필요
+- [ ] NAVER API HUB 우선순위 2(`naver_local_recheck`, 좌표 교차검증)는
+      selftest로 변환식은 검증했지만 아직 review 큐 처리에 실전 투입은 안 함
+- [ ] **`preprocessed/final/places.json`(인천 정본)과 `generated_places_
+      incheon_정인지.json`(인천 검수용 후보)이 같은 13건인데 내용이
+      갈라져 있음** — 2026-08-27 정리하다 발견. 채영 개인 성지 2건이
+      final에는 `twice-chaeyoung-food-*`(멤버 개별 귀속)로, generated에는
+      `twice-food-*`(그룹 전체로만 귀속)로 서로 다르게 들어가 있고,
+      generated 쪽은 영업시간도 아직 하나도 안 채워짐(final은 8건 완료).
+      둘 중 어느 쪽이 최신/정답인지, 나중에 병합할 때 어느 쪽을 기준으로
+      할지 확인 필요 — 지금 이 세션에서 건드린 적 없는 기존 상태라 원인
+      불명, 다음에 인천 다시 만질 때 먼저 확인할 것
+- [x] ~~pre-2026-08-25 명명 규칙(도시 접미사 없는 구버전) 산출물 정리~~ →
+      2026-08-27 완료. `generated_places_정인지.json`(240건, 서울/부산/인천
+      199건 + 비MVP 41건 혼재)에서 이미 낡은 MVP 199건은 버리고 비MVP 41건만
+      `generated_places_nonMVP_정인지.json`으로 보존(위 "MVP 이후" 절 참고).
+      `generated_review_needed_seoul_정인지.json`(CSV 방식 정착 전 남은 구버전
+      1회성 산출물), `generated_places_seoul_정인지.json.bak`(사흘치 수동
+      검수가 반영되기 전인 최초 상태라 복구 지점으로서 의미 없음), 루트
+      `__pycache__/`도 같이 삭제
 
 ## 참고
 

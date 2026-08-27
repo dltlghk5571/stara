@@ -1,28 +1,56 @@
 # -*- coding: utf-8 -*-
 """
-preprocessed/places.json의 open_time/close_time을 Google Places API (New)
-Text Search로 채운다. (운영시간 매치.md 참고)
+places.json의 open_time/close_time을 Google Places API (New) Text Search로
+채운다. (운영시간 매치.md 참고)
 
-입력: preprocessed/places.json (정본 - 카카오맵으로 좌표 검증된 상태)
+입력/출력 파일은 build_dataset.py와 동일한 --city=/--owner= 규칙으로 정해짐:
+    (플래그 없음)            -> preprocessed/final/places.json (정본 - 카카오맵으로
+                                좌표 검증 + 사람 검수까지 끝나서 병합된 파일.
+                                2026-08-25부터 preprocessed/final/로 분리 -
+                                검수 중인 도시별 generated_*와 뒤섞이지 않게)
+    --city=seoul --owner=X  -> preprocessed/generated_places_seoul_X.json
+                                (build_dataset.py가 만든 도시별 후보 파일에
+                                직접 채움 - 정본으로 병합하기 전에 도시 단위로
+                                먼저 검수+시간보강까지 끝내고 싶을 때 사용.
+                                2026-08 이후 서울/부산/인천을 한 사람이 순서대로
+                                처리하게 되면서, 도시마다 이 스크립트를 따로
+                                돌릴 수 있게 파라미터화함 - build_dataset.py
+                                실행 직후 검수 없이 바로 이어붙이는 건 권장하지
+                                않음: 검수 전 후보(노이즈/오태깅 등)에도 Google
+                                API 호출이 나가서 유료 쿼터만 낭비하게 됨)
+    --preview               -> preprocessed/preview/places.json (MVP 3개
+                                도시의 generated_places_*에서 review 플래그
+                                남은 행을 뺀 "검수 완료분만 모은 미리보기"
+                                스냅샷 - --city/--owner와 같이 못 씀)
+같은 규칙으로 city_name_ko 조회용 cities.json도, review_needed.json/백업도
+전부 같은 접두어를 씀.
+
 출력:
-    preprocessed/places.json      - open_time/close_time 채워서 덮어씀
-                                     (덮어쓰기 전 places.json.bak으로 백업)
-    preprocessed/review_needed.json - 자동으로 못 채운/확인 필요한 항목 모음
+    {접두어}places.json         - open_time/close_time 채워서 덮어씀
+                                   (덮어쓰기 전 .bak으로 백업)
+    {접두어}review_needed.json  - 자동으로 못 채운/확인 필요한 항목 모음
         - low_confidence: 매칭 실패 또는 좌표 500m 이상 이탈(오매칭 의심)
-        - always_open: 영업시간 개념 없음으로 추정(공원/포토스팟 등) - 빈 값 유지
+        - always_open: 영업시간 개념 없음으로 추정(공원/랜드마크 등) - 빈 값 유지
         - weekday_variation: 요일별 영업시간이 달라서 대표값(최빈값)만 채운 항목
                               (요일별 원본 정보도 같이 기록)
 
 실행:
-    python fill_hours.py --dry-run          # API 호출 없이 대상/쿼리만 미리보기
-    python fill_hours.py --limit 5          # 실제로 5건만 호출해서 결과 확인
-    python fill_hours.py                    # 전체 실행(이미 채워진 항목은 건너뜀)
+    python fill_hours.py --dry-run                       # 정본 대상, API 호출 없이 미리보기
+    python fill_hours.py --city=seoul --owner=정인지 --dry-run  # 서울 후보 파일 대상
+    python fill_hours.py --city=seoul --owner=정인지 --limit 5  # 서울 5건만 실제 호출
+    python fill_hours.py --city=seoul --owner=정인지            # 서울 후보 파일 전체 실행
+    python fill_hours.py                                  # 정본 전체 실행(이미 채워진 항목은 건너뜀)
 
 안전장치:
     - GOOGLE_PLACES_API_KEY는 .env에서만 읽음(코드에 하드코딩 금지)
     - ./cache/{place_id}.json에 원본 응답을 캐싱 - 재실행 시 이미 조회한 곳은
       API를 다시 호출하지 않음(무료 쿼터 절약, 멱등성)
     - 이미 open_time이 채워진 항목은 애초에 대상에서 제외
+    - 이 스크립트는 반드시 로컬/서버 배치 환경에서만 실행한다 - 프론트엔드
+      JS에 API 키가 노출되면 남이 도용해서 무료 쿼터를 소진시킬 수 있음.
+      GOOGLE_PLACES_API_KEY는 Google Cloud Console에서 IP 제한을 걸어둘 것
+      (브라우저 키가 아니라 서버/배치용 키라 "HTTP 리퍼러"가 아니라
+      "IP 주소" 제한이 맞는 방식)
 """
 
 import argparse
@@ -38,13 +66,63 @@ import requests
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(BASE_DIR, "preprocessed")
-PLACES_PATH = os.path.join(OUT_DIR, "places.json")
-CITIES_PATH = os.path.join(OUT_DIR, "cities.json")
-BACKUP_PATH = PLACES_PATH + ".bak"
-REVIEW_PATH = os.path.join(OUT_DIR, "review_needed.json")
+FINAL_DIR = os.path.join(OUT_DIR, "final")
 CACHE_DIR = os.path.join(BASE_DIR, "cache")
 
+
+PREVIEW_DIR = os.path.join(OUT_DIR, "preview")
+
+
+def resolve_paths(city, owner, preview=False):
+    """build_dataset.py와 동일한 명명 규칙(2026-08-25 확정,
+    "generated_{종류}_{도시}_{작성자}.{확장자}") - --city=/--owner=가 없으면
+    정본 파일(preprocessed/final/places.json 등, 검수+영업시간까지 끝나서
+    병합된 도시만 들어있는 폴더 - 2026-08-25부터 preprocessed/ 바로 밑이
+    아니라 final/ 하위로 분리함, 검수 중인 도시별 generated_*와 뒤섞이면
+    한눈에 구분이 안 돼서)을, 있으면 해당 도시의
+    generated_places_{도시}_{작성자}.json 같은 파일(preprocessed/ 바로
+    밑, 아직 검수/병합 전)을 대상으로 삼는다.
+
+    --preview는 세 번째 대상: preprocessed/preview/{cities,places,
+    review_needed}.json - MVP 3개 도시(서울/부산/인천)의 generated_places_*
+    중 그 도시 review CSV에 _review_notes가 남은(아직 검수 안 끝난) 행을
+    제외하고 합쳐둔 "검수 완료분만 모은 미리보기" 스냅샷(final/과 달리
+    도시별로 손으로 병합한 게 아니라 review 플래그 유무만으로 자동
+    필터링한 것이라, final/에 넣기 전 단계로 보면 됨). generated_*처럼
+    아직 fill_hours.py를 안 거쳐서 open_time/close_time이 비어있다."""
+    if preview:
+        places_path = os.path.join(PREVIEW_DIR, "places.json")
+        return {
+            "places": places_path,
+            "cities": os.path.join(PREVIEW_DIR, "cities.json"),
+            "review": os.path.join(PREVIEW_DIR, "review_needed.json"),
+            "backup": places_path + ".bak",
+        }
+    suffix_parts = [p for p in (city, owner) if p]
+    if not suffix_parts:
+        places_path = os.path.join(FINAL_DIR, "places.json")
+        return {
+            "places": places_path,
+            "cities": os.path.join(FINAL_DIR, "cities.json"),
+            "review": os.path.join(FINAL_DIR, "review_needed.json"),
+            "backup": places_path + ".bak",
+        }
+    suffix = "_" + "_".join(suffix_parts)
+    places_path = os.path.join(OUT_DIR, f"generated_places{suffix}.json")
+    return {
+        "places": places_path,
+        "cities": os.path.join(OUT_DIR, f"generated_cities{suffix}.json"),
+        "review": os.path.join(OUT_DIR, f"generated_review_needed{suffix}.json"),
+        "backup": places_path + ".bak",
+    }
+
 SEARCH_URL = "https://places.googleapis.com/v1/places:searchText"
+# FieldMask는 꼭 필요한 것만: regularOpeningHours가 이미 최상위 과금 등급인
+# Enterprise SKU를 발동시켜서, 같이 요청한 id/displayName/formattedAddress/
+# location(Essentials)·businessStatus(Pro)는 등급을 안 올리므로 추가 비용이
+# 없다 - 과금은 요청 필드 중 "가장 비싼 등급" 하나로 매겨지지 요청한 필드
+# 개수대로 매겨지지 않는다. 반대로 reviews/photos/rating 같은 Enterprise+
+# Atmosphere 등급 필드는 등급을 한 단계 더 올리니 여기 추가하지 말 것.
 FIELD_MASK = (
     "places.id,places.displayName,places.formattedAddress,"
     "places.location,places.regularOpeningHours,places.businessStatus"
@@ -147,7 +225,10 @@ def extract_weekday_hours(periods):
 
 
 def looks_always_open(place):
-    if place.get("place_category") == "photo":
+    # "photo" 카테고리는 2026-08-20 회의에서 landmark_observatory로 흡수돼
+    # 폐지됨(Data_Preprocessing_Template.ts 참고) - 옛 값 그대로 두면 이 체크가
+    # 죽은 코드가 돼서 이름 힌트에만 의존하게 되므로 새 값으로 갱신.
+    if place.get("place_category") == "landmark_observatory":
         return True
     name = place.get("place_name_ko") or ""
     return any(hint in name for hint in ALWAYS_OPEN_NAME_HINTS)
@@ -230,11 +311,24 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--dry-run", action="store_true", help="API 호출 없이 대상/쿼리만 출력")
     parser.add_argument("--limit", type=int, default=None, help="처리할 최대 건수(테스트용)")
+    parser.add_argument("--city", default=None, help="build_dataset.py와 동일 - 지정하면 정본 대신 "
+                         "{city}.{owner}.generated.places.json 등을 대상으로 함")
+    parser.add_argument("--owner", default=None, help="build_dataset.py와 동일")
+    parser.add_argument("--preview", action="store_true",
+                         help="preprocessed/preview/{places,cities,review_needed}.json 대상 - "
+                              "--city/--owner와 같이 못 씀")
     args = parser.parse_args()
 
-    with open(PLACES_PATH, encoding="utf-8") as f:
+    if args.preview and (args.city or args.owner):
+        safe_print("--preview는 --city/--owner와 같이 쓸 수 없습니다.")
+        sys.exit(1)
+
+    paths = resolve_paths(args.city, args.owner, preview=args.preview)
+    safe_print(f"대상 파일: {paths['places']}")
+
+    with open(paths["places"], encoding="utf-8") as f:
         places = json.load(f)
-    with open(CITIES_PATH, encoding="utf-8") as f:
+    with open(paths["cities"], encoding="utf-8") as f:
         city_ko_by_id = {c["city_id"]: c["city_name_ko"] for c in json.load(f)}
 
     targets = [p for p in places if not p.get("open_time")]
@@ -287,11 +381,12 @@ def main():
 
         safe_print(f"  ({i}/{len(targets)}) {place['place_id']} 처리 완료 - API 호출 누적 {api_calls}건")
 
-    if os.path.exists(PLACES_PATH):
-        shutil.copy(PLACES_PATH, BACKUP_PATH)
-    with open(PLACES_PATH, "w", encoding="utf-8") as f:
+    os.makedirs(os.path.dirname(paths["places"]), exist_ok=True)
+    if os.path.exists(paths["places"]):
+        shutil.copy(paths["places"], paths["backup"])
+    with open(paths["places"], "w", encoding="utf-8") as f:
         json.dump(places, f, ensure_ascii=False, indent=2)
-    with open(REVIEW_PATH, "w", encoding="utf-8") as f:
+    with open(paths["review"], "w", encoding="utf-8") as f:
         json.dump(review, f, ensure_ascii=False, indent=2)
 
     n_review = sum(len(v) for v in review.values())
@@ -302,8 +397,8 @@ def main():
     safe_print(f"검토 필요: {n_review}건 (low_confidence={len(review['low_confidence'])}, "
                f"always_open={len(review['always_open'])}, weekday_variation={len(review['weekday_variation'])})")
     safe_print(f"이번 실행 API 호출 수: {api_calls}건")
-    safe_print(f"백업: {BACKUP_PATH}")
-    safe_print(f"검토 리포트: {REVIEW_PATH}")
+    safe_print(f"백업: {paths['backup']}")
+    safe_print(f"검토 리포트: {paths['review']}")
 
 
 if __name__ == "__main__":

@@ -14,5 +14,6 @@ from drive/
 
 # 키 값은 없지만 문서 자체가 "커밋하지 말 것"이라고 명시한 인수인계 노트
 GEOCODING_HANDOFF.md
-
+naver-api-hub-integration.md
+place_status_2026-08-27.md
 

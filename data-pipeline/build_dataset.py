@@ -11,25 +11,32 @@
        현재 Place 스키마는 위경도가 있는 "장소"만 다루도록 되어 있어서, 도시 단위인
        출신지 데이터는 참고용으로만 집계하고 최종 출력엔 포함하지 않음.
 
-출력 (기본: 전체 도시 통합. --city=incheon 처럼 도시 하나만 뽑을 수도 있음):
-    preprocessed/cities.json  - {city_id, city_name_ko(축약형), city_name_en}
-    preprocessed/artists.json - {artist_id, artist_name_ko, artist_name_en}
-    preprocessed/places.json  - Place[] (Data_Preprocessing_Template.ts 참고)
-    preprocessed/places_needs_review.csv - 이름/출처/relation_text 중 하나라도
-      비어서 사람이 봐야 하는 행
+출력 (기본: 전체 도시 통합. --city=incheon 처럼 도시 하나만 뽑을 수도 있음).
+파일명 규칙(2026-08-25 확정): "generated_{종류}_{도시}_{작성자}.{확장자}" -
+종류가 맨 앞, 도시/작성자는 뒤, 구분자는 언더바(생략된 값은 그냥 빠짐):
+    preprocessed/generated_cities_{city}_{owner}.json  - {city_id, city_name_ko(축약형), city_name_en}
+    preprocessed/generated_artists_{city}_{owner}.json - {artist_id, artist_name_ko, artist_name_en}
+    preprocessed/generated_places_{city}_{owner}.json  - Place[] (Data_Preprocessing_Template.ts 참고)
+    preprocessed/generated_places_needs_review_{city}_{owner}.csv - 이름/출처/
+      relation_text 중 하나라도 비어서 사람이 봐야 하는 행
+이 파일들은 전부 검수 전 후보다 - 검수 + fill_hours.py로 영업시간까지 끝나
+병합된 도시만 preprocessed/final/{cities,artists,places}.json(정본)에 들어간다
+(사람이 직접 병합 - 아직 자동화 안 됨).
 
 실행:
     python build_dataset.py                        # 지오코딩 없이 (빠름, 반복 작업용)
     python build_dataset.py --geocode               # 좌표/한글 상호명/카테고리까지 채움
     python build_dataset.py --geocode --city=incheon # 한 도시만 출력
     python build_dataset.py --city=incheon --owner=정인지 # 도시 분담 시 담당자 이름을 파일명에 표시
-      -> preprocessed/incheon.정인지.generated.cities.json 등
+      -> preprocessed/generated_cities_incheon_정인지.json 등
 
 주의:
     - place_id/artist_id는 최종 조립 단계(7단계)에서만 부여됨. place_category를
       ID의 "맥락" 자리에 쓰고, relation_text에서 특정 멤버가 감지되면
       "{그룹}-{멤버}" 형태로 자동 분리를 시도함(완벽하지 않음 - 코드 주석 참고)
-    - source_url이 실제 링크(http/https)가 아니면 전부 "PENDING"으로 통일
+    - source_url이 실제 링크(http/https)가 아니어도, relation_text 자체가
+      "인물+구체적 콘텐츠명"을 담은 추적 가능한 인용이면 인정한다(2026-08-25
+      정책, has_credible_citation() 참고) - 그 외에는 전부 "PENDING"으로 통일
     - artist_name_ko는 확실히 아는 것만 채움(GROUP_KO_NAMES/MEMBER_KO_NAMES) -
       모르면 영문명을 임시로 넣고 needs_ko_name으로 표시 (틀린 번역보다 안전)
     - 좌표가 없는 장소는 최종 places.json에서 제외됨(필수 필드라 null 불가)
@@ -302,9 +309,14 @@ def slugify_hyphen(name):
 
 
 ARTIST_ALIASES = {
-    "idle": "(G)I-DLE", "gidle": "(G)I-DLE", "i-dle": "(G)I-DLE",
+    # 2026-08-24 팀 결정: 그룹 활동명이 "(G)I-DLE"에서 "I-DLE"로 바뀌어서, 원본에
+    # "(G)I-DLE"로 크롤링된 것도 최종 데이터셋엔 "I-DLE"로 통일해서 저장한다.
+    "idle": "I-DLE", "gidle": "I-DLE", "i-dle": "I-DLE",
     "girlsgeneration": "Girls' Generation", "snsd": "Girls' Generation",
     "straykids": "Stray Kids", "skz": "Stray Kids",
+    # NCT DREAM/NCT 127은 별도 그룹이 아니라 NCT 산하 유닛이라 상위 그룹(NCT)으로
+    # 통일해서 수집한다 (2026-08-24 팀 결정).
+    "nctdream": "NCT", "nct127": "NCT",
 }
 
 
@@ -496,15 +508,15 @@ def load_thisismykorea():
         if not place:
             continue
 
-        review_reasons = []
         # 진짜 장소명이면 보통 12단어, 마침표 1개를 안 넘음. 그보다 길거나 문장이
-        # 여러 개면 place/description 필드가 밀려서 설명문이 들어온 오염 행일
-        # 가능성이 높음 (실제로 이 소스에서 2건 발견됨) -> 카카오 쿼리로 보내지 않음.
+        # 여러 개면 place/description 필드가 밀려서 설명문이 들어온 오염 행임
+        # (ATEEZ 3건 확인, 2026-08-24 - desc 필드엔 "Address :" 라벨만 남고 진짜
+        # 장소명은 원본 어디에도 없어서 자동 복구 불가). 살릴 수 없으니 통째로 폐기.
         if len(place.split()) > 12 or place.count(".") >= 2:
-            review_reasons.append("place 필드가 설명문처럼 보임(필드 밀림 의심, 원본 데이터 확인 필요)")
-            place_en, place_ko = None, None
-        else:
-            place_en, place_ko = split_bilingual_name(place)
+            continue
+
+        review_reasons = []
+        place_en, place_ko = split_bilingual_name(place)
 
         addr = item.get("address")
         # 실제 주소라면 번지수(숫자)가 거의 항상 포함됨. 숫자 없이 8단어 넘는 긴 문자열은
@@ -569,40 +581,78 @@ def is_noise_title(name):
     return any(s.startswith(w) for w in NOISE_START_WORDS)
 
 
+def artist_mentioned_in_text(artist_raw, text):
+    """아티스트명이 place/description 원문에 실제로 등장하는지 확인(대소문자 무시).
+    stara_places.json을 직접 까보니 73건 중 31건(43%)에 "IVE" 태그가 붙어있는데,
+    뷰티숍/드라마 촬영지/일반 공연장 소개처럼 IVE와 무관한 항목에도 죄다 붙어있는
+    스크래핑 오염이 발견됨(2026-08-24 확인) - 본문에 이름이 실제로 언급된
+    아티스트만 신뢰하는 걸로 걸러냄. IVE 하나만의 문제가 아니라 이 소스의
+    artists 필드 전체를 못 믿는다는 뜻이라 일반 규칙으로 적용."""
+    pattern = r"(?<![A-Za-z0-9])" + re.escape(artist_raw) + r"(?![A-Za-z0-9])"
+    return re.search(pattern, text, re.IGNORECASE) is not None
+
+
+# stara_places.json 전용 - 노이즈 제목 필터/아티스트 언급 검증을 통과하고도 여전히
+# "특정 성지 하나"로 볼 수 없는 항목들을 사람이 직접 확인해서 제외 목록으로 확정함
+# (2026-08-24). 사유는 각 줄에 표기: 장소 여러 개를 한 행에 묶은 "블록", 목차성
+# 절 제목, 특정 시즌 이벤트 근거(이 정적 데이터셋의 기존 제외 기준에 해당).
+STARA_PLACES_DROP_TITLES = {
+    "kwangya@seoul & sm town coex (seoul forest / gangnam)",  # 장소 2곳 묶임
+    "cube café & cube studio (seongsu / gangnam)",  # 뒤에 나오는 단일 "Cube Cafe"와 중복 + 장소 묶임
+    "photocard & boba cafés (hongdae, sinchon)",  # 특정 업체가 아니라 여러 지역 카테고리
+    "understanding the korean wave (hallyu)",  # 주제 개괄문, 장소 아님
+    "official label stores",  # 여러 기획사 매장을 한 행에 묶음
+    "stadium / dome tour",  # 절 제목, 장소 아님
+    "national museum of korea — 2026 blackpink partnership",  # 2026-02 한정 특별전 - 시즌 이벤트라 기존 제외 기준(README "장소 포함/제외 기준")에 해당
+}
+
+
 def load_stara_places():
     path = os.path.join(RAW_DIR, "stara_places.json")
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
 
     rows = []
-    dropped = 0
+    dropped_noise = 0
+    dropped_no_artist = 0
     for item in data:
         raw_place = (item.get("place") or "").strip()
         if not raw_place:
             continue
         cleaned, subtitle = clean_listicle_title(raw_place)
         if is_noise_title(cleaned) or is_noise_title(raw_place):
-            dropped += 1
+            dropped_noise += 1
+            continue
+        # 제외 목록은 부제(em-dash 뒷부분)까지 포함한 원제목 기준으로 등록했으므로,
+        # clean_listicle_title()이 분리하기 전의 번호만 뗀 제목으로 대조해야 한다.
+        unsplit_title = re.sub(r"^\d+\.\s*", "", raw_place).strip().lower()
+        if unsplit_title in STARA_PLACES_DROP_TITLES:
+            dropped_noise += 1
             continue
 
-        artists = item.get("artists") or []
+        base_desc = (item.get("description") or "").strip()
+        text = f"{raw_place} {base_desc}"
+        artists = [a for a in (item.get("artists") or []) if artist_mentioned_in_text(a, text)]
+        if not artists:
+            # 태그가 아예 없었거나(장소 소개/구 가이드류), 있어도 본문에 근거가
+            # 없는 오태깅(위 IVE 사례)뿐 - 성지로 볼 근거가 없어 폐기.
+            dropped_no_artist += 1
+            continue
+
         place_en, place_ko = split_bilingual_name(cleaned)
 
         # 이 소스는 주소/지역 필드가 아예 없음 -> city는 항상 비어있음.
         # (URL이 seoultourism.org 계열이라 실제로는 대부분 서울이겠지만, 문서 단위로
-        # 확정된 정보가 아니라서 추측 대입하지 않고 사람 확인으로 넘김)
+        # 확정된 정보가 아니라서 추측 대입하지 않고 지오코딩/사람 확인으로 넘김)
         review_reasons = ["city 정보 없음(소스에 주소 필드 없음)"]
-        if not artists:
-            review_reasons.append("아티스트 매칭 없음(노이즈 가능성, 사람 확인 필요)")
 
-        base_desc = (item.get("description") or "").strip()
         relation = base_desc
         if subtitle:
             relation = (subtitle + (" - " + base_desc if base_desc else "")).strip()
 
-        for artist in (artists or [None]):
+        for artist in artists:
             rows.append({
-                "artist_name": canonical_artist(artist) if artist else None,
+                "artist_name": canonical_artist(artist),
                 "place_name_ko": place_ko, "place_name_en": place_en,
                 "relation_text_en": relation or None,
                 "image_url": item.get("image") or None,
@@ -612,7 +662,8 @@ def load_stara_places():
                 "_review_reason": "; ".join(review_reasons),
                 "_source": "stara_places.json",
             })
-    print(f"  stara_places.json: {len(data)}건 중 노이즈 {dropped}건 제외")
+    print(f"  stara_places.json: {len(data)}건 중 노이즈/블록 {dropped_noise}건, "
+          f"아티스트 근거 없음 {dropped_no_artist}건 제외")
     return rows
 
 
@@ -641,9 +692,16 @@ def load_manual_places():
 
             cat = item.get("category_hint")
             rows.append({
-                # 그룹 단위로 일관되게 (다른 소스들도 멤버 개별이 아니라 그룹명을
-                # artist_name으로 씀; 멤버 정보는 description_ko/en 안에 이미 있음)
+                # artist_name은 그룹 단위로 일관되게 유지(allowlist/GROUP_KO_NAMES가
+                # 그룹 기준이라서) - 멤버는 아래 _manual_member로 따로 전달.
                 "artist_name": canonical_artist(item.get("artist")),
+                "_manual_member": (item.get("member") or "").strip() or None,
+                # ↑ relation_text 문장에서 정규식으로 멤버를 추출하는
+                # resolve_artist_ids()의 기본 방식은 "OO's 인물"처럼 소유격이
+                # 인물명 앞에 와야 잡히는데, 이 소스는 "BTS's Jin"처럼 그룹명에
+                # 소유격이 붙고 멤버명이 뒤에 오는 문장이 많아서 정규식이 못 잡음
+                # (2026-08-24 인천 재검수 중 발견 - 원본에 이미 있는 명시적
+                # member 필드를 그동안 안 읽고 있었음). 있으면 이 값을 우선 사용.
                 "city_id": city_id, "city_name_ko": city_ko, "city_name_en": city_en,
                 "place_name_ko": place_ko, "place_name_en": None,
                 "address": item.get("address"),
@@ -678,6 +736,8 @@ def load_hometowns():
 
     import glob
     csv_candidates = glob.glob(os.path.join(BASE_DIR, "아이돌_출신지_*.csv"))
+    if not csv_candidates:
+        csv_candidates = glob.glob(os.path.join(BASE_DIR, "raw_data_정인지", "아이돌_출신지_*.csv"))
     if not csv_candidates:
         raise FileNotFoundError("아이돌_출신지_*.csv 파일을 찾을 수 없음")
     csv_path = csv_candidates[0]
@@ -834,8 +894,23 @@ def kakao_keyword_search(query, api_key):
 
 # 관광/방문 목적지가 될 수 없는 카테고리 - 이런 매칭은 이름만 비슷하고 실제로는
 # 전혀 다른 시설인 경우가 많음 (예: "Chinatown" 검색이 "차이나타운 공영주차장"에
-# 매칭된 사례, "Citizen Park" 검색이 근처 아파트 단지에 매칭된 사례 실제 확인됨)
-NOISE_CATEGORIES = ("주차장", "부동산", "아파트", "주거시설")
+# 매칭된 사례, "Citizen Park" 검색이 근처 아파트 단지에 매칭된 사례,
+# "UN Village"(백현 노래 제목이자 동네 이름) 검색이 "유엔빌리지치과의원"에
+# 매칭된 사례가 실제로 확인됨(2026-08-25) - K-pop 성지는 절대 이런 업종일 수
+# 없으니 무조건 제외. 사람이 매번 "이거 진짜 같은 곳 맞아?"를 눈으로 확인해야
+# 했던 이유 중 상당수가 사실 이 필터 하나로 걸러지는 기계적 오매칭이었음 -
+# 이 목록에 안 걸리는 나머지(예: "아차산"을 검색했는데 이름이 비슷한 실내
+# 클라이밍짐 지점에 매칭되는 경우처럼 카테고리 자체는 그럴듯한 케이스)는
+# 카테고리만으로 못 걸러서 여전히 "영문명으로 검색한 매칭" 리뷰가 필요함.
+NOISE_CATEGORIES = (
+    "주차장", "부동산", "공인중개사", "아파트", "주거시설", "오피스텔",
+    "병원", "의원", "치과", "한의원", "약국", "동물병원",
+    "학원", "교습소", "어린이집", "유치원",
+    "은행", "금융", "보험",
+    "장례식장", "묘지", "납골당",
+    "관공서", "주민센터", "구청", "시청", "경찰서", "소방서", "세무서", "법원", "검찰청",
+    "정비소", "세차장", "주유소",
+)
 
 
 def pick_best_match(docs, city_ko):
@@ -889,6 +964,9 @@ def geocode_and_fill_names(rows, api_key):
     cache = load_geocode_cache()
     n_queried = n_hit = n_cached = n_skipped = 0
 
+    # city_id 유무는 대상 조건에 없음 - city 미상 행(주소 필드 자체가 없는 소스 등)도
+    # 장소명만 있으면 대상에 포함시켜서, 아래에서 카카오 검색 결과 주소로 city를
+    # 역으로 채워볼 기회를 준다(2026-08-24, "city 미상 67건" 보강 시도 결정).
     targets = [
         r for r in rows
         if (r.get("place_name_ko") or r.get("place_name_en"))
@@ -1026,7 +1104,7 @@ GROUP_KO_NAMES = {
     "exo": "엑소", "bts": "방탄소년단", "mamamoo": "마마무", "redvelvet": "레드벨벳",
     "winner": "위너", "ikon": "아이콘", "seventeen": "세븐틴", "straykids": "스트레이 키즈",
     "twice": "트와이스", "astro": "아스트로", "nct": "엔시티", "ateez": "에이티즈",
-    "gidle": "(여자)아이들", "itzy": "있지", "txt": "투모로우바이투게더", "aespa": "에스파",
+    "idle": "(여자)아이들", "itzy": "있지", "txt": "투모로우바이투게더", "aespa": "에스파",
     "enhypen": "엔하이픈", "treasure": "트레저", "ive": "아이브", "lesserafim": "르세라핌",
     "newjeans": "뉴진스", "nmixx": "엔믹스", "babymonster": "베이비몬스터",
     "illit": "아일릿", "cortis": "코르티스", "blackpink": "블랙핑크",
@@ -1065,6 +1143,44 @@ def validate_source_url(raw):
     return "; ".join(dict.fromkeys(urls)) if urls else "PENDING"
 
 
+# 2026-08-25 정책 변경: 케이팝 팬덤 특성상 링크 하나 없이도 작은 단서(멤버가
+# 언급한 콘텐츠 한 조각)만으로 실제 촬영지/방문지를 특정해내는 경우가 많다.
+# source_url이 진짜 링크가 아니어도, relation_text 자체가 "누가 + 어떤
+# 콘텐츠에서" 나왔는지 구체적으로 밝히고 있으면(나중에 실제로 찾아볼 수 있는
+# 추적 가능한 인용이면) 출처 미상으로 보지 않는다. 다만 이 기준을 통과해도
+# status는 draft 그대로 유지 - "확인 가능한 링크"로 사람이 직접 검증해야
+# verified로 올라간다는 원칙은 안 바뀜(review 표시만 해제).
+# 판별 기준은 "인물 + 구체적 콘텐츠명"(날짜는 필수 아님) - "Jimin's father's
+# restaurant"처럼 근거가 될 콘텐츠 자체가 없는 맨주장은 여전히 불인정.
+# 이 목록/휴리스틱은 완벽하지 않으므로(새 콘텐츠 포맷이 계속 생김), 애매한
+# 케이스는 사람이 직접 판단하는 게 안전함.
+CREDIBLE_CONTENT_MARKERS = (
+    "vlog", "-log", "weverse", "instagram", "twitter", "x post", "youtube",
+    "music video", "episode", "cover", "livestream", "concert", "fancam",
+    "broadcast", "interview", "behind", "pop-up", "guide", "sev sev tour",
+    "diary", "telepathy", "code ep", "1n2d", "so so fun", "run bts",
+    "racha log", "skz code",
+)
+# 위 목록은 문장 아무 데나 있어도 됨(부분 문자열 검색). 아래는 그 자체로는
+# 너무 짧고 흔해서(다른 단어에 우연히 포함될 수 있어서 - "big"/"deep" 등)
+# 단어 경계로만 매칭한다. "Vernon, ... Vernon IG"처럼 문장 맨 끝에 오면
+# 뒤에 공백/쉼표가 없어서 예전엔 안 걸렸던 버그를 여기서 고침(2026-08-25,
+# 부산 조현화랑 항목 재검증 중 발견).
+CREDIBLE_CONTENT_WORD_MARKERS = ("ig", "mv", "ep")
+HEDGE_WORDS = ("reportedly", "not exact", "unconfirmed", "알려진", "추정")
+
+
+def has_credible_citation(relation_text):
+    if not relation_text:
+        return False
+    text = relation_text.lower()
+    if any(h in text for h in HEDGE_WORDS):
+        return False
+    if any(m in text for m in CREDIBLE_CONTENT_MARKERS):
+        return True
+    return any(re.search(r"\b" + re.escape(w) + r"\b", text) for w in CREDIBLE_CONTENT_WORD_MARKERS)
+
+
 def resolve_artist_ids(artist_rows, member_group_map):
     """이 장소를 공유하는 (아티스트, 관계텍스트) 행들을 보고, 특정 멤버 개인
     얘기면 "{그룹}-{멤버}"로 분리하고, 아니면 그룹 그대로 둠.
@@ -1081,13 +1197,21 @@ def resolve_artist_ids(artist_rows, member_group_map):
         if not group:
             continue
         group_key = _artist_key(canonical_artist(group))
-        text = " ".join(filter(None, [ar.get("relation_text_ko"), ar.get("relation_text_en")]))
-        mentioned = []
-        for name in extract_mentioned_names(text):
-            key = _artist_key(name)
-            g = member_group_map.get(key)
-            if g and _artist_key(g) == group_key and key != group_key:
-                mentioned.append(name)
+
+        # raw_data_정인지처럼 원본에 명시적 member 필드가 있으면 이걸 최우선으로
+        # 신뢰한다 - 정규식 추출보다 훨씬 정확함("BTS's Jin"처럼 그룹명에
+        # 소유격이 붙는 문장은 정규식으로 못 잡는데, 이런 소스가 실제로 있었음).
+        manual_member = ar.get("_manual_member")
+        if manual_member:
+            mentioned = [manual_member]
+        else:
+            text = " ".join(filter(None, [ar.get("relation_text_ko"), ar.get("relation_text_en")]))
+            mentioned = []
+            for name in extract_mentioned_names(text):
+                key = _artist_key(name)
+                g = member_group_map.get(key)
+                if g and _artist_key(g) == group_key and key != group_key:
+                    mentioned.append(name)
 
         if mentioned:
             for m in dict.fromkeys(mentioned):
@@ -1118,10 +1242,19 @@ def build_schema(place_rows, member_group_map):
     artist_registry = {}
     dropped_no_coords = []
     dropped_accommodation = []
+    dropped_no_city = []
 
     for (city_id, name_ko, name_en), group in by_place.items():
         if not city_id:
-            continue  # 도시 매핑 안 된 행은 좌표도 대개 없어서 애초에 스킵
+            # --geocode를 쓰면 geocode_and_fill_names()가 카카오 검색 결과 주소로
+            # city를 역으로 채우는 걸 이미 시도한 뒤임(2026-08-24부터 city 미상
+            # 행도 지오코딩 대상에 포함되도록 함) - 그래도 안 채워진 행만 여기로
+            # 옴. 그냥 버리지 않고 개수/목록을 남겨서 사람이 원본을 볼 수 있게 함.
+            dropped_no_city.append({
+                "place_name_ko": name_ko, "place_name_en": name_en,
+                "artists": sorted({g.get("artist_name") for g in group if g.get("artist_name")}),
+            })
+            continue
 
         lat = next((g.get("latitude") for g in group if g.get("latitude") is not None), None)
         lon = next((g.get("longitude") for g in group if g.get("longitude") is not None), None)
@@ -1163,6 +1296,12 @@ def build_schema(place_rows, member_group_map):
         relations_en = list(dict.fromkeys(g["relation_text_en"] for g in group if g.get("relation_text_en")))
         sources = list(dict.fromkeys(g["source_url"] for g in group if g.get("source_url")))
         source_url = validate_source_url("; ".join(sources))
+        # 실제 링크가 없어도 relation_text 자체가 추적 가능한 인용이면
+        # "출처 미상"으로 안 본다(2026-08-25 정책, has_credible_citation 참고).
+        if source_url == "PENDING":
+            combined_relation = " / ".join(relations_en) or " / ".join(relations_ko)
+            if has_credible_citation(combined_relation):
+                source_url = f"[콘텐츠 인용 - 링크 미확인] {combined_relation}"
 
         place_slug = slugify_hyphen(final_name_en or final_name_ko)
         place_id = f"{artist_ids[0]}-{cat_en}-{place_slug}" if artist_ids else f"unknown-{cat_en}-{place_slug}"
@@ -1179,6 +1318,15 @@ def build_schema(place_rows, member_group_map):
             review_notes.append("한글 relation_text 없음")
         if not relations_en:
             review_notes.append("영문 relation_text 없음")
+        # 지오코딩 단계(geocode_and_fill_names)가 붙여둔 사유(영문명으로 검색한
+        # 매칭이라 오탐 위험/카카오 매칭 자체 실패 등)를 여기서 매번 새로
+        # 만드느라 놓치고 있었음 - 좌표 정확도가 최우선 순위인 프로젝트에서
+        # 가장 위험한 신호(오탐 가능성)가 최종 review CSV에 하나도 안 뜨던
+        # 버그였음(2026-08-24 서울 검수 중 발견 - 356건 중 129건이 이 사유였음).
+        for g in group:
+            for frag in (g.get("_review_reason") or "").split("; "):
+                if frag and frag not in review_notes:
+                    review_notes.append(frag)
 
         places.append({
             "place_id": place_id,
@@ -1211,10 +1359,20 @@ def build_schema(place_rows, member_group_map):
         city_en = next((g.get("city_name_en") for g in group if g.get("city_name_en")), None)
         city_registry[city_id] = (city_ko, city_en)
 
-    return places, city_registry, artist_registry, dropped_no_coords, dropped_accommodation
+    return places, city_registry, artist_registry, dropped_no_coords, dropped_accommodation, dropped_no_city
 
 
-def save_schema(places, city_registry, artist_registry, label):
+def generated_filename(kind, ext, city_filter, owner_filter):
+    """산출물 파일명 규칙(2026-08-25 확정) - "generated_{종류}_{도시}_{작성자}.{확장자}"
+    형태로, 종류가 맨 앞·도시/작성자는 뒤쪽·구분자는 전부 언더바.
+    도시/작성자가 없으면(--city=/--owner= 생략) 그 부분은 그냥 빠진다.
+    예: generated_places_seoul_정인지.json, generated_places.json(둘 다 생략 시)."""
+    suffix_parts = [p for p in (city_filter, owner_filter) if p]
+    suffix = ("_" + "_".join(suffix_parts)) if suffix_parts else ""
+    return f"generated_{kind}{suffix}.{ext}"
+
+
+def save_schema(places, city_registry, artist_registry, city_filter, owner_filter):
     os.makedirs(OUT_DIR, exist_ok=True)
 
     cities = []
@@ -1231,15 +1389,20 @@ def save_schema(places, city_registry, artist_registry, label):
 
     places_out = [{k: v for k, v in p.items() if not k.startswith("_")} for p in places]
 
-    with open(os.path.join(OUT_DIR, f"{label}cities.json"), "w", encoding="utf-8") as f:
+    cities_path = os.path.join(OUT_DIR, generated_filename("cities", "json", city_filter, owner_filter))
+    artists_path = os.path.join(OUT_DIR, generated_filename("artists", "json", city_filter, owner_filter))
+    places_path = os.path.join(OUT_DIR, generated_filename("places", "json", city_filter, owner_filter))
+    review_path = os.path.join(OUT_DIR, generated_filename("places_needs_review", "csv", city_filter, owner_filter))
+
+    with open(cities_path, "w", encoding="utf-8") as f:
         json.dump(cities, f, ensure_ascii=False, indent=2)
-    with open(os.path.join(OUT_DIR, f"{label}artists.json"), "w", encoding="utf-8") as f:
+    with open(artists_path, "w", encoding="utf-8") as f:
         json.dump(artists, f, ensure_ascii=False, indent=2)
-    with open(os.path.join(OUT_DIR, f"{label}places.json"), "w", encoding="utf-8") as f:
+    with open(places_path, "w", encoding="utf-8") as f:
         json.dump(places_out, f, ensure_ascii=False, indent=2)
 
     review_places = [p for p in places if p.get("_review_notes")]
-    with open(os.path.join(OUT_DIR, f"{label}places_needs_review.csv"), "w", newline="", encoding="utf-8-sig") as f:
+    with open(review_path, "w", newline="", encoding="utf-8-sig") as f:
         writer = csv.DictWriter(f, fieldnames=["place_id", "city_id", "artist_ids", "place_name_ko", "_review_notes"])
         writer.writeheader()
         for p in review_places:
@@ -1252,6 +1415,8 @@ def save_schema(places, city_registry, artist_registry, label):
     return {
         "cities": len(cities), "artists": len(artists), "places": len(places),
         "needs_ko_name": needs_ko_name, "needs_review": len(review_places),
+        "cities_path": cities_path, "artists_path": artists_path,
+        "places_path": places_path, "review_path": review_path,
     }
 
 
@@ -1304,6 +1469,17 @@ def main():
             print("   [건너뜀] KAKAO_REST_API_KEY가 .env에 없음")
         else:
             geocode_and_fill_names(place_rows, api_key)
+            # merge_places()(5단계)는 city_id가 아직 안 채워진 상태에서 돌기
+            # 때문에, 주소 필드 자체가 없는 소스(stara_places.json 등) 유래
+            # 행은 다른 소스에 이미 있는 같은 실제 장소와 병합되지 못하고
+            # 남아있다가 여기서 각자 다른 지오코딩 결과를 받는 경우가 있었음
+            # (2026-08-24 서울 검수 중 발견 - "서울숲"이 진짜 서울숲과 5.6km
+            # 떨어진 "홍릉시험림"으로 잘못 매칭된 채 별개 행으로 남아있었음).
+            # city_id가 다 채워진 지금 다시 한 번 병합해서 이런 케이스를 합친다.
+            print("6b) 지오코딩으로 city 채워진 뒤 중복 병합 재시도...")
+            before_n = len(place_rows)
+            place_rows = merge_places(place_rows)
+            print(f"   {before_n}행 -> {len(place_rows)}행")
     else:
         print("6) 지오코딩 건너뜀 (실행하려면: python build_dataset.py --geocode)")
 
@@ -1319,24 +1495,34 @@ def main():
         print(f"   --city={city_filter} 필터 적용: {len(place_rows)}행")
 
     print("7) 최종 조립 - cities/artists/places.json...")
-    places, city_registry, artist_registry, dropped_no_coords, dropped_accommodation = build_schema(place_rows, member_group_map)
+    places, city_registry, artist_registry, dropped_no_coords, dropped_accommodation, dropped_no_city = build_schema(place_rows, member_group_map)
     # 자동 생성 결과는 항상 .generated.json으로 따로 저장하고, 사람이 손으로
     # 검수/보완한 cities.json/artists.json/places.json은 절대 자동으로 덮어쓰지
     # 않는다 - 한 번 이 스크립트가 빈 결과로 정본 파일을 덮어써서 복구한 적이
     # 있어서(지오코딩 없이 돌리면 좌표가 없어 전부 걸러짐), 재발 방지.
     # 검수 후 정본으로 승격하려면 사람이 직접 파일을 바꿔치기할 것.
-    prefix_parts = [p for p in (city_filter, owner_filter) if p]
-    prefix = "".join(f"{p}." for p in prefix_parts)
-    label = f"{prefix}generated."
-    stats = save_schema(places, city_registry, artist_registry, label)
+    stats = save_schema(places, city_registry, artist_registry, city_filter, owner_filter)
     print(f"   cities: {stats['cities']} / artists: {stats['artists']} / places: {stats['places']}")
     print(f"   (자동 생성본 - 정본 cities.json/artists.json/places.json은 건드리지 않음. "
           f"검수 후 필요하면 사람이 직접 교체할 것)")
     print(f"   좌표 없어서 제외된 곳: {len(dropped_no_coords)}건")
     print(f"   숙소류라서 제외된 곳: {len(dropped_accommodation)}건")
-    print(f"   review 필요: {stats['needs_review']}건 -> preprocessed/{label}places_needs_review.csv")
+    print(f"   지오코딩 후에도 city 미상이라 제외된 곳: {len(dropped_no_city)}건")
+    if dropped_no_city:
+        dropped_no_city_path = os.path.join(
+            OUT_DIR, generated_filename("dropped_no_city", "csv", city_filter, owner_filter))
+        with open(dropped_no_city_path, "w", newline="", encoding="utf-8-sig") as f:
+            writer = csv.DictWriter(f, fieldnames=["place_name_ko", "place_name_en", "artists"])
+            writer.writeheader()
+            for d in dropped_no_city:
+                writer.writerow({
+                    "place_name_ko": d["place_name_ko"], "place_name_en": d["place_name_en"],
+                    "artists": ";".join(d["artists"]),
+                })
+        print(f"   -> {dropped_no_city_path} 에 목록 저장 (원본 재확인용)")
+    print(f"   review 필요: {stats['needs_review']}건 -> {stats['review_path']}")
     print(f"   한글 아티스트명 미확인(임시로 영문명 사용): {len(stats['needs_ko_name'])}종 {stats['needs_ko_name']}")
-    print(f"-> preprocessed/{label}cities.json, {label}artists.json, {label}places.json")
+    print(f"-> {stats['cities_path']}, {stats['artists_path']}, {stats['places_path']}")
 
 
 if __name__ == "__main__":
