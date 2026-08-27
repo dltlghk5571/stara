@@ -19,6 +19,15 @@ Key routing rules:
 - Resume context → invoke /context-restore
 - Author a backlog-ready spec/issue → invoke /spec
 
+## Place data schema — do not change
+
+The `Place` interface (`src/types/index.ts`) and its data in `src/data/places.ts`
+are the target format for real K-pop pilgrimage location data currently being
+collected by hand. Do not rename, remove, or restructure `Place` fields, or
+change the `id` slug convention (`{artistSlug}-{context}-{placeSlug}`), without
+explicit user approval — an in-progress external data collection effort is
+matching against this exact shape.
+
 ## GBrain Configuration (configured by /setup-gbrain)
 - Mode: local-stdio
 - Engine: pglite

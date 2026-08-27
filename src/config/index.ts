@@ -28,3 +28,6 @@ export const MIN_TOUCH_TARGET_PX = 44;
 export const TOUR_SEARCH_RADIUS_METERS = Number(
   process.env.TOUR_SEARCH_RADIUS_METERS ?? 2000
 );
+
+/** 미션 인증 시 사용자 위치가 장소로부터 이 반경(m) 안이어야 통과로 본다. */
+export const GPS_MISSION_RADIUS_METERS = 200;

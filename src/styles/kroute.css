@@ -1,0 +1,298 @@
+/*
+ * kroute.html(새 와이어프레임)의 <style> 블록에서 컴포넌트별 inline style로 옮길 수 없는
+ * 부분만 그대로 가져온 것 — 전역 리셋, 키프레임, 애니메이션 유틸 클래스, 스크롤바.
+ * 색상/그림자/보더 등 컴포넌트 스타일 값은 src/lib/kroute-tokens.ts + 각 컴포넌트의
+ * inline style로 옮겨졌다(원본이 애초에 인라인 스타일 기반이라 그 구조를 그대로 따름).
+ */
+button.kr-reset,
+input.kr-reset {
+  font-family: "Nunito", sans-serif;
+}
+button.kr-reset {
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 2px;
+}
+
+@keyframes kr-fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes kr-fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes kr-stampIn {
+  0% {
+    transform: scale(3.5) rotate(-20deg);
+    opacity: 0;
+  }
+  55% {
+    transform: scale(0.88) rotate(5deg);
+    opacity: 1;
+  }
+  75% {
+    transform: scale(1.06) rotate(-2deg);
+  }
+  100% {
+    transform: scale(1) rotate(0);
+  }
+}
+@keyframes kr-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes kr-spin {
+  from {
+    transform: rotate(0);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes kr-slideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes kr-confetti {
+  0% {
+    transform: translateY(0) rotate(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(110vh) rotate(720deg) scale(0.4);
+    opacity: 0;
+  }
+}
+@keyframes kr-bounceIn {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.08);
+  }
+  70% {
+    transform: scale(0.94);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.kr-aFadeUp {
+  animation: kr-fadeUp 0.5s ease forwards;
+}
+.kr-aFadeIn {
+  animation: kr-fadeIn 0.4s ease forwards;
+}
+.kr-aStampIn {
+  animation: kr-stampIn 0.7s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+}
+.kr-aFloat {
+  animation: kr-float 3s ease-in-out infinite;
+}
+.kr-aSpin {
+  animation: kr-spin 1.5s linear infinite;
+}
+.kr-aSlideUp {
+  animation: kr-slideUp 0.4s cubic-bezier(0.32, 0.72, 0, 1) forwards;
+}
+.kr-aBounceIn {
+  animation: kr-bounceIn 0.6s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+.kr-aD1 {
+  animation-delay: 0.1s;
+}
+.kr-aD2 {
+  animation-delay: 0.2s;
+}
+.kr-aD3 {
+  animation-delay: 0.3s;
+}
+.kr-aD4 {
+  animation-delay: 0.4s;
+}
+.kr-aD5 {
+  animation-delay: 0.5s;
+}
+.kr-hidden0 {
+  opacity: 0;
+}
+.kr-scrollY {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── 온보딩: 아티스트 그리드 (기존 .artist-grid 레이아웃값 그대로, 색만 kroute 톤) ── */
+.kr-artistGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px 12px;
+  overflow-y: auto;
+  flex: 1;
+  padding-bottom: 8px;
+}
+
+/* ── 온보딩: 지역 지도 (기존 .kr-map/.kr-region r1~r8 좌표 그대로 이식) ── */
+.kr-regionMap {
+  position: relative;
+  flex: 1;
+  min-height: 420px;
+  border-radius: 20px;
+  border: 2.5px solid #111111;
+  background: #d6eeff;
+  overflow: hidden;
+}
+.kr-regionSlot {
+  position: absolute;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border: 2.5px solid #111111;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 #111111;
+  transition: box-shadow 0.15s;
+}
+.kr-regionSlot:active {
+  transform: scale(0.96);
+}
+.kr-regionSlot.r1 { width: 76px; height: 56px; left: 26%; top: 6%; }
+.kr-regionSlot.r2 { width: 88px; height: 78px; left: 52%; top: 2%; }
+.kr-regionSlot.r3 { width: 80px; height: 60px; left: 22%; top: 30%; }
+.kr-regionSlot.r4 { width: 78px; height: 96px; left: 56%; top: 32%; }
+.kr-regionSlot.r5 { width: 74px; height: 70px; left: 12%; top: 52%; }
+.kr-regionSlot.r6 { width: 82px; height: 78px; left: 50%; top: 58%; }
+.kr-regionSlot.r7 { width: 60px; height: 44px; left: 64%; top: 76%; }
+.kr-regionSlot.r8 { width: 64px; height: 40px; left: 20%; top: 84%; }
+
+/*
+ * ── prototype.css 색상 변수를 kroute 팔레트로 전역 교체 ──
+ * /edit, /collection, /complete 등 아직 개별 리스킨 안 한 화면들이 이 클래스들을
+ * 그대로 쓰고 있어서, 변수/공통 클래스만 덮어써도 전체 톤이 kroute로 맞춰진다.
+ * prototype.css 제거(정리 단계) 전까지의 다리 역할 — 그래서 !important로 명확히 이긴다.
+ */
+:root {
+  --primary: #ffe566;
+  --secondary: #00d4d4;
+  --bg: #faf6ef;
+  --mint: #aaff00;
+  --coral: #ff3399;
+  --navy: #111111;
+}
+
+.btn {
+  font-family: "Outfit", sans-serif !important;
+  font-weight: 900 !important;
+  border-radius: 50px !important;
+  border: 2.5px solid #111111 !important;
+}
+.btn-coral,
+.btn-primary,
+.btn-outline,
+.btn-secondary {
+  box-shadow: 3px 3px 0 #111111 !important;
+}
+
+.search-row,
+.manual-map,
+.loc-card,
+.candidate-card,
+.schedule-footer,
+.place-sheet-card,
+.confirm-add-card,
+.filter-chip {
+  border: 2.5px solid #111111 !important;
+}
+/* .tl-view(flex-column)의 flex-shrink 기본값 때문에 다른 flex:1 형제(릴스 패널)에
+   밀려 지도가 찌그러지는 기존 버그 — 명시적으로 줄어들지 않게 고정한다. */
+.manual-map,
+.search-row {
+  flex-shrink: 0;
+}
+.candidate-card {
+  box-shadow: 4px 4px 0 #111111 !important;
+}
+.loc-card {
+  box-shadow: 3px 3px 0 #111111 !important;
+}
+.filter-chip,
+.candidate-card h3,
+.candidate-card .added-min,
+.locations-title,
+.candidate-progress b {
+  font-family: "Outfit", sans-serif !important;
+}
+.candidate-card h3,
+.locations-title {
+  font-weight: 900 !important;
+}
+.flow-h1 {
+  font-family: "Outfit", sans-serif !important;
+  font-weight: 900 !important;
+}
+.flow-sub {
+  font-family: "Nunito", sans-serif !important;
+}
+.diary-preview-card {
+  border: 2.5px solid #111111 !important;
+  box-shadow: 4px 4px 0 #111111 !important;
+}
+.new-badge {
+  border: 2px solid #111111 !important;
+}
+
+/* ── 루트 미리보기: 경유지 연결선 ── */
+.kr-pathNode {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 6px;
+  position: relative;
+}
+.kr-pathNode:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  left: 19px;
+  top: 42px;
+  width: 2px;
+  height: 26px;
+  background: #111111;
+  opacity: 0.25;
+}

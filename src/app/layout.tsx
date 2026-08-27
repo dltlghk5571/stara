@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import "@/styles/prototype.css";
+// kroute.html(새 와이어프레임) 리스킨용 전역 스타일 — 이관이 끝나면 위 prototype.css를 뺀다.
+import "@/styles/kroute.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +39,7 @@ export default function RootLayout({
             next/font/google(스코프드 이름 생성)이 아니라 원본과 같은 방식으로 로드해야 매칭된다. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Caveat:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Outfit:wght@400;600;700;800;900&family=Nunito:wght@400;500;600;700;800&display=swap"
           rel="stylesheet"
         />
       </head>

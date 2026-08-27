@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Region } from "@/data/regions";
 import type { Place } from "@/types";
+import { BackButton, KButton, KCard, Pill } from "@/components/ui/kroute";
+import { BLACK, BORDER, CREAM, LBLUE, LIME, PALGREEN, WHITE } from "@/lib/kroute-tokens";
 
 interface RepresentativeArtist {
   nameEn: string;
@@ -45,76 +47,101 @@ export default function RegionDetailClient({ region, representativeArtist, artis
   }
 
   return (
-    <div id="tv-province" className="tl-view">
-      <div className="province-hero">
-        <div className="province-back" onClick={() => router.push("/onboarding/region")}>
-          ←
+    <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
+      <div style={{ height: 210, position: "relative", flexShrink: 0, overflow: "hidden", background: "linear-gradient(135deg,#FF3399,#FF6DBE)" }}>
+        <div style={{ position: "absolute", top: 16, left: 16 }}>
+          <BackButton onClick={() => router.push("/onboarding/region")} />
         </div>
-        <div className="province-kicker">
-          {representativeArtist ? "Representative Artist" : "Now Curating"}
+        <div style={{ position: "absolute", bottom: 14, left: 16 }}>
+          <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 11, letterSpacing: 1, color: "#FFE9F5", display: "block", marginBottom: 4 }}>
+            {representativeArtist ? "REPRESENTATIVE ARTIST" : "NOW CURATING"}
+          </span>
+          <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, color: WHITE, textShadow: "2px 2px 0 rgba(0,0,0,.2)" }}>
+            {region.nameEn}
+          </h2>
         </div>
-        <div className="province-title">{region.nameEn}</div>
       </div>
 
-      <div className="province-body">
-        {representativeArtist ? (
-          <div className="rep-artist-card">
-            <div className="artist-avatar" style={{ background: "var(--coral)" }}>
-              {representativeArtist.initials}
-            </div>
-            <div className="rep-artist-meta">
-              <b>{representativeArtist.nameEn}</b>
-              <span>{representativeArtist.spotCount} filming locations in this region</span>
-            </div>
+      <div className="kr-scrollY" style={{ flex: 1, padding: "16px 24px" }}>
+        <KCard
+          style={{ padding: 14, background: representativeArtist ? LBLUE : "#F0F0F0", marginBottom: 14, display: "flex", gap: 10, alignItems: "center" }}
+        >
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              background: WHITE,
+              border: BORDER,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontFamily: "Outfit",
+              fontWeight: 900,
+              fontSize: 15,
+              flexShrink: 0,
+            }}
+          >
+            {representativeArtist ? representativeArtist.initials : "🔍"}
           </div>
-        ) : (
-          <div className="rep-artist-card">
-            <div className="artist-avatar" style={{ background: "var(--gray)" }}>
-              🔍
-            </div>
-            <div className="rep-artist-meta">
-              <b>Now Curating</b>
-              <span>{highlights === null ? "불러오는 중…" : "TourAPI 인기 스팟으로 미리보기"}</span>
-            </div>
+          <div>
+            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13 }}>
+              {representativeArtist ? representativeArtist.nameEn : "Now Curating"}
+            </p>
+            <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#555" }}>
+              {representativeArtist
+                ? `${representativeArtist.spotCount} filming locations`
+                : highlights === null
+                  ? "불러오는 중…"
+                  : "TourAPI 인기 스팟으로 미리보기"}
+            </p>
           </div>
-        )}
+        </KCard>
 
-        <div className="province-desc">{region.descriptionKo}</div>
+        <p style={{ fontFamily: "Nunito", fontSize: 14, color: "#666", marginBottom: 14, lineHeight: 1.6 }}>
+          {region.descriptionKo}
+        </p>
 
-        <div className="province-tags">
-          {representativeArtist && (
-            <div className="province-tag">🎬 {representativeArtist.spotCount} spots</div>
-          )}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+          {representativeArtist && <Pill bg={PALGREEN}>🎬 {representativeArtist.spotCount} spots</Pill>}
           {!representativeArtist &&
             highlights?.map((p) => (
-              <div key={p.id} className="province-tag">
+              <Pill key={p.id} bg={WHITE}>
                 📍 {p.nameKo}
-              </div>
+              </Pill>
             ))}
         </div>
 
-        <button className="btn btn-coral" onClick={() => setSheetOpen(true)}>
-          Select this region
-        </button>
+        <KButton onClick={() => setSheetOpen(true)}>SELECT THIS REGION ✦</KButton>
       </div>
 
-      <div className={`sheet-overlay${sheetOpen ? " open" : ""}`} onClick={() => setSheetOpen(false)}>
-        <div className="sheet sheet-center" onClick={(e) => e.stopPropagation()}>
-          <div className="handle"></div>
-          <div className="sheet-q">
-            Select <span>{region.nameEn}</span>?
-          </div>
-          <div className="sheet-sub">선택한 지역을 기준으로 루트를 만들어드려요.</div>
-          <div className="sheet-actions">
-            <button className="btn btn-outline" onClick={() => setSheetOpen(false)}>
-              Cancel
-            </button>
-            <button className="btn btn-coral" onClick={handleConfirm}>
-              Complete
-            </button>
-          </div>
+      {sheetOpen && (
+        <div
+          onClick={() => setSheetOpen(false)}
+          style={{ position: "fixed", inset: 0, zIndex: 150, background: "rgba(0,0,0,.65)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}
+        >
+          <KCard
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            style={{ width: "100%", maxWidth: 360, padding: 28, textAlign: "center" }}
+          >
+            <span style={{ fontSize: 48, display: "block", marginBottom: 16 }}>🗺️</span>
+            <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 22, marginBottom: 8 }}>
+              Select {region.nameEn}?
+            </h2>
+            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#888", marginBottom: 24 }}>
+              선택한 지역을 기준으로 루트를 만들어드려요.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              <KButton bg={LIME} color={BLACK} onClick={handleConfirm}>
+                Complete
+              </KButton>
+              <KButton outline onClick={() => setSheetOpen(false)}>
+                Cancel
+              </KButton>
+            </div>
+          </KCard>
         </div>
-      </div>
+      )}
     </div>
   );
 }

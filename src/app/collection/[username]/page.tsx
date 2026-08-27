@@ -39,9 +39,11 @@ export default async function CollectionPage({
 
   if (!user) {
     return (
-      <div className="flex min-h-screen flex-col">
+      <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", background: "#FAF6EF" }}>
         <TopBar title="컬렉션북" backHref="/" />
-        <p className="p-6 text-center text-sm text-slate-500">존재하지 않는 컬렉션북이에요</p>
+        <p style={{ padding: 24, textAlign: "center", fontFamily: "Nunito", fontSize: 14, color: "#888" }}>
+          존재하지 않는 컬렉션북이에요
+        </p>
       </div>
     );
   }
@@ -53,9 +55,9 @@ export default async function CollectionPage({
     .orderBy(desc(questPhotos.completedAt));
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", background: "#FAF6EF" }}>
       <TopBar title={`${user.displayName}의 컬렉션북`} backHref="/" />
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col gap-4 px-5 py-6">
+      <main style={{ margin: "0 auto", display: "flex", width: "100%", maxWidth: 400, flex: 1, flexDirection: "column", gap: 16, padding: "20px" }}>
         <CollectionShare username={user.username} />
         <CollectionGallery photos={photos} />
       </main>

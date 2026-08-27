@@ -37,7 +37,7 @@ function pinIconUrl(pin: MapPin): string {
     </svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   }
-  const fill = pin.status === "next" ? "#ff8f7a" : pin.status === "done" ? "#8ee7c8" : pin.color;
+  const fill = pin.status === "next" ? "#FF3399" : pin.status === "done" ? "#AAFF00" : pin.color;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
     <path d="M15 1 C7 1 1 7 1 15 C1 24 15 29 15 29 C15 29 29 24 29 15 C29 7 23 1 15 1 Z" fill="${fill}" stroke="white" stroke-width="2"/>
     <text x="15" y="19" font-size="12" font-weight="700" font-family="sans-serif" fill="white" text-anchor="middle">${label}</text>
@@ -47,7 +47,7 @@ function pinIconUrl(pin: MapPin): string {
 
 const MY_LOCATION_ICON = `data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-    <circle cx="10" cy="10" r="8" fill="#2563eb" stroke="white" stroke-width="2"/>
+    <circle cx="10" cy="10" r="8" fill="#00D4D4" stroke="white" stroke-width="2"/>
   </svg>`
 )}`;
 
@@ -127,7 +127,7 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
       routeGeometry && routeGeometry.length > 1 ? routeGeometry : pins.map((p) => [p.lat, p.lng]);
     polylineRef.current = new window.Tmapv2.Polyline({
       path: points.map(([lat, lng]) => new window.Tmapv2!.LatLng(lat, lng)),
-      strokeColor: "#7c5cfc",
+      strokeColor: "#FF3399",
       strokeWeight: 3,
       map: mapRef.current,
     });
@@ -194,12 +194,16 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
         onClick={handleLocate}
         disabled={locating}
         aria-label="내 위치 표시"
-        className="absolute bottom-3 right-3 z-[1000] flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-700 shadow-md disabled:opacity-60 dark:bg-slate-800 dark:text-slate-100"
+        className="absolute bottom-3 right-3 z-[1000] flex h-11 w-11 items-center justify-center rounded-full bg-white text-black disabled:opacity-60"
+        style={{ border: "2.5px solid #111111", boxShadow: "3px 3px 0 #111111" }}
       >
         <LocateFixed size={20} className={locating ? "animate-pulse" : undefined} />
       </button>
       {locError && (
-        <div className="absolute bottom-16 right-3 z-[1000] max-w-[200px] rounded-lg bg-slate-900/90 px-3 py-2 text-xs text-white">
+        <div
+          className="absolute bottom-16 right-3 z-[1000] max-w-[200px] rounded-lg bg-black px-3 py-2 text-xs text-white"
+          style={{ border: "2px solid #111111" }}
+        >
           {locError}
         </div>
       )}

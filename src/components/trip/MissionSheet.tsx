@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { upload } from "@vercel/blob/client";
 import { useTripStore } from "@/store/tripStore";
 import { getQuestsForPlace } from "@/data/quests";
+import { haversineKm } from "@/lib/distance";
+import { GPS_MISSION_RADIUS_METERS } from "@/config";
+import { KButton, KCard, Pill } from "@/components/ui/kroute";
+import { LIME, PALGREEN, PINK, YELLOW } from "@/lib/kroute-tokens";
 import type { DiaryPhoto } from "@/components/trip/TripShellClient";
 import type { Place } from "@/types";
 
@@ -14,10 +18,15 @@ interface Props {
   onComplete: (photo: DiaryPhoto) => void;
 }
 
+type GpsStatus = "checking" | "ok" | "far" | "unavailable";
+
 /**
- * 미션 시트 — 사진 첨부가 필수다. 제출하면 업로드 → quest_photos 저장 →
- * 필수 퀘스트 완료 처리 → 스탬프 확정까지 한 번에 처리한다(기존엔 사진 업로드와
- * 퀘스트 체크가 서로 무관했음 — 이 컴포넌트가 그 둘을 하나로 묶는다).
+ * 미션 시트 — 사진 첨부 + 위치 확인이 필수다. 제출하면 업로드 → quest_photos 저장 →
+ * 필수 퀘스트 완료 처리 → 스탬프 확정까지 한 번에 처리한다.
+ *
+ * 사진 자체(내용)는 아직 검증하지 않고 항상 통과시킨다 — 대신 GPS로 "이 장소 근처에
+ * 실제로 있었는지"만 확인한다. 위치를 못 가져오면(권한거부/미지원/타임아웃) 사용자가
+ * 영구히 막히지 않도록 검증을 건너뛰고 통과시킨다.
  */
 export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const activeTripId = useTripStore((s) => s.activeTripId);
@@ -32,7 +41,39 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const [status, setStatus] = useState<"idle" | "uploading" | "error" | "success">("idle");
   const [savedPhoto, setSavedPhoto] = useState<DiaryPhoto | null>(null);
 
+  const [gps, setGps] = useState<GpsStatus>(() =>
+    typeof navigator !== "undefined" && navigator.geolocation ? "checking" : "unavailable"
+  );
+  const [gpsDistanceM, setGpsDistanceM] = useState<number | null>(null);
+
   const quest = getQuestsForPlace(place)[0];
+
+  function fetchLocation() {
+    if (!navigator.geolocation) return; // gps는 이미 "unavailable"로 초기화됨
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const km = haversineKm(
+          { latitude: pos.coords.latitude, longitude: pos.coords.longitude },
+          { latitude: place.latitude, longitude: place.longitude }
+        );
+        const meters = Math.round(km * 1000);
+        setGpsDistanceM(meters);
+        setGps(meters <= GPS_MISSION_RADIUS_METERS ? "ok" : "far");
+      },
+      () => setGps("unavailable"),
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  }
+
+  function retryLocation() {
+    setGps("checking");
+    fetchLocation();
+  }
+
+  useEffect(() => {
+    fetchLocation();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [place.id]);
 
   async function handleFile(rawFile: File) {
     const isHeic =
@@ -103,74 +144,234 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
 
   if (status === "success") {
     return (
-      <div className="modal-overlay open">
-        <div className="modal-card">
-          <div className="modal-emoji">🎉</div>
-          <div className="modal-title">Mission Complete!</div>
-          <div className="modal-sub">인증샷이 확인됐어요.</div>
-          <div className="modal-stamp-preview">🏅</div>
-          <button className="btn btn-coral" onClick={() => savedPhoto && onComplete(savedPhoto)}>
-            Receive Stamp →
-          </button>
-        </div>
+      <div
+        style={{
+          position: "fixed",
+          inset: 0,
+          zIndex: 60,
+          background: "rgba(0,0,0,.72)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 24,
+        }}
+      >
+        <KCard className="kr-aBounceIn" style={{ width: "100%", maxWidth: 320, padding: 28, textAlign: "center" }}>
+          <div
+            style={{
+              width: 80,
+              height: 80,
+              borderRadius: "50%",
+              background: YELLOW,
+              border: "2.5px solid #111111",
+              boxShadow: "4px 4px 0 #111111",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 40,
+              margin: "0 auto 16px",
+            }}
+          >
+            ⭐
+          </div>
+          <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 22, color: PINK, marginBottom: 4 }}>
+            CONGRATULATIONS!
+          </h2>
+          <p style={{ fontFamily: "Caveat", fontSize: 20, fontStyle: "italic", color: "#555", marginBottom: 16 }}>
+            Mission Complete!
+          </p>
+          <div
+            className="kr-aStampIn"
+            style={{
+              width: 72,
+              height: 72,
+              borderRadius: 16,
+              border: "2.5px solid #111111",
+              background: PALGREEN,
+              boxShadow: "4px 4px 0 #111111",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: 36,
+              margin: "8px auto 20px",
+            }}
+          >
+            🏅
+          </div>
+          <KButton onClick={() => savedPhoto && onComplete(savedPhoto)}>Receive Stamp →</KButton>
+        </KCard>
       </div>
     );
   }
 
-  return (
-    <div className="sheet-overlay open" onClick={onClose}>
-      <div className="sheet" onClick={(e) => e.stopPropagation()}>
-        <div className="handle"></div>
-        <div className="sheet-q" style={{ textAlign: "left", fontSize: "18px" }}>
-          {quest?.titleKo ?? place.nameKo}
-        </div>
-        <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "10px", color: "var(--coral)", fontWeight: 700, marginTop: "2px" }}>
-          📍 {place.nameKo}
-        </div>
-        <div style={{ fontSize: "12.5px", color: "var(--gray)", lineHeight: 1.55, margin: "12px 0 18px" }}>
-          {quest?.descriptionKo}
-        </div>
+  const canSubmit = !!file && status !== "uploading" && gps !== "far";
 
-        <label className={`photo-dropzone${previewUrl ? " captured" : ""}`}>
-          {previewUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={previewUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-          ) : (
-            <>
-              <div className="ic">📷</div>
-              <div className="t">Tap to add a photo</div>
-            </>
+  return (
+    <div
+      style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,.65)", display: "flex", flexDirection: "column" }}
+      onClick={onClose}
+    >
+      <div style={{ flex: 1 }} />
+      <div
+        className="kr-aSlideUp"
+        style={{ borderRadius: "24px 24px 0 0", border: "2.5px solid #111111", borderBottom: "none", background: "#fff", maxHeight: "85%" }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ display: "flex", justifyContent: "center", padding: "12px 0 8px" }}>
+          <div style={{ width: 40, height: 4, borderRadius: 50, background: "#ddd" }} />
+        </div>
+        <div className="kr-scrollY" style={{ maxHeight: 580, padding: "0 24px 32px" }}>
+          <div style={{ marginBottom: 14, display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <Pill bg={YELLOW}>ACTIVE MISSION 🎯</Pill>
+            {gps === "checking" && <Pill bg="#eee" color="#777">📍 위치 확인 중…</Pill>}
+            {gps === "ok" && <Pill bg={PALGREEN}>📍 위치 확인됨</Pill>}
+            {gps === "far" && <Pill bg="#FFD6D6">📍 {gpsDistanceM}m 떨어짐</Pill>}
+            {gps === "unavailable" && <Pill bg="#eee" color="#777">📍 위치 확인 생략</Pill>}
+          </div>
+
+          <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 14 }}>
+            <div
+              style={{
+                width: 56,
+                height: 56,
+                borderRadius: 16,
+                border: "2.5px solid #111111",
+                background: PALGREEN,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 28,
+                flexShrink: 0,
+                boxShadow: "3px 3px 0 #111111",
+              }}
+            >
+              🎯
+            </div>
+            <div style={{ flex: 1 }}>
+              <h3 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 18, marginBottom: 2 }}>
+                {quest?.titleKo ?? place.nameKo}
+              </h3>
+              <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#888" }}>📍 {place.nameKo}</p>
+            </div>
+            <button
+              type="button"
+              className="kr-reset"
+              onClick={onClose}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: 8,
+                border: "2.5px solid #111111",
+                background: "#f5f5f5",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 14,
+              }}
+            >
+              ✕
+            </button>
+          </div>
+
+          <p style={{ fontFamily: "Nunito", fontSize: 14, color: "#555", lineHeight: 1.6, marginBottom: 14 }}>
+            {quest?.descriptionKo}
+          </p>
+
+          {gps === "far" && (
+            <div
+              style={{
+                background: "#FFF0F0",
+                border: "2.5px solid #111111",
+                borderRadius: 12,
+                padding: "12px 14px",
+                marginBottom: 14,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+              }}
+            >
+              <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#c0392b", fontWeight: 700 }}>
+                장소에서 {gpsDistanceM}m 떨어져 있어요. 가까이 가서 다시 확인해주세요.
+              </p>
+              <button
+                type="button"
+                className="kr-reset"
+                onClick={retryLocation}
+                style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 12, color: "#c0392b", whiteSpace: "nowrap" }}
+              >
+                다시 확인
+              </button>
+            </div>
           )}
+
+          <label
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              border: `2.5px dashed ${PINK}`,
+              borderRadius: 16,
+              padding: previewUrl ? 0 : "28px 20px",
+              textAlign: "center",
+              marginBottom: 14,
+              background: "#FFF5FA",
+              cursor: "pointer",
+              overflow: "hidden",
+              minHeight: previewUrl ? 180 : undefined,
+            }}
+          >
+            {previewUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={previewUrl} alt="" style={{ width: "100%", height: 180, objectFit: "cover" }} />
+            ) : (
+              <>
+                <div style={{ fontSize: 36, marginBottom: 8 }}>📷</div>
+                <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Upload Mission Photo</p>
+                <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#bbb" }}>Tap to take or upload a photo</p>
+              </>
+            )}
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
+              style={{ display: "none" }}
+              disabled={status === "uploading"}
+              onChange={(e) => {
+                const f = e.target.files?.[0];
+                if (f) handleFile(f);
+              }}
+            />
+          </label>
+
           <input
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/heic,image/heif"
-            style={{ display: "none" }}
-            disabled={status === "uploading"}
-            onChange={(e) => {
-              const f = e.target.files?.[0];
-              if (f) handleFile(f);
+            type="text"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
+            placeholder="한마디 남기기 (선택)"
+            maxLength={80}
+            style={{
+              width: "100%",
+              padding: "12px 16px",
+              borderRadius: 12,
+              border: "2.5px solid #111111",
+              fontFamily: "Nunito",
+              fontSize: 14,
+              outline: "none",
+              marginBottom: 14,
             }}
           />
-        </label>
 
-        <input
-          type="text"
-          className="field"
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-          placeholder="한마디 남기기 (선택)"
-          maxLength={80}
-        />
+          {status === "error" && (
+            <p style={{ color: "#e11d48", fontSize: 12, fontWeight: 700, marginBottom: 10 }}>
+              제출에 실패했어요. 다시 시도해주세요.
+            </p>
+          )}
 
-        {status === "error" && (
-          <p style={{ color: "#e11d48", fontSize: "12px", fontWeight: 700, marginBottom: "10px" }}>
-            제출에 실패했어요. 다시 시도해주세요.
-          </p>
-        )}
-
-        <button className="btn btn-coral" disabled={!file || status === "uploading"} onClick={handleSubmit}>
-          {status === "uploading" ? "제출 중…" : "Submit Mission"}
-        </button>
+          <KButton bg={status === "uploading" ? "#eee" : LIME} color={status === "uploading" ? "#aaa" : "#111"} disabled={!canSubmit} onClick={handleSubmit}>
+            {status === "uploading" ? "제출 중…" : "COMPLETE MISSION 🎯"}
+          </KButton>
+        </div>
       </div>
     </div>
   );

@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
+import { BackButton } from "@/components/ui/kroute";
+import { CREAM } from "@/lib/kroute-tokens";
 
 interface Props {
   title: string;
@@ -12,16 +13,20 @@ interface Props {
 export default function TopBar({ title, backHref, rightSlot }: Props) {
   const router = useRouter();
   return (
-    <header className="flex h-14 shrink-0 items-center gap-2 border-b border-slate-200 bg-white px-3 dark:border-slate-700 dark:bg-slate-900">
-      <button
-        type="button"
-        onClick={() => (backHref ? router.push(backHref) : router.back())}
-        aria-label="뒤로가기"
-        className="flex h-11 w-11 items-center justify-center rounded-full text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800"
-      >
-        <ChevronLeft size={22} />
-      </button>
-      <h1 className="flex-1 text-base font-bold text-slate-900 dark:text-white">{title}</h1>
+    <header
+      style={{
+        display: "flex",
+        height: 56,
+        flexShrink: 0,
+        alignItems: "center",
+        gap: 10,
+        borderBottom: "2.5px solid #111111",
+        background: CREAM,
+        padding: "0 14px",
+      }}
+    >
+      <BackButton onClick={() => (backHref ? router.push(backHref) : router.back())} />
+      <h1 style={{ flex: 1, fontFamily: "Outfit", fontWeight: 900, fontSize: 15 }}>{title}</h1>
       {rightSlot}
     </header>
   );

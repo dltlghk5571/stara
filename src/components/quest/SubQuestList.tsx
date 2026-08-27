@@ -1,6 +1,7 @@
 "use client";
 
 import { Sparkles } from "lucide-react";
+import { LIME } from "@/lib/kroute-tokens";
 import type { Quest } from "@/types";
 
 interface Props {
@@ -13,26 +14,50 @@ interface Props {
 export default function SubQuestList({ quest, completedQuestIds, onToggle }: Props) {
   const done = completedQuestIds.includes(quest.id);
   return (
-    <div className="rounded-xl border border-dashed border-fuchsia-300 bg-fuchsia-50/60 p-3 dark:border-fuchsia-800 dark:bg-fuchsia-950/20">
-      <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold text-fuchsia-600 dark:text-fuchsia-300">
-        <Sparkles size={14} /> 이동 중 보너스 서브 퀘스트
+    <div
+      style={{
+        borderRadius: 14,
+        border: `2px dashed #111111`,
+        background: "#F7FFE0",
+        padding: 12,
+      }}
+    >
+      <p
+        style={{
+          marginBottom: 8,
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          fontFamily: "Outfit",
+          fontWeight: 900,
+          fontSize: 11,
+          letterSpacing: 0.5,
+          color: "#7a9900",
+        }}
+      >
+        <Sparkles size={14} /> BONUS · 이동 중 서브 퀘스트
       </p>
-      <label className="flex min-h-11 cursor-pointer items-start gap-3">
+      <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", minHeight: 44 }}>
         <input
           type="checkbox"
           checked={done}
           onChange={() => onToggle(quest.id)}
-          className="mt-0.5 h-5 w-5 shrink-0 accent-fuchsia-600"
+          style={{ marginTop: 2, width: 20, height: 20, flexShrink: 0, accentColor: LIME }}
         />
         <span>
           <span
-            className={`block text-sm font-semibold ${
-              done ? "text-slate-400 line-through" : "text-slate-700 dark:text-slate-100"
-            }`}
+            style={{
+              display: "block",
+              fontFamily: "Outfit",
+              fontWeight: 700,
+              fontSize: 13,
+              color: done ? "#aaa" : "#111",
+              textDecoration: done ? "line-through" : "none",
+            }}
           >
             {quest.titleKo}
           </span>
-          <span className="block text-xs text-slate-500 dark:text-slate-400">
+          <span style={{ display: "block", fontFamily: "Nunito", fontSize: 11, color: "#888" }}>
             {quest.descriptionKo}
           </span>
         </span>

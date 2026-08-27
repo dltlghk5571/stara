@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useUser } from "@clerk/nextjs";
 import { Loader2 } from "lucide-react";
 import TopBar from "@/components/layout/TopBar";
+import { KButton } from "@/components/ui/kroute";
+import { BORDER, CREAM } from "@/lib/kroute-tokens";
 
 interface LocalUser {
   username: string;
@@ -13,27 +16,25 @@ interface LocalUser {
 export default function MyCollectionPage() {
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const [usernameCheckDone, setUsernameCheckDone] = useState(false);
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    if (!isLoaded) return;
-    if (!isSignedIn) {
-      setChecking(false);
-      return;
-    }
+    if (!isLoaded || !isSignedIn) return;
     fetch("/api/user/username")
       .then((r) => r.json())
       .then((data: { user: LocalUser | null }) => {
         if (data.user?.username) {
           router.replace(`/collection/${data.user.username}`);
         } else {
-          setChecking(false);
+          setUsernameCheckDone(true);
         }
       });
   }, [isLoaded, isSignedIn, router]);
+
+  const checking = !isLoaded || (isSignedIn && !usernameCheckDone);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -54,45 +55,38 @@ export default function MyCollectionPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", background: CREAM }}>
       <TopBar title="내 컬렉션북" backHref="/trip" />
-      <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-4 px-5 py-6">
-        {!isLoaded || checking ? (
-          <div className="flex flex-col items-center gap-2 text-slate-400">
+      <main style={{ margin: "0 auto", display: "flex", width: "100%", maxWidth: 400, flex: 1, flexDirection: "column", justifyContent: "center", gap: 16, padding: "24px 20px" }}>
+        {checking ? (
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, color: "#aaa" }}>
             <Loader2 size={24} className="animate-spin" />
-            <p className="text-xs">불러오는 중...</p>
+            <p style={{ fontFamily: "Nunito", fontSize: 12 }}>불러오는 중...</p>
           </div>
         ) : !isSignedIn ? (
-          <div className="flex flex-col items-center gap-3 text-center">
-            <p className="text-sm text-slate-500 dark:text-slate-400">
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" }}>
+            <p style={{ fontFamily: "Nunito", fontSize: 14, color: "#666" }}>
               로그인하면 체크포인트 인증샷으로 컬렉션북을 만들 수 있어요
             </p>
-            <a
-              href="/sign-in"
-              className="flex min-h-11 items-center justify-center rounded-xl bg-fuchsia-600 px-6 text-sm font-bold text-white"
-            >
-              로그인
-            </a>
+            <Link href="/sign-in" style={{ width: "100%", maxWidth: 240 }}>
+              <KButton>로그인</KButton>
+            </Link>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <label style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 13 }}>
               컬렉션북 주소에 쓸 아이디를 정해줘
             </label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="영소문자, 숫자, _ 3-20자"
-              className="min-h-11 rounded-xl border border-slate-300 px-3 text-sm dark:border-slate-600 dark:bg-slate-900"
+              style={{ minHeight: 44, borderRadius: 12, border: BORDER, padding: "0 14px", fontFamily: "Nunito", fontSize: 14, outline: "none" }}
             />
-            {error && <p className="text-xs text-rose-500">{error}</p>}
-            <button
-              type="submit"
-              disabled={submitting || username.length < 3}
-              className="flex min-h-11 items-center justify-center rounded-xl bg-fuchsia-600 text-sm font-bold text-white disabled:bg-slate-200 disabled:text-slate-400"
-            >
+            {error && <p style={{ fontSize: 12, color: "#e11d48" }}>{error}</p>}
+            <KButton type="submit" disabled={submitting || username.length < 3}>
               시작하기
-            </button>
+            </KButton>
           </form>
         )}
       </main>

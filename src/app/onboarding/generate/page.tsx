@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { getRegionById } from "@/data/regions";
 import { useRouteOptions } from "@/lib/tour-api/useRouteOptions";
 import { useTripStore } from "@/store/tripStore";
+import { KButton, Pill } from "@/components/ui/kroute";
+import { CREAM, LIME, YELLOW } from "@/lib/kroute-tokens";
 
 function GenerateInner() {
   const router = useRouter();
@@ -23,12 +25,12 @@ function GenerateInner() {
 
   if (!region) {
     return (
-      <div id="tv-confirm" className="tl-view">
-        <div className="flow-h1">지역을 먼저 선택해주세요</div>
-        <div style={{ marginTop: "14px", width: "100%" }}>
-          <button className="btn btn-coral" onClick={() => router.push("/onboarding/region")}>
-            지역 선택으로 이동
-          </button>
+      <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, gap: 14 }}>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20, textAlign: "center" }}>
+          지역을 먼저 선택해주세요
+        </h2>
+        <div style={{ width: "100%", maxWidth: 300 }}>
+          <KButton onClick={() => router.push("/onboarding/region")}>지역 선택으로 이동</KButton>
         </div>
       </div>
     );
@@ -44,67 +46,123 @@ function GenerateInner() {
 
   if (loading) {
     return (
-      <div id="tv-generating" className="tl-view">
-        <div className="spinner"></div>
-        <div className="flow-h1" style={{ fontSize: "17px" }}>
-          Creating your route…
+      <div
+        style={{
+          minHeight: "100dvh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: 32,
+          background: "linear-gradient(135deg,#FFF0E6 0%,#E8FFD6 50%,#D6EEFF 100%)",
+        }}
+      >
+        <div style={{ position: "relative", marginBottom: 28 }}>
+          <div
+            className="kr-aSpin"
+            style={{
+              width: 100,
+              height: 100,
+              borderRadius: "50%",
+              border: "3px dashed #111111",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <div
+              style={{
+                width: 80,
+                height: 80,
+                borderRadius: "50%",
+                background: "#fff",
+                border: "2.5px solid #111111",
+                boxShadow: "4px 4px 0 #111111",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: 40,
+              }}
+            >
+              ✈️
+            </div>
+          </div>
         </div>
-        <div className="generating-sub">MATCHING SCENES · MAPPING STOPS</div>
+        <Pill bg={YELLOW} style={{ fontSize: 13, padding: "6px 18px", marginBottom: 20 }}>
+          NATURAL COURSE · OPTIMAL PATH
+        </Pill>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24, textAlign: "center", marginBottom: 4 }}>
+          Generating Route
+        </h2>
+        <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", textAlign: "center", fontStyle: "italic" }}>
+          {region.nameEn} 루트를 만드는 중…
+        </p>
       </div>
     );
   }
 
   if (options.length === 0) {
     return (
-      <div id="tv-confirm" className="tl-view">
-        <div className="flow-h1">
+      <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, gap: 14 }}>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20, textAlign: "center" }}>
           지금은 {region.nameEn} 루트 후보를 찾지 못했어요
-        </div>
-        <div className="flow-sub">잠시 후 다시 시도해주세요.</div>
-        <div style={{ display: "flex", gap: "10px", width: "100%", marginTop: "14px" }}>
-          <button className="btn btn-outline" onClick={() => router.push(`/onboarding/region/${region.id}`)}>
+        </h2>
+        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666" }}>잠시 후 다시 시도해주세요.</p>
+        <div style={{ width: "100%", maxWidth: 300 }}>
+          <KButton outline onClick={() => router.push(`/onboarding/region/${region.id}`)}>
             다시 시도
-          </button>
+          </KButton>
         </div>
       </div>
     );
   }
 
   return (
-    <div id="tv-preview" className="tl-view">
-      <div className="preview-head">
-        <div className="flow-h1" style={{ fontSize: "20px" }}>
-          Pick a route
-        </div>
-        <div className="flow-sub">
+    <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "48px 24px 12px" }}>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20 }}>Pick a route</h2>
+        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 4 }}>
           {region.nameEn} 루트 {options.length}가지를 준비했어요. 하나를 골라주세요.
-        </div>
+        </p>
       </div>
 
-      <div style={{ flex: 1, overflowY: "auto", padding: "6px 22px 20px", display: "flex", flexDirection: "column", gap: "18px" }}>
+      <div className="kr-scrollY" style={{ flex: 1, padding: "6px 24px 20px", display: "flex", flexDirection: "column", gap: 18 }}>
         {options.map((option, i) => (
           <div key={option.id}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "6px" }}>
-              <b className="flow-h1" style={{ fontSize: "15px" }}>
-                {option.labelEn}
-              </b>
-              <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "10px", color: "var(--gray)" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+              <b style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>{option.labelEn}</b>
+              <span style={{ fontFamily: "Nunito", fontSize: 11, color: "#888", fontWeight: 700 }}>
                 {option.stopCount} stops · {Math.round(option.totalMinutes / 60)}h
               </span>
             </div>
-            <div className="preview-path" style={{ overflowY: "visible", padding: "0" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               {option.places.map((p) => (
-                <div key={p.id} className="path-node">
-                  <div className="path-dot">📍</div>
-                  <div className="path-label">
-                    <b>{p.nameKo}</b>
-                  </div>
+                <div key={p.id} className="kr-pathNode" style={{ padding: "6px 0" }}>
+                  <span
+                    style={{
+                      width: 38,
+                      height: 38,
+                      borderRadius: "50%",
+                      background: LIME,
+                      border: "2.5px solid #111111",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 16,
+                      flexShrink: 0,
+                    }}
+                  >
+                    📍
+                  </span>
+                  <b style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 13 }}>{p.nameKo}</b>
                 </div>
               ))}
             </div>
-            <button className="btn btn-coral" style={{ marginTop: "10px" }} onClick={() => choose(i)}>
-              Confirm this route
-            </button>
+            <div style={{ marginTop: 10 }}>
+              <KButton bg="#FF6600" color="#fff" onClick={() => choose(i)}>
+                Confirm this route
+              </KButton>
+            </div>
           </div>
         ))}
       </div>

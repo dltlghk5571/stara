@@ -6,10 +6,14 @@ import { useUser } from "@clerk/nextjs";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import { getPlaceById } from "@/data/places";
+import { levelFromStamps, nextRewardLabel } from "@/lib/gamification";
 import MapView from "@/components/map/MapView";
 import StampGrid from "@/components/stamp/StampGrid";
 import MissionSheet from "@/components/trip/MissionSheet";
 import SubQuestList from "@/components/quest/SubQuestList";
+import { BottomNav, KButton, KCard, Pill } from "@/components/ui/kroute";
+import type { KrouteTab } from "@/components/ui/kroute";
+import { CYAN, LBLUE, LIME, PALGREEN, PINK, WHITE, YELLOW } from "@/lib/kroute-tokens";
 import type { Place, Quest } from "@/types";
 
 export interface DiaryPhoto {
@@ -28,7 +32,7 @@ export interface TripGroup {
   photos: DiaryPhoto[];
 }
 
-type Tab = "cover" | "diary" | "route" | "stamps";
+type Tab = KrouteTab;
 
 interface Props {
   initialDiaryGroups: TripGroup[];
@@ -101,87 +105,22 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
   const holderName = user?.fullName || user?.username || "STARA Traveler";
 
   return (
-    <div id="tv-app" className="tl-view">
-      <div className="appbar">
-        <div className="brand">
-          STAR<span>A</span>
-        </div>
-        {activeTripName && <div className="route-chip">{activeTripName.toUpperCase()}</div>}
-      </div>
-
-      <div className="pages">
+    <div style={{ height: "100dvh", display: "flex", flexDirection: "column", background: "#FAF6EF" }}>
+      <div style={{ flex: 1, minHeight: 0, overflow: "hidden" }}>
         {tab === "cover" && (
-          <div className="page" id="page-cover">
-            <div className="cover-wrap">
-              <div className="cover">
-                <div className="kicker">Your Travel Passport</div>
-                <div className="emblem">
-                  <span className="glyph">🎬</span>
-                </div>
-                <div style={{ textAlign: "center" }}>
-                  <div className="cover-title">
-                    K-Content Travel
-                    <br />
-                    Passport
-                  </div>
-                  <div className="cover-sub">&ldquo;Play the scene. Keep the story.&rdquo;</div>
-                </div>
-                <div className="cover-footer">
-                  <div>
-                    <div className="label">HOLDER</div>
-                    <div className="holder">{holderName}</div>
-                  </div>
-                  <div className="stat">
-                    <b>
-                      {earnedStampIds.length} / {orderedPlaces.length}
-                    </b>
-                    <div className="label">STAMPS</div>
-                  </div>
-                </div>
-              </div>
-              <div className="home-ctas">
-                <button className="btn btn-primary" onClick={() => router.push("/onboarding/artists")}>
-                  + Create New Route
-                </button>
-                <button className="btn btn-secondary" onClick={() => setTab("route")}>
-                  🗺️ View Current Quests
-                </button>
-                <button
-                  className="btn btn-outline"
-                  onClick={() => router.push("/edit")}
-                  style={{ marginTop: "-2px" }}
-                >
-                  루트 직접 편집하기
-                </button>
-              </div>
-            </div>
-          </div>
+          <CoverTab
+            holderName={holderName}
+            activeTripName={activeTripName}
+            earnedCount={earnedStampIds.length}
+            totalCount={orderedPlaces.length}
+            onContinue={() => setTab("route")}
+            onCreateNew={() => router.push("/onboarding/artists")}
+            onEdit={() => router.push("/edit")}
+          />
         )}
 
         {tab === "stamps" && (
-          <div className="page" id="page-stamps">
-            <div className="stamp-page">
-              <div className="section-title">Mission Stamps</div>
-              <div className="section-sub">미션을 완료할 때마다 스탬프가 쌓여요.</div>
-              <StampGrid orderedPlaces={orderedPlaces} earnedStampIds={earnedStampIds} />
-              <div className="progress-bar">
-                <div className="progress-track">
-                  <div
-                    className="progress-fill"
-                    style={{
-                      width: `${orderedPlaces.length ? (earnedStampIds.length / orderedPlaces.length) * 100 : 0}%`,
-                    }}
-                  />
-                </div>
-                <div className="progress-num">
-                  {orderedPlaces.length
-                    ? Math.round((earnedStampIds.length / orderedPlaces.length) * 100)
-                    : 0}
-                  %
-                </div>
-              </div>
-            </div>
-          </div>
+          <StampsTab orderedPlaces={orderedPlaces} earnedStampIds={earnedStampIds} />
         )}
 
         {tab === "route" && (
@@ -205,12 +144,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
         {tab === "diary" && <DiaryTab groups={diaryGroups} />}
       </div>
 
-      <div className="navbar">
-        <NavBtn icon="📘" label="Cover" active={tab === "cover"} onClick={() => setTab("cover")} />
-        <NavBtn icon="🗒️" label="Diary" active={tab === "diary"} onClick={() => setTab("diary")} />
-        <NavBtn icon="🗺️" label="Route" active={tab === "route"} onClick={() => setTab("route")} />
-        <NavBtn icon="🏅" label="Stamps" active={tab === "stamps"} onClick={() => setTab("stamps")} />
-      </div>
+      <BottomNav active={tab} onChange={setTab} />
 
       {missionPlace && (
         <MissionSheet
@@ -244,22 +178,126 @@ function mergeSessionIntoGroups(
   return merged;
 }
 
-function NavBtn({
-  icon,
-  label,
-  active,
-  onClick,
+function CoverTab({
+  holderName,
+  activeTripName,
+  earnedCount,
+  totalCount,
+  onContinue,
+  onCreateNew,
+  onEdit,
 }: {
-  icon: string;
-  label: string;
-  active: boolean;
-  onClick: () => void;
+  holderName: string;
+  activeTripName: string | null;
+  earnedCount: number;
+  totalCount: number;
+  onContinue: () => void;
+  onCreateNew: () => void;
+  onEdit: () => void;
 }) {
+  const pct = totalCount > 0 ? Math.round((earnedCount / totalCount) * 100) : 0;
   return (
-    <button type="button" className={`navbtn${active ? " active" : ""}`} onClick={onClick}>
-      <div className="ic">{icon}</div>
-      {label}
-    </button>
+    <div className="kr-scrollY" style={{ height: "100%", padding: "48px 24px 24px" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: "50%",
+            background: PINK,
+            border: "2.5px solid #111111",
+            boxShadow: "3px 3px 0 #111111",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "Outfit",
+            fontWeight: 900,
+            fontSize: 18,
+            color: WHITE,
+          }}
+        >
+          K
+        </div>
+        <div>
+          <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 11, color: "#888", letterSpacing: 1 }}>WELCOME BACK!</p>
+          <div style={{ marginTop: 3 }}>
+            <Pill bg={CYAN}>✦ {holderName}</Pill>
+          </div>
+        </div>
+      </div>
+
+      <h1 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24, lineHeight: 1.2 }}>
+        K-CONTENT TRAVEL PASSPORT
+      </h1>
+      <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#888", fontStyle: "italic", marginTop: 4, marginBottom: 16 }}>
+        Your journey continues…
+      </p>
+
+      {activeTripName && (
+        <KCard style={{ padding: 0, overflow: "hidden", background: LBLUE, marginBottom: 14 }}>
+          <div style={{ padding: "14px 16px", borderBottom: "2.5px solid #111111", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>Active Route</span>
+            <Pill bg={WHITE} style={{ fontSize: 10 }}>IN PROGRESS</Pill>
+          </div>
+          <div style={{ padding: "12px 16px" }}>
+            <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{activeTripName}</p>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
+              <span style={{ fontFamily: "Nunito", fontSize: 13, fontWeight: 600, color: "#555" }}>Mission Progress</span>
+              <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13 }}>{earnedCount}/{totalCount}</span>
+            </div>
+            <div style={{ height: 6, borderRadius: 50, border: "1.5px solid #111111", overflow: "hidden", background: "#f0f0f0" }}>
+              <div style={{ height: "100%", background: PINK, borderRadius: 50, width: `${pct}%`, transition: "width .5s" }} />
+            </div>
+          </div>
+        </KCard>
+      )}
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <KButton bg={LIME} color="#111" onClick={onContinue}>
+          {earnedCount === totalCount && totalCount > 0 ? "VIEW ROUTE ✓" : "CONTINUE →"}
+        </KButton>
+        <KButton bg={PINK} color={WHITE} onClick={onCreateNew}>
+          + CREATE NEW ROUTE
+        </KButton>
+        <KButton outline onClick={onEdit}>
+          루트 직접 편집하기
+        </KButton>
+      </div>
+    </div>
+  );
+}
+
+function StampsTab({ orderedPlaces, earnedStampIds }: { orderedPlaces: Place[]; earnedStampIds: string[] }) {
+  const level = levelFromStamps(earnedStampIds.length);
+  const reward = nextRewardLabel(earnedStampIds.length);
+  return (
+    <div className="kr-scrollY" style={{ height: "100%", padding: "48px 24px 24px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>Mission Stamps</h2>
+        <Pill bg={CYAN}>LEVEL {level}</Pill>
+      </div>
+      <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#888", fontStyle: "italic", marginBottom: 14 }}>
+        Collect &apos;em all to level up! 🎌
+      </p>
+
+      <KCard style={{ overflow: "hidden", background: "#F0E8FF", marginBottom: 14 }}>
+        <div style={{ padding: "16px 20px", display: "flex", alignItems: "center" }}>
+          <div style={{ flex: 1 }}>
+            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 28, lineHeight: 1 }}>
+              {earnedStampIds.length} / {orderedPlaces.length}
+            </p>
+            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 3 }}>미션을 완료할 때마다 스탬프가 쌓여요</p>
+          </div>
+          <div style={{ width: 1.5, height: 44, background: "rgba(0,0,0,.12)", margin: "0 16px" }} />
+          <div style={{ flex: 1 }}>
+            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, color: PINK }}>Next Reward:</p>
+            <p style={{ fontFamily: "Nunito", fontWeight: 700, fontSize: 13 }}>{reward} 🎉</p>
+          </div>
+        </div>
+      </KCard>
+
+      <StampGrid orderedPlaces={orderedPlaces} earnedStampIds={earnedStampIds} />
+    </div>
   );
 }
 
@@ -282,28 +320,24 @@ function RouteTab({
   onOpenMission: (i: number) => void;
   onFinish: () => void;
 }) {
+  const doneCount = orderedPlaces.filter((_, i) => statusOf(i) === "done").length;
   return (
-    <div className="page" id="page-route">
-      <div className="route-header">
-        <div>
-          <div style={{ fontFamily: "'Fraunces', serif", fontWeight: 600, fontSize: "15px" }}>
-            Quests &amp; Map
-          </div>
-          <div className="route-title">다음 체크포인트를 탭해서 미션을 진행하세요</div>
-        </div>
-        <div className="route-counter">
-          🏅 {orderedPlaces.filter((_, i) => statusOf(i) === "done").length}/{orderedPlaces.length}
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "48px 24px 14px", flexShrink: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 15, flex: 1 }}>다음 체크포인트를 탭해서 미션 진행</span>
+          <Pill bg={LIME}>🏅 {doneCount}/{orderedPlaces.length}</Pill>
         </div>
       </div>
 
-      <div className="map" style={{ overflow: "hidden" }}>
+      <div style={{ height: 180, margin: "0 24px 14px", borderRadius: 16, border: "2.5px solid #111111", overflow: "hidden", flexShrink: 0 }}>
         <MapView
           pins={orderedPlaces.map((p, i) => ({
             id: p.id,
             lat: p.latitude,
             lng: p.longitude,
             order: i + 1,
-            color: "#243b53",
+            color: "#111111",
             title: p.nameKo,
             status: statusOf(i),
           }))}
@@ -316,41 +350,74 @@ function RouteTab({
       </div>
 
       {segmentQuest && (
-        <div style={{ padding: "0 20px", marginTop: "10px" }}>
+        <div style={{ padding: "0 24px", marginBottom: 10, flexShrink: 0 }}>
           <SubQuestList quest={segmentQuest} completedQuestIds={completedQuestIds} onToggle={onToggleSubQuest} />
         </div>
       )}
 
-      <div className="quest-list">
-        <div className="quest-list-title">Quest List</div>
+      <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 8px" }}>
+        <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 16, marginBottom: 12 }}>Missions Checklist</p>
         {orderedPlaces.map((p, i) => {
           const status = statusOf(i);
+          const active = status === "next";
           return (
-            <div
+            <button
               key={p.id}
-              className={`quest ${status}`}
-              onClick={() => onOpenMission(i)}
-              style={status !== "next" ? { cursor: "default" } : undefined}
+              type="button"
+              className="kr-reset"
+              onClick={active ? () => onOpenMission(i) : undefined}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                padding: "13px 14px",
+                borderRadius: 14,
+                border: "2.5px solid #111111",
+                marginBottom: 8,
+                background: status === "done" ? PALGREEN : active ? YELLOW : WHITE,
+                boxShadow: active ? "4px 4px 0 #111111" : "2px 2px 0 #111111",
+                cursor: active ? "pointer" : "default",
+                textAlign: "left",
+              }}
             >
-              <div className="quest-ic">{status === "locked" ? "🔒" : status === "done" ? "✓" : "⏳"}</div>
-              <div>
-                <div className="quest-name">{p.nameKo}</div>
-                <div className="quest-status">
-                  {status === "done" ? "✓ Completed" : status === "next" ? "Up next · tap to view" : "🔒 Locked"}
-                </div>
+              <div
+                style={{
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  flexShrink: 0,
+                  background: status === "done" ? LIME : active ? WHITE : "#f0f0f0",
+                  border: `2px solid ${status === "locked" ? "#ccc" : "#111111"}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 16,
+                }}
+              >
+                {status === "locked" ? "🔒" : status === "done" ? "✓" : "⏳"}
               </div>
-            </div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14, color: status === "locked" ? "#aaa" : "#111", marginBottom: 2 }}>
+                  {p.nameKo}
+                </p>
+                <p style={{ fontFamily: "Nunito", fontSize: 12, fontWeight: 700, color: status === "done" ? "#555" : active ? "#333" : "#bbb" }}>
+                  {status === "done" ? "✓ COMPLETED" : active ? "GO NOW!" : "LOCKED"}
+                </p>
+              </div>
+              {active && <Pill bg={PINK} color={WHITE}>GO! 🎯</Pill>}
+            </button>
           );
         })}
-      </div>
 
-      {allDone && orderedPlaces.length > 0 && (
-        <div style={{ padding: "16px 20px 0" }}>
-          <button className="btn btn-coral" onClick={onFinish}>
-            모든 체크포인트 완료 — 여행 마무리하기
-          </button>
-        </div>
-      )}
+        {allDone && orderedPlaces.length > 0 && (
+          <div style={{ marginTop: 10 }}>
+            <KButton bg={PINK} color={WHITE} onClick={onFinish}>
+              모든 체크포인트 완료 — 여행 마무리하기
+            </KButton>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -362,13 +429,9 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
 
   if (groups.length === 0) {
     return (
-      <div className="page" id="page-diary">
-        <div className="stamp-page" style={{ textAlign: "center" }}>
-          <div className="section-title">Diary</div>
-          <div className="section-sub" style={{ marginTop: "12px" }}>
-            첫 미션을 완료하면 다이어리가 채워져요.
-          </div>
-        </div>
+      <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, textAlign: "center" }}>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>My K-ROUTE Diary</h2>
+        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#888", marginTop: 12 }}>첫 미션을 완료하면 다이어리가 채워져요.</p>
       </div>
     );
   }
@@ -376,37 +439,64 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
   const days = groupByDay(active.photos);
 
   return (
-    <div className="page" id="page-diary">
-      <div className="diary-routes">
-        {groups.map((g) => (
-          <div
-            key={g.key}
-            className={`diary-route-tab${g.key === active.key ? " active" : ""}`}
-            onClick={() => setActiveKey(g.key)}
-          >
-            {g.name}
-          </div>
-        ))}
+    <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
+      <div style={{ padding: "48px 24px 12px", flexShrink: 0 }}>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>My K-ROUTE Diary</h2>
+        <p style={{ fontFamily: "Caveat", fontSize: 17, color: "#888", fontStyle: "italic", marginTop: 2 }}>여행 기록 & 순간들 ✨</p>
       </div>
 
-      <div className="diary-board">
+      {groups.length > 1 && (
+        <div style={{ display: "flex", gap: 8, padding: "0 24px 12px", flexShrink: 0, overflowX: "auto" }}>
+          {groups.map((g) => (
+            <button
+              key={g.key}
+              type="button"
+              className="kr-reset"
+              onClick={() => setActiveKey(g.key)}
+              style={{
+                padding: "6px 14px",
+                borderRadius: 50,
+                border: "2.5px solid #111111",
+                background: g.key === active.key ? PINK : WHITE,
+                color: g.key === active.key ? WHITE : "#111",
+                fontFamily: "Outfit",
+                fontWeight: 700,
+                fontSize: 12,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {g.name}
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 8px" }}>
         {days.map(([day, photos]) => (
-          <div key={day}>
-            <div className="diary-day">{day}</div>
-            {photos.map((photo, i) => (
-              <div
+          <div key={day} style={{ marginBottom: 8 }}>
+            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, color: "#888", marginBottom: 8 }}>{day}</p>
+            {photos.map((photo) => (
+              <KCard
                 key={photo.id}
-                className={`pin-card ${i % 2 === 0 ? "rot-l" : "rot-r"}`}
                 onClick={() => setViewerIndex(active.photos.findIndex((p) => p.id === photo.id))}
+                style={{ marginBottom: 16, padding: 0, overflow: "hidden", cursor: "pointer" }}
               >
-                <div className="pushpin"></div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={photo.photoUrl} alt="" />
-                {photo.note && <div className="pin-cap">{photo.note}</div>}
-                <div className="pin-meta">
-                  <span>{getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}</span>
+                <div style={{ height: 160, position: "relative" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={photo.photoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom,transparent,rgba(0,0,0,.35))" }} />
+                  <div style={{ position: "absolute", bottom: 8, left: 12 }}>
+                    <Pill bg={WHITE}>📍 {getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}</Pill>
+                  </div>
                 </div>
-              </div>
+                {photo.note && (
+                  <div style={{ padding: "12px 16px" }}>
+                    <p style={{ fontFamily: "Caveat", fontSize: 16, fontStyle: "italic", color: "#555", lineHeight: 1.4 }}>
+                      &quot;{photo.note}&quot;
+                    </p>
+                  </div>
+                )}
+              </KCard>
             ))}
           </div>
         ))}
@@ -459,7 +549,17 @@ function DiaryViewer({
 
   return (
     <div
-      className="lightbox open"
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 80,
+        background: "rgba(0,0,0,.9)",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: 20,
+      }}
       onTouchStart={(e) => {
         touchStartX.current = e.touches[0].clientX;
       }}
@@ -471,47 +571,54 @@ function DiaryViewer({
         else if (delta < -50) goNext();
       }}
     >
-      <button className="lightbox-close" onClick={onClose}>
+      <button
+        type="button"
+        className="kr-reset"
+        onClick={onClose}
+        style={{ position: "absolute", top: 20, right: 20, width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,.15)", color: "#fff", fontSize: 16 }}
+      >
         ✕
       </button>
 
-      <div style={{ position: "relative", width: "100%", maxWidth: "420px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ position: "relative", width: "100%", maxWidth: 420, display: "flex", alignItems: "center", justifyContent: "center" }}>
         {index > 0 && (
           <button
             type="button"
+            className="kr-reset"
             onClick={goPrev}
             aria-label="이전 사진"
-            style={{
-              position: "absolute", left: "8px", zIndex: 10, width: "36px", height: "36px",
-              borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", border: "none", fontSize: "18px",
-            }}
+            style={{ position: "absolute", left: 8, zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", fontSize: 18 }}
           >
             ‹
           </button>
         )}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={photo.photoUrl} alt="" />
+        <img src={photo.photoUrl} alt="" style={{ maxWidth: "100%", maxHeight: "70vh", borderRadius: 12 }} />
         {index < photos.length - 1 && (
           <button
             type="button"
+            className="kr-reset"
             onClick={goNext}
             aria-label="다음 사진"
-            style={{
-              position: "absolute", right: "8px", zIndex: 10, width: "36px", height: "36px",
-              borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", border: "none", fontSize: "18px",
-            }}
+            style={{ position: "absolute", right: 8, zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", fontSize: 18 }}
           >
             ›
           </button>
         )}
       </div>
 
-      <div className="lightbox-meta">
-        <div className="lightbox-loc">{getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}</div>
-        <div className="lightbox-time">
+      <div style={{ marginTop: 16, textAlign: "center" }}>
+        <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 14, color: "#fff" }}>
+          {getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}
+        </p>
+        <p style={{ fontFamily: "Nunito", fontSize: 12, color: "rgba(255,255,255,.6)", marginTop: 4 }}>
           {index + 1} / {photos.length}
-        </div>
-        {photo.note && <div className="lightbox-cap">&ldquo;{photo.note}&rdquo;</div>}
+        </p>
+        {photo.note && (
+          <p style={{ fontFamily: "Caveat", fontSize: 16, fontStyle: "italic", color: "#fff", marginTop: 8 }}>
+            &quot;{photo.note}&quot;
+          </p>
+        )}
       </div>
     </div>
   );
