@@ -2,6 +2,9 @@
 __pycache__/
 *.pyc
 
+# fill_hours.py가 남기는 Google Places API 원본 응답 캐시(재실행 시 쿼터 절약용) - 생성물이라 제외
+cache/
+
 # 장소 데이터(원본 + 전처리 결과물) - 코드/문서만 git으로 관리, 데이터는 별도 공유
 preprocessed/
 raw_data_곽채원/
@@ -11,6 +14,6 @@ from drive/
 
 # 키 값은 없지만 문서 자체가 "커밋하지 말 것"이라고 명시한 인수인계 노트
 GEOCODING_HANDOFF.md
+naver-api-hub-integration.md
+place_status_2026-08-27.md
 
-# 팀원 개인 작업 로그 - git으로 공유 안 함
-개발일지_김지윤.md

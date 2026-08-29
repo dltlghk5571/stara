@@ -16,7 +16,7 @@ from build_dataset import is_same_place, normalize_place_key, canonical_artist, 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DRAFT_PATH = os.path.join(BASE_DIR, "from drive", "전처리_초안_임서준.json")
-PLACES_PATH = os.path.join(BASE_DIR, "preprocessed", "places.json")
+PLACES_PATH = os.path.join(BASE_DIR, "preprocessed", "final", "places.json")
 OUT_PATH = os.path.join(BASE_DIR, "preprocessed", "source_url_matches.csv")
 
 
