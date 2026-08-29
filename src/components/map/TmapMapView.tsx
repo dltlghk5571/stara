@@ -27,22 +27,60 @@ function waitForTmap(): Promise<void> {
   });
 }
 
+const PIN_SIZE = 34;
+
 /** status가 있으면(Route 탭) 상태별 스타일을 우선하고, 없으면 기존처럼 color를 그대로 쓴다. */
 function pinIconUrl(pin: MapPin): string {
   const label = pin.order ?? "";
   if (pin.status === "locked") {
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_SIZE}" height="${PIN_SIZE}" viewBox="0 0 30 30">
       <path d="M15 1 C7 1 1 7 1 15 C1 24 15 29 15 29 C15 29 29 24 29 15 C29 7 23 1 15 1 Z" fill="none" stroke="#b9b19a" stroke-width="2" stroke-dasharray="3 3"/>
-      <text x="15" y="19" font-size="12" font-weight="700" font-family="sans-serif" fill="#b9b19a" text-anchor="middle">${label}</text>
+      <text x="15" y="19" font-size="13" font-weight="700" font-family="sans-serif" fill="#b9b19a" text-anchor="middle">${label}</text>
     </svg>`;
     return `data:image/svg+xml,${encodeURIComponent(svg)}`;
   }
   const fill = pin.status === "next" ? "#FF3399" : pin.status === "done" ? "#AAFF00" : pin.color;
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${PIN_SIZE}" height="${PIN_SIZE}" viewBox="0 0 30 30">
     <path d="M15 1 C7 1 1 7 1 15 C1 24 15 29 15 29 C15 29 29 24 29 15 C29 7 23 1 15 1 Z" fill="${fill}" stroke="white" stroke-width="2"/>
-    <text x="15" y="19" font-size="12" font-weight="700" font-family="sans-serif" fill="white" text-anchor="middle">${label}</text>
+    <text x="15" y="19" font-size="13" font-weight="700" font-family="sans-serif" fill="white" text-anchor="middle">${label}</text>
   </svg>`;
   return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
+// 실제 좌표(place.latitude/longitude)는 절대 바꾸지 않는다 — 여기서 계산하는 offset은
+// 마커 "아이콘 표시 위치"에만 쓰이는 순수 프레젠테이션 값이고, 아래 경로선(polyline)/
+// fitBounds는 항상 pin.lat/pin.lng 원본을 그대로 사용한다.
+const OVERLAP_THRESHOLD_DEG = 0.00006; // 약 6~7m 이내면 "겹친 것"으로 취급
+
+/** 서로 아주 가까운(=지도에서 겹쳐 보이는) 핀들을 작은 원형으로 펼쳐서 각각 클릭/구분 가능하게 만든다. */
+function spiderfyPositions(pins: MapPin[]): Map<string, { lat: number; lng: number }> {
+  const offsets = new Map<string, { lat: number; lng: number }>();
+  const used = new Set<string>();
+  for (const pin of pins) {
+    if (used.has(pin.id)) continue;
+    const group = pins.filter(
+      (p) =>
+        !used.has(p.id) &&
+        Math.abs(p.lat - pin.lat) < OVERLAP_THRESHOLD_DEG &&
+        Math.abs(p.lng - pin.lng) < OVERLAP_THRESHOLD_DEG
+    );
+    group.forEach((p) => used.add(p.id));
+    if (group.length === 1) {
+      offsets.set(group[0].id, { lat: group[0].lat, lng: group[0].lng });
+      continue;
+    }
+    const centerLat = group.reduce((sum, p) => sum + p.lat, 0) / group.length;
+    const centerLng = group.reduce((sum, p) => sum + p.lng, 0) / group.length;
+    const radius = OVERLAP_THRESHOLD_DEG * 1.6;
+    group.forEach((p, i) => {
+      const angle = (2 * Math.PI * i) / group.length;
+      offsets.set(p.id, {
+        lat: centerLat + radius * Math.sin(angle),
+        lng: centerLng + radius * Math.cos(angle),
+      });
+    });
+  }
+  return offsets;
 }
 
 const MY_LOCATION_ICON = `data:image/svg+xml,${encodeURIComponent(
@@ -100,15 +138,18 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
     });
   }, [ready]);
 
-  // 마커 동기화
+  // 마커 동기화 — 겹치는 핀은 spiderfyPositions로 계산한 표시 전용 좌표를 쓰고,
+  // 실제 pin.lat/pin.lng(원본 좌표)는 아래 경로선/fitBounds에서만 그대로 쓴다.
   useEffect(() => {
     if (!ready || !mapRef.current || !window.Tmapv2) return;
     markersRef.current.forEach((m) => m.setMap(null));
+    const displayPositions = spiderfyPositions(pins);
     markersRef.current = pins.map((pin) => {
+      const pos = displayPositions.get(pin.id) ?? pin;
       const marker = new window.Tmapv2!.Marker({
-        position: new window.Tmapv2!.LatLng(pin.lat, pin.lng),
+        position: new window.Tmapv2!.LatLng(pos.lat, pos.lng),
         icon: pinIconUrl(pin),
-        iconSize: new window.Tmapv2!.Size(30, 30),
+        iconSize: new window.Tmapv2!.Size(PIN_SIZE, PIN_SIZE),
         map: mapRef.current,
       });
       if (onPinClick) marker.addListener?.("click", () => onPinClick(pin.id));

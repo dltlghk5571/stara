@@ -49,13 +49,16 @@ export default function OnboardingArtistsPage() {
                   display: "flex",
                   flexDirection: "column",
                   alignItems: "center",
+                  justifyContent: "center",
                   gap: 6,
                   padding: "12px 8px",
+                  boxSizing: "border-box",
+                  aspectRatio: "1 / 1",
                   borderRadius: 16,
                   border: isSel ? `2.5px solid ${PINK}` : BORDER,
                   background: WHITE,
                   position: "relative",
-                  boxShadow: isSel ? `4px 4px 0 ${PINK}` : SHADOW,
+                  boxShadow: SHADOW,
                 }}
               >
                 <div
@@ -79,29 +82,6 @@ export default function OnboardingArtistsPage() {
                 <span style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 11, textAlign: "center", lineHeight: 1.2 }}>
                   {artist.nameEn}
                 </span>
-                {isSel && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      bottom: -10,
-                      left: "50%",
-                      transform: "translateX(-50%)",
-                      background: PINK,
-                      borderRadius: 50,
-                      border: BORDER,
-                      padding: "2px 10px",
-                      fontFamily: "Outfit",
-                      fontWeight: 900,
-                      fontSize: 10,
-                      color: WHITE,
-                      whiteSpace: "nowrap",
-                      boxShadow: `2px 2px 0 ${BLACK}`,
-                      zIndex: 1,
-                    }}
-                  >
-                    BIAS ✦
-                  </div>
-                )}
               </button>
             );
           })}
