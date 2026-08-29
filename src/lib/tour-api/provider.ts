@@ -12,10 +12,10 @@ import {
 } from "./client";
 import { mapTourItemsToPlaces } from "./mapper";
 import { TOUR_API_BASE_URL, TOUR_API_EN_BASE_URL } from "./config";
-import type { TourApiDetailIntroItem } from "./types";
+import type { TourApiDetailIntroItem, Locale } from "./types";
 import type { Place } from "@/types";
 
-export type Locale = "ko" | "en";
+export type { Locale };
 
 export interface TourismDetail {
   overview: string | null;
@@ -66,7 +66,7 @@ export const tourismDataProvider: TourismDataProvider = {
         baseUrl
       )
     );
-    return mapTourItemsToPlaces(items);
+    return mapTourItemsToPlaces(items, locale);
   },
 
   async getDetail(contentId, contentTypeId, locale = "ko") {

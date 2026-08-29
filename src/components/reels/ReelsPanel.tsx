@@ -85,7 +85,7 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
       </div>
 
       {detailPlace && (
-        <PlaceDetailSheet place={detailPlace} onClose={() => setDetailPlace(null)} />
+        <PlaceDetailSheet key={detailPlace.id} place={detailPlace} onClose={() => setDetailPlace(null)} />
       )}
     </div>
   );

@@ -54,7 +54,7 @@ export default function ReelCard({
             체류 {place.dwellMinutes}분
           </div>
           <div>
-            운영 {place.openTime}~{place.closeTime}
+            운영 {place.openTime && place.closeTime ? `${place.openTime}~${place.closeTime}` : "정보 없음"}
           </div>
           <div className="added-min">루트에 추가 시 약 +{estimatedAddedMinutes}분 소요</div>
         </dl>

@@ -1,0 +1,3239 @@
+[
+  {
+    "place_id": "bigbang-taeyang-food-mosu-seoul",
+    "place_name_ko": "모수 서울",
+    "candidates": [
+      {
+        "contentid": "2855483",
+        "title": "로코스 비비큐 경리단길본점",
+        "distanceKm": 0.05807760358703069
+      },
+      {
+        "contentid": "402926",
+        "title": "라 쿠치나",
+        "distanceKm": 0.07098745089097555
+      },
+      {
+        "contentid": "3533136",
+        "title": "모드하우스",
+        "distanceKm": 0.2176580168223507
+      }
+    ]
+  },
+  {
+    "place_id": "blackpink-food-mamma-mia",
+    "place_name_ko": "맘마미아",
+    "candidates": [
+      {
+        "contentid": "2842458",
+        "title": "수락이오냉면",
+        "distanceKm": 0.09361823016911776
+      },
+      {
+        "contentid": "2842597",
+        "title": "평양칼국수",
+        "distanceKm": 0.2584762454185957
+      }
+    ]
+  },
+  {
+    "place_id": "bts-food-ansic-restaurant",
+    "place_name_ko": "안식레스토랑",
+    "candidates": [
+      {
+        "contentid": "232271",
+        "title": "광양불고기본가",
+        "distanceKm": 0.11551680090807873
+      },
+      {
+        "contentid": "2870558",
+        "title": "아선재",
+        "distanceKm": 0.17870000188567767
+      }
+    ]
+  },
+  {
+    "place_id": "bts-shopping-ccnmade",
+    "place_name_ko": "최창남메이드 1호점",
+    "candidates": [
+      {
+        "contentid": "836702",
+        "title": "뱃고동",
+        "distanceKm": 0.02399515317408611
+      },
+      {
+        "contentid": "2946112",
+        "title": "향기억",
+        "distanceKm": 0.051953010956036716
+      },
+      {
+        "contentid": "2870139",
+        "title": "닭으로가 압구정본점",
+        "distanceKm": 0.06425617338489416
+      },
+      {
+        "contentid": "2869819",
+        "title": "골드피쉬 딤섬퀴진",
+        "distanceKm": 0.08904456203197891
+      },
+      {
+        "contentid": "2867799",
+        "title": "우돈청",
+        "distanceKm": 0.10183057731030615
+      },
+      {
+        "contentid": "2869719",
+        "title": "이치에",
+        "distanceKm": 0.1340167095604495
+      },
+      {
+        "contentid": "2847862",
+        "title": "꽁티드툴레아",
+        "distanceKm": 0.14275416328491017
+      },
+      {
+        "contentid": "2855422",
+        "title": "호족반 청담",
+        "distanceKm": 0.15988183732849945
+      },
+      {
+        "contentid": "2870092",
+        "title": "파씨오네",
+        "distanceKm": 0.15988183732849945
+      },
+      {
+        "contentid": "2869672",
+        "title": "바빌리안테이블",
+        "distanceKm": 0.18694446594177375
+      },
+      {
+        "contentid": "2869781",
+        "title": "몽고네",
+        "distanceKm": 0.19084954924193312
+      },
+      {
+        "contentid": "2867691",
+        "title": "우텐더",
+        "distanceKm": 0.19143596113836425
+      },
+      {
+        "contentid": "2665070",
+        "title": "보보식당",
+        "distanceKm": 0.20067976759214348
+      },
+      {
+        "contentid": "2869361",
+        "title": "압구정곱창",
+        "distanceKm": 0.20556646155159625
+      },
+      {
+        "contentid": "2731162",
+        "title": "루비떡볶이",
+        "distanceKm": 0.2165834558593762
+      },
+      {
+        "contentid": "2854372",
+        "title": "덕후선생",
+        "distanceKm": 0.2482423416075365
+      },
+      {
+        "contentid": "2773265",
+        "title": "K현대미술관",
+        "distanceKm": 0.2682449242836776
+      },
+      {
+        "contentid": "273772",
+        "title": "갤러리아백화점 명품관",
+        "distanceKm": 0.28481162800877274
+      }
+    ]
+  },
+  {
+    "place_id": "bts-food-dosan-jokbal",
+    "place_name_ko": "도산족발&칼국수",
+    "candidates": [
+      {
+        "contentid": "2869549",
+        "title": "스시선수",
+        "distanceKm": 0.020529874788217765
+      },
+      {
+        "contentid": "2869782",
+        "title": "갓포아키 도산공원점",
+        "distanceKm": 0.03263228372768773
+      },
+      {
+        "contentid": "2870471",
+        "title": "그랑씨엘",
+        "distanceKm": 0.07836284630093107
+      },
+      {
+        "contentid": "130581",
+        "title": "갤러리 마노",
+        "distanceKm": 0.11274478451455391
+      },
+      {
+        "contentid": "2853778",
+        "title": "현해",
+        "distanceKm": 0.12946064736470975
+      },
+      {
+        "contentid": "2869531",
+        "title": "스시코우지",
+        "distanceKm": 0.12946064736470975
+      },
+      {
+        "contentid": "2870076",
+        "title": "파시0914",
+        "distanceKm": 0.13235343722209034
+      },
+      {
+        "contentid": "2853037",
+        "title": "메종 사우스케이프",
+        "distanceKm": 0.14219591987959562
+      },
+      {
+        "contentid": "2869697",
+        "title": "바랗",
+        "distanceKm": 0.14514899195520967
+      },
+      {
+        "contentid": "2871222",
+        "title": "현복집 강남본점",
+        "distanceKm": 0.18104520164277083
+      },
+      {
+        "contentid": "2869612",
+        "title": "웍셔너리",
+        "distanceKm": 0.19362275962407458
+      },
+      {
+        "contentid": "2869737",
+        "title": "저스트 스테이크(Just Steak)",
+        "distanceKm": 0.19477154330539986
+      },
+      {
+        "contentid": "2731162",
+        "title": "루비떡볶이",
+        "distanceKm": 0.20145593187398161
+      },
+      {
+        "contentid": "2871160",
+        "title": "투뿔등심 논현 본점",
+        "distanceKm": 0.22411990730462045
+      },
+      {
+        "contentid": "2871171",
+        "title": "압구정변강쇠떡볶이",
+        "distanceKm": 0.26456293988659835
+      },
+      {
+        "contentid": "2855422",
+        "title": "호족반 청담",
+        "distanceKm": 0.27087614062898974
+      },
+      {
+        "contentid": "2870092",
+        "title": "파씨오네",
+        "distanceKm": 0.27087614062898974
+      },
+      {
+        "contentid": "2773265",
+        "title": "K현대미술관",
+        "distanceKm": 0.27248767436017685
+      },
+      {
+        "contentid": "2869719",
+        "title": "이치에",
+        "distanceKm": 0.2786346945902155
+      },
+      {
+        "contentid": "2847862",
+        "title": "꽁티드툴레아",
+        "distanceKm": 0.28348865492390996
+      }
+    ]
+  },
+  {
+    "place_id": "bts-food-geumhong",
+    "place_name_ko": "금홍짬뽕",
+    "candidates": [
+      {
+        "contentid": "3465527",
+        "title": "보코 서울 강남",
+        "distanceKm": 0.10164129941543759
+      },
+      {
+        "contentid": "2871244",
+        "title": "현우동",
+        "distanceKm": 0.13971416053686522
+      },
+      {
+        "contentid": "2871497",
+        "title": "김수사",
+        "distanceKm": 0.17935747790373427
+      },
+      {
+        "contentid": "2867469",
+        "title": "쮸즈",
+        "distanceKm": 0.23652815311407174
+      },
+      {
+        "contentid": "2870174",
+        "title": "다온바이뱀부",
+        "distanceKm": 0.243610604050017
+      },
+      {
+        "contentid": "2869506",
+        "title": "왕스덕 논현점",
+        "distanceKm": 0.24746700277312358
+      },
+      {
+        "contentid": "2870254",
+        "title": "네기다이닝라운지",
+        "distanceKm": 0.2598224747110468
+      }
+    ]
+  },
+  {
+    "place_id": "bts-landmark_observatory-hyundai-card-understage",
+    "place_name_ko": "현대카드 언더스테이지",
+    "candidates": [
+      {
+        "contentid": "3428325",
+        "title": "현대카드 뮤직 라이브러리",
+        "distanceKm": 0.00624172951142728
+      },
+      {
+        "contentid": "2711768",
+        "title": "현대카드 바이닐앤플라스틱",
+        "distanceKm": 0.03177579991502644
+      },
+      {
+        "contentid": "2860052",
+        "title": "치즈플로",
+        "distanceKm": 0.1181727851578495
+      },
+      {
+        "contentid": "2779128",
+        "title": "공기(Gongi)",
+        "distanceKm": 0.1252502919440957
+      },
+      {
+        "contentid": "2849620",
+        "title": "Summer Lane",
+        "distanceKm": 0.12787297319410768
+      },
+      {
+        "contentid": "2855723",
+        "title": "휴135",
+        "distanceKm": 0.1404580501521389
+      },
+      {
+        "contentid": "142771",
+        "title": "임피리얼 팰리스 부티크 호텔",
+        "distanceKm": 0.2553796676499539
+      },
+      {
+        "contentid": "2860400",
+        "title": "베라 한남점",
+        "distanceKm": 0.2665457887939406
+      }
+    ]
+  },
+  {
+    "place_id": "bts-activity-jamwon-hangang-park",
+    "place_name_ko": "잠원한강공원",
+    "candidates": [
+      {
+        "contentid": "970342",
+        "title": "잠원한강공원",
+        "distanceKm": 0.9444878969387334
+      },
+      {
+        "contentid": "1541078",
+        "title": "오엔(ON)",
+        "distanceKm": 0.1317907238228252
+      }
+    ]
+  },
+  {
+    "place_id": "bts-landmark_observatory-national-museum-of-korea",
+    "place_name_ko": "국립중앙박물관",
+    "candidates": [
+      {
+        "contentid": "129703",
+        "title": "국립중앙박물관",
+        "distanceKm": 0.3260032219750713
+      },
+      {
+        "contentid": "1177980",
+        "title": "국립중앙박물관 어린이박물관",
+        "distanceKm": 0.017215434055881294
+      },
+      {
+        "contentid": "1604580",
+        "title": "국립중앙박물관 전통염료식물원",
+        "distanceKm": 0.31988001920565307
+      }
+    ]
+  },
+  {
+    "place_id": "bts-rm-landmark_observatory-olympic-park",
+    "place_name_ko": "올림픽공원",
+    "candidates": [
+      {
+        "contentid": "2739473",
+        "title": "수원올림픽공원",
+        "distanceKm": 29.936443689055952
+      },
+      {
+        "contentid": "126532",
+        "title": "올림픽공원",
+        "distanceKm": 0.5081208767483406
+      },
+      {
+        "contentid": "2758192",
+        "title": "올림픽공원 들꽃마루",
+        "distanceKm": 0.5081208767483406
+      },
+      {
+        "contentid": "3085174",
+        "title": "올림픽공원 올림픽홀",
+        "distanceKm": 0.8767276161134931
+      },
+      {
+        "contentid": "2784141",
+        "title": "올림픽공원(창원)",
+        "distanceKm": 290.1933818310238
+      },
+      {
+        "contentid": "2761797",
+        "title": "올림픽공원피크닉장",
+        "distanceKm": 0.5067158652733499
+      },
+      {
+        "contentid": "127525",
+        "title": "몽촌토성",
+        "distanceKm": 0.19728721808476715
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-landmark_observatory-bukchon-hanok-village",
+    "place_name_ko": "북촌한옥마을",
+    "candidates": [
+      {
+        "contentid": "126537",
+        "title": "북촌한옥마을",
+        "distanceKm": 0.34496605226608884
+      },
+      {
+        "contentid": "2946075",
+        "title": "북촌한옥마을 감고당길",
+        "distanceKm": 0.4738985271453589
+      },
+      {
+        "contentid": "130446",
+        "title": "가회민화박물관",
+        "distanceKm": 0.04803434938467065
+      },
+      {
+        "contentid": "3446417",
+        "title": "오설록 티하우스 북촌점",
+        "distanceKm": 0.08048368263855249
+      },
+      {
+        "contentid": "3072219",
+        "title": "북촌빈관 by 락고재",
+        "distanceKm": 0.08285709149919936
+      },
+      {
+        "contentid": "3438381",
+        "title": "북촌다락방",
+        "distanceKm": 0.13700152385600098
+      },
+      {
+        "contentid": "2696383",
+        "title": "한옥 201(Hanok 201)",
+        "distanceKm": 0.14460982015573193
+      },
+      {
+        "contentid": "3532757",
+        "title": "곰곰하우스",
+        "distanceKm": 0.1520376517838017
+      },
+      {
+        "contentid": "2481866",
+        "title": "백인제가옥",
+        "distanceKm": 0.1559911457759146
+      },
+      {
+        "contentid": "2607481",
+        "title": "향운",
+        "distanceKm": 0.1709953181313308
+      },
+      {
+        "contentid": "3438368",
+        "title": "해아원",
+        "distanceKm": 0.18176729817635826
+      },
+      {
+        "contentid": "2608499",
+        "title": "미담 한옥 게스트 하우스",
+        "distanceKm": 0.18308332835410904
+      },
+      {
+        "contentid": "2700971",
+        "title": "락고재 서울 북촌 한옥호텔",
+        "distanceKm": 0.20843453083046748
+      },
+      {
+        "contentid": "2603884",
+        "title": "연당",
+        "distanceKm": 0.21975376784966139
+      },
+      {
+        "contentid": "3438295",
+        "title": "함한옥스테이",
+        "distanceKm": 0.21971734377945695
+      },
+      {
+        "contentid": "3438724",
+        "title": "소월정",
+        "distanceKm": 0.223803775493382
+      },
+      {
+        "contentid": "3072235",
+        "title": "유준당 바이 버틀러리",
+        "distanceKm": 0.2237685198855813
+      },
+      {
+        "contentid": "2587214",
+        "title": "제이한옥(JAY Hanok)",
+        "distanceKm": 0.23041794167958324
+      },
+      {
+        "contentid": "2997938",
+        "title": "그랑핸드 가회점",
+        "distanceKm": 0.23160837848386268
+      },
+      {
+        "contentid": "3438261",
+        "title": "이도한옥",
+        "distanceKm": 0.23333963414272832
+      },
+      {
+        "contentid": "3072240",
+        "title": "온유헌 바이 버틀러리",
+        "distanceKm": 0.23656239792439337
+      },
+      {
+        "contentid": "2588198",
+        "title": "삼청동 코리아 게스트하우스",
+        "distanceKm": 0.24850809068034208
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-cafe-dal",
+    "place_name_ko": "카페달",
+    "candidates": [
+      {
+        "contentid": "2899851",
+        "title": "카페달밤",
+        "distanceKm": 208.5096550098466
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-front-seoul",
+    "place_name_ko": "프론트서울",
+    "candidates": [
+      {
+        "contentid": "987720",
+        "title": "신사동 가로수길",
+        "distanceKm": 0.06092058787437866
+      },
+      {
+        "contentid": "2867731",
+        "title": "샤블리",
+        "distanceKm": 0.1325616016239447
+      },
+      {
+        "contentid": "2870254",
+        "title": "네기다이닝라운지",
+        "distanceKm": 0.16071497727395773
+      },
+      {
+        "contentid": "2869230",
+        "title": "어썸로즈",
+        "distanceKm": 0.18414202646447234
+      },
+      {
+        "contentid": "2592885",
+        "title": "엘크레",
+        "distanceKm": 0.19757871123939105
+      },
+      {
+        "contentid": "2867469",
+        "title": "쮸즈",
+        "distanceKm": 0.210553102132799
+      },
+      {
+        "contentid": "2869506",
+        "title": "왕스덕 논현점",
+        "distanceKm": 0.24158073432605584
+      },
+      {
+        "contentid": "2869101",
+        "title": "김북순큰남비집 신사본점",
+        "distanceKm": 0.2568443318939507
+      },
+      {
+        "contentid": "2871497",
+        "title": "김수사",
+        "distanceKm": 0.26582652093713904
+      },
+      {
+        "contentid": "3465527",
+        "title": "보코 서울 강남",
+        "distanceKm": 0.2690247221542015
+      },
+      {
+        "contentid": "2856080",
+        "title": "스와니예",
+        "distanceKm": 0.2809443398417565
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-culture-gyeongbokgung-palace",
+    "place_name_ko": "경복궁",
+    "candidates": [
+      {
+        "contentid": "126508",
+        "title": "경복궁",
+        "distanceKm": 0.17662708467233706
+      },
+      {
+        "contentid": "3577022",
+        "title": "경복궁",
+        "distanceKm": 310.68605083457834
+      },
+      {
+        "contentid": "2648460",
+        "title": "경복궁 별빛야행",
+        "distanceKm": 0.1766270898577389
+      },
+      {
+        "contentid": "1952962",
+        "title": "경복궁 북쪽마을 북촌 즐기기",
+        "distanceKm": 0.17762515302010357
+      },
+      {
+        "contentid": "2615461",
+        "title": "경복궁 생과방",
+        "distanceKm": 0.17662708467233706
+      },
+      {
+        "contentid": "2820889",
+        "title": "경복궁에 맛있는 부엌",
+        "distanceKm": 0.6055282943326504
+      },
+      {
+        "contentid": "4025882",
+        "title": "다이소 경복궁역점",
+        "distanceKm": 0.3814906369061232
+      },
+      {
+        "contentid": "4012713",
+        "title": "앤더슨벨 경복궁 플래그쉽 스토어",
+        "distanceKm": 0.6115068566935207
+      },
+      {
+        "contentid": "4009449",
+        "title": "올리브영 경복궁역점",
+        "distanceKm": 0.42631595916665455
+      },
+      {
+        "contentid": "1914505",
+        "title": "청계천을 돌아 경복궁에서 인사동까지",
+        "distanceKm": 0.958278110937369
+      },
+      {
+        "contentid": "2390314",
+        "title": "한복남 경복궁점",
+        "distanceKm": 0.3478873181670983
+      },
+      {
+        "contentid": "2629723",
+        "title": "[백년가게]경복궁식당",
+        "distanceKm": 187.11240496819434
+      },
+      {
+        "contentid": "1604652",
+        "title": "건청궁",
+        "distanceKm": 0.17064138286608727
+      },
+      {
+        "contentid": "562425",
+        "title": "두가헌 레스토랑",
+        "distanceKm": 0.25843653774949427
+      },
+      {
+        "contentid": "1947036",
+        "title": "스미스가 좋아하는 한옥",
+        "distanceKm": 0.28148119878969047
+      },
+      {
+        "contentid": "1934593",
+        "title": "국립현대미술관 서울",
+        "distanceKm": 0.29700517200516263
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-sunghoon-food-jazz-story-2",
+    "place_name_ko": "재즈스토리 2호점",
+    "candidates": [
+      {
+        "contentid": "2848108",
+        "title": "개뿔",
+        "distanceKm": 0.23903025668823458
+      },
+      {
+        "contentid": "2946109",
+        "title": "손놀림공방",
+        "distanceKm": 0.2597214870598194
+      },
+      {
+        "contentid": "3533152",
+        "title": "힐제이",
+        "distanceKm": 0.2842713412674507
+      },
+      {
+        "contentid": "3080775",
+        "title": "유니플렉스",
+        "distanceKm": 0.29005034246979267
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-landmark_observatory-samcheong-dong-street",
+    "place_name_ko": "삼청동거리",
+    "candidates": [
+      {
+        "contentid": "250147",
+        "title": "삼청동거리",
+        "distanceKm": 0.7661867083987065
+      },
+      {
+        "contentid": "3533161",
+        "title": "앙니드 공이안",
+        "distanceKm": 0.04792121710001499
+      },
+      {
+        "contentid": "2588198",
+        "title": "삼청동 코리아 게스트하우스",
+        "distanceKm": 0.048149708623917056
+      },
+      {
+        "contentid": "130688",
+        "title": "세계장신구박물관",
+        "distanceKm": 0.11871256114544673
+      },
+      {
+        "contentid": "130613",
+        "title": "갤러리도올",
+        "distanceKm": 0.13620953045890194
+      },
+      {
+        "contentid": "2835583",
+        "title": "바라캇 서울",
+        "distanceKm": 0.1464347611908287
+      },
+      {
+        "contentid": "129918",
+        "title": "국제갤러리",
+        "distanceKm": 0.15997418302748626
+      },
+      {
+        "contentid": "3438358",
+        "title": "정연재",
+        "distanceKm": 0.1718841168685877
+      },
+      {
+        "contentid": "3438368",
+        "title": "해아원",
+        "distanceKm": 0.18650433298182678
+      },
+      {
+        "contentid": "2946235",
+        "title": "단하",
+        "distanceKm": 0.193796538078697
+      },
+      {
+        "contentid": "130636",
+        "title": "아트파크",
+        "distanceKm": 0.21542889726054032
+      },
+      {
+        "contentid": "2997938",
+        "title": "그랑핸드 가회점",
+        "distanceKm": 0.2192214334077889
+      },
+      {
+        "contentid": "130587",
+        "title": "갤러리조선",
+        "distanceKm": 0.23105565105700615
+      },
+      {
+        "contentid": "3438381",
+        "title": "북촌다락방",
+        "distanceKm": 0.22950392852428383
+      },
+      {
+        "contentid": "3072219",
+        "title": "북촌빈관 by 락고재",
+        "distanceKm": 0.24323160462876625
+      },
+      {
+        "contentid": "2739443",
+        "title": "PKM갤러리",
+        "distanceKm": 0.2614938581995872
+      },
+      {
+        "contentid": "3113222",
+        "title": "온 가족 책 잔치",
+        "distanceKm": 0.27061365231243034
+      },
+      {
+        "contentid": "2739448",
+        "title": "공근혜갤러리",
+        "distanceKm": 0.2749363665015444
+      },
+      {
+        "contentid": "3106658",
+        "title": "[K드라마 촬영지] 공근혜갤러리",
+        "distanceKm": 0.2749363665015444
+      },
+      {
+        "contentid": "402994",
+        "title": "삼청동수제비",
+        "distanceKm": 0.28496430121234995
+      },
+      {
+        "contentid": "2481866",
+        "title": "백인제가옥",
+        "distanceKm": 0.2938638998589111
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-tongkeun-galbi-sinchon-branch",
+    "place_name_ko": "통큰갈비 신촌본점",
+    "candidates": [
+      {
+        "contentid": "1019327",
+        "title": "긱 라이브하우스",
+        "distanceKm": 0.1410959275246411
+      },
+      {
+        "contentid": "130961",
+        "title": "이한열기념관",
+        "distanceKm": 0.23220341049617424
+      },
+      {
+        "contentid": "1292674",
+        "title": "춘천집닭갈비막국수",
+        "distanceKm": 0.23277014061768636
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-gordon-ramsay-street-burger-world-trade-center-branch",
+    "place_name_ko": "고든램지 스트리트 버거 무역센터점",
+    "candidates": [
+      {
+        "contentid": "142769",
+        "title": "그랜드 인터컨티넨탈 서울 파르나스",
+        "distanceKm": 0.11400113272454897
+      },
+      {
+        "contentid": "2542167",
+        "title": "연화산",
+        "distanceKm": 0.18556141980063998
+      },
+      {
+        "contentid": "3439947",
+        "title": "강남 미디어 윈터페스타",
+        "distanceKm": 0.200704397822757
+      },
+      {
+        "contentid": "2870297",
+        "title": "부타이 1막",
+        "distanceKm": 0.27673421767035356
+      },
+      {
+        "contentid": "3464974",
+        "title": "신라스테이 삼성",
+        "distanceKm": 0.295129103926544
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-dangdo-ice-cream",
+    "place_name_ko": "당도아이스크림",
+    "candidates": [
+      {
+        "contentid": "2833276",
+        "title": "송이네",
+        "distanceKm": 0.09738724003683975
+      },
+      {
+        "contentid": "2907085",
+        "title": "망원월드컵시장",
+        "distanceKm": 0.1684759190404908
+      },
+      {
+        "contentid": "2823094",
+        "title": "청아라 생선구이",
+        "distanceKm": 0.20328826410460288
+      },
+      {
+        "contentid": "2871291",
+        "title": "진평925",
+        "distanceKm": 0.22078119976147825
+      },
+      {
+        "contentid": "2853784",
+        "title": "정광수의돈까스가게",
+        "distanceKm": 0.2226176473809136
+      },
+      {
+        "contentid": "2871363",
+        "title": "한강껍데기",
+        "distanceKm": 0.22828960645054291
+      },
+      {
+        "contentid": "2989027",
+        "title": "간격 드로잉스페이스",
+        "distanceKm": 0.26082189349147294
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-deo-masinneun-jokbal-bossam-wonhyoro-branch",
+    "place_name_ko": "더맛있는족발보쌈 원효로점",
+    "candidates": [
+      {
+        "contentid": "127016",
+        "title": "옛 용산신학교와 원효로 예수성심성당",
+        "distanceKm": 0.22589444291288222
+      },
+      {
+        "contentid": "132229",
+        "title": "용산전자랜드",
+        "distanceKm": 0.2984514443369064
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-jungwon-food-domanda-namyeong-branch",
+    "place_name_ko": "도만다 남영점",
+    "candidates": [
+      {
+        "contentid": "2855577",
+        "title": "오츠커피 용산점",
+        "distanceKm": 0.2010392614188918
+      },
+      {
+        "contentid": "2860024",
+        "title": "열정도쭈꾸미",
+        "distanceKm": 0.24230304444364914
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-donghwagogok-the-room-gangnam-branch",
+    "place_name_ko": "동화고옥 The ROOM 강남점",
+    "candidates": [
+      {
+        "contentid": "719514",
+        "title": "지식재산전문도서관",
+        "distanceKm": 0.05653702145989261
+      },
+      {
+        "contentid": "2871116",
+        "title": "예담한정식",
+        "distanceKm": 0.13140412002646557
+      },
+      {
+        "contentid": "2802077",
+        "title": "2025 과학영재교육 페스티벌",
+        "distanceKm": 0.17017657914366358
+      },
+      {
+        "contentid": "2733862",
+        "title": "빌즈 강남",
+        "distanceKm": 0.23106341595881388
+      },
+      {
+        "contentid": "2870538",
+        "title": "신동궁감자탕 역삼본점",
+        "distanceKm": 0.2356169930301711
+      },
+      {
+        "contentid": "2871711",
+        "title": "보슬보슬 역삼본점",
+        "distanceKm": 0.2656740271034987
+      },
+      {
+        "contentid": "2752546",
+        "title": "돝고기506",
+        "distanceKm": 0.2665800826355802
+      },
+      {
+        "contentid": "135708",
+        "title": "청수횟집",
+        "distanceKm": 0.27338231912681943
+      },
+      {
+        "contentid": "2871478",
+        "title": "강남진해장",
+        "distanceKm": 0.2759558948941709
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-activity-diana-pilates-flying-yoga",
+    "place_name_ko": "디아나 필라테스&플라잉요가",
+    "candidates": [
+      {
+        "contentid": "2838491",
+        "title": "이이요",
+        "distanceKm": 0.0376766341969158
+      },
+      {
+        "contentid": "2875239",
+        "title": "이화만두",
+        "distanceKm": 0.10149476921887898
+      },
+      {
+        "contentid": "132502",
+        "title": "중곡동 가구거리",
+        "distanceKm": 0.20793778721232467
+      },
+      {
+        "contentid": "2560282",
+        "title": "호재래",
+        "distanceKm": 0.209283558573993
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-reiho-sushi",
+    "place_name_ko": "레이호 스시",
+    "candidates": [
+      {
+        "contentid": "2856080",
+        "title": "스와니예",
+        "distanceKm": 0.01999011454575505
+      },
+      {
+        "contentid": "984650",
+        "title": "더리버사이드 호텔",
+        "distanceKm": 0.11056063284021506
+      },
+      {
+        "contentid": "584698",
+        "title": "스파레이",
+        "distanceKm": 0.14875766880024133
+      },
+      {
+        "contentid": "2869101",
+        "title": "김북순큰남비집 신사본점",
+        "distanceKm": 0.16570524276949125
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-activity-lotte-world-adventure",
+    "place_name_ko": "롯데월드 어드벤처",
+    "candidates": [
+      {
+        "contentid": "126498",
+        "title": "롯데월드 어드벤처",
+        "distanceKm": 0.02788291759785776
+      },
+      {
+        "contentid": "2893996",
+        "title": "롯데월드 어드벤처",
+        "distanceKm": 0.01995310926214617
+      },
+      {
+        "contentid": "2815627",
+        "title": "롯데월드 어드벤처 부산",
+        "distanceKm": 319.5688123516637
+      },
+      {
+        "contentid": "131297",
+        "title": "롯데월드 아이스링크",
+        "distanceKm": 0.14564715659550886
+      },
+      {
+        "contentid": "142766",
+        "title": "롯데호텔 월드",
+        "distanceKm": 0.14564715659550886
+      },
+      {
+        "contentid": "231897",
+        "title": "서울 삼전도비",
+        "distanceKm": 0.2250403901615064
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-shopping-market-in-you",
+    "place_name_ko": "마켓인유",
+    "candidates": [
+      {
+        "contentid": "2899175",
+        "title": "프롤라",
+        "distanceKm": 0.15534205770947726
+      },
+      {
+        "contentid": "2899661",
+        "title": "세디치",
+        "distanceKm": 0.1719666493862676
+      },
+      {
+        "contentid": "2745602",
+        "title": "에스팩토리",
+        "distanceKm": 0.21284503895981877
+      },
+      {
+        "contentid": "2401757",
+        "title": "자양동 양꼬치거리 (중국음식문화거리)",
+        "distanceKm": 0.2703145290519778
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-activity-bowl-house-hannam",
+    "place_name_ko": "볼하우스 한남",
+    "candidates": [
+      {
+        "contentid": "2855434",
+        "title": "한남동감자탕",
+        "distanceKm": 0.15028725375108765
+      },
+      {
+        "contentid": "2856443",
+        "title": "백년손님",
+        "distanceKm": 0.19171156891349073
+      },
+      {
+        "contentid": "403509",
+        "title": "두에꼬제",
+        "distanceKm": 0.24704105774289342
+      },
+      {
+        "contentid": "2758130",
+        "title": "오만지아",
+        "distanceKm": 0.29447162978357894
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-sapporo-hongdae-branch",
+    "place_name_ko": "삿뽀로 홍대점",
+    "candidates": [
+      {
+        "contentid": "2699359",
+        "title": "홍대스타일 게스트하우스",
+        "distanceKm": 0.12069307495278109
+      },
+      {
+        "contentid": "2907142",
+        "title": "롯데호텔 L7홍대",
+        "distanceKm": 0.13125378870521848
+      },
+      {
+        "contentid": "3533163",
+        "title": "퀸하우스",
+        "distanceKm": 0.15793042081832015
+      },
+      {
+        "contentid": "2917245",
+        "title": "아만티호텔서울",
+        "distanceKm": 0.17298872736993698
+      },
+      {
+        "contentid": "2917226",
+        "title": "머큐어 앰배서더 서울 홍대",
+        "distanceKm": 0.2098216460849631
+      },
+      {
+        "contentid": "2700281",
+        "title": "니트하우스",
+        "distanceKm": 0.27342329675915494
+      },
+      {
+        "contentid": "2918636",
+        "title": "나인브릭호텔",
+        "distanceKm": 0.29558605598406595
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-seoul-ludens",
+    "place_name_ko": "서울루덴스",
+    "candidates": [
+      {
+        "contentid": "3533136",
+        "title": "모드하우스",
+        "distanceKm": 0.03221611757126941
+      },
+      {
+        "contentid": "2855483",
+        "title": "로코스 비비큐 경리단길본점",
+        "distanceKm": 0.13319466195531265
+      },
+      {
+        "contentid": "402926",
+        "title": "라 쿠치나",
+        "distanceKm": 0.19609119336956404
+      },
+      {
+        "contentid": "130573",
+        "title": "갤러리에스피",
+        "distanceKm": 0.22850993658654495
+      },
+      {
+        "contentid": "130637",
+        "title": "어반아트",
+        "distanceKm": 0.26395044151303954
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-yanghwajeong",
+    "place_name_ko": "양화정",
+    "candidates": [
+      {
+        "contentid": "2871395",
+        "title": "합정옥",
+        "distanceKm": 0.13687892896044135
+      },
+      {
+        "contentid": "2871345",
+        "title": "핑크솔트 숯불구이",
+        "distanceKm": 0.1452033941540221
+      },
+      {
+        "contentid": "403305",
+        "title": "그릭조이",
+        "distanceKm": 0.20189412053019426
+      },
+      {
+        "contentid": "127308",
+        "title": "정몽주 동상",
+        "distanceKm": 0.22898598792492864
+      },
+      {
+        "contentid": "2853824",
+        "title": "크레이지카츠",
+        "distanceKm": 0.2348903203915213
+      },
+      {
+        "contentid": "2853860",
+        "title": "각시보쌈",
+        "distanceKm": 0.24004069325604477
+      },
+      {
+        "contentid": "2853890",
+        "title": "교다이야",
+        "distanceKm": 0.2969374749364296
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-eonyang-saeng-gogi",
+    "place_name_ko": "언양생고기",
+    "candidates": [
+      {
+        "contentid": "2855434",
+        "title": "한남동감자탕",
+        "distanceKm": 0.08921899136851207
+      },
+      {
+        "contentid": "2860187",
+        "title": "테이블포포",
+        "distanceKm": 0.1916534045924332
+      },
+      {
+        "contentid": "403509",
+        "title": "두에꼬제",
+        "distanceKm": 0.2867785912475073
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-eom-yongbaek-pork-gukbap-jonggak-branch",
+    "place_name_ko": "엄용백 돼지국밥 종각점",
+    "candidates": [
+      {
+        "contentid": "232225",
+        "title": "양반댁",
+        "distanceKm": 0.03996227363635777
+      },
+      {
+        "contentid": "129907",
+        "title": "조형갤러리",
+        "distanceKm": 0.08317114260028054
+      },
+      {
+        "contentid": "130577",
+        "title": "갤러리 라메르",
+        "distanceKm": 0.11417438184792118
+      },
+      {
+        "contentid": "2392535",
+        "title": "다이나믹 메이즈 인사동",
+        "distanceKm": 0.1283102656892662
+      },
+      {
+        "contentid": "2739479",
+        "title": "한국미술관",
+        "distanceKm": 0.13081025027721094
+      },
+      {
+        "contentid": "605961",
+        "title": "민영환 자결터",
+        "distanceKm": 0.1408204356009649
+      },
+      {
+        "contentid": "985264",
+        "title": "이새",
+        "distanceKm": 0.17589946156355804
+      },
+      {
+        "contentid": "1063408",
+        "title": "옛찻집",
+        "distanceKm": 0.18414209073509205
+      },
+      {
+        "contentid": "3464880",
+        "title": "오라카이 인사동 스위츠",
+        "distanceKm": 0.189792766925293
+      },
+      {
+        "contentid": "2848063",
+        "title": "마이클 바이 해비치",
+        "distanceKm": 0.1897277075809737
+      },
+      {
+        "contentid": "1063403",
+        "title": "인사동찻집",
+        "distanceKm": 0.19386896886155092
+      },
+      {
+        "contentid": "403093",
+        "title": "이문설농탕",
+        "distanceKm": 0.19401556802997774
+      },
+      {
+        "contentid": "2606224",
+        "title": "공평도시유적전시관",
+        "distanceKm": 0.1972238613659221
+      },
+      {
+        "contentid": "402970",
+        "title": "산촌",
+        "distanceKm": 0.22268379012235476
+      },
+      {
+        "contentid": "132226",
+        "title": "낙원 악기상가",
+        "distanceKm": 0.22366708743114389
+      },
+      {
+        "contentid": "132219",
+        "title": "인사동 문화의 거리",
+        "distanceKm": 0.23878248241902203
+      },
+      {
+        "contentid": "2465890",
+        "title": "시은재",
+        "distanceKm": 0.23911394038090575
+      },
+      {
+        "contentid": "835739",
+        "title": "안동국시소람",
+        "distanceKm": 0.24236525704492695
+      },
+      {
+        "contentid": "129903",
+        "title": "동산방화랑",
+        "distanceKm": 0.2430347450219151
+      },
+      {
+        "contentid": "130629",
+        "title": "백악미술관",
+        "distanceKm": 0.24613864863111992
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-activity-yeouido-park",
+    "place_name_ko": "여의도공원",
+    "candidates": [
+      {
+        "contentid": "127955",
+        "title": "여의도공원",
+        "distanceKm": 0.08051858754596473
+      },
+      {
+        "contentid": "2774305",
+        "title": "여의도공원 문화의마당",
+        "distanceKm": 0.24302281948093216
+      },
+      {
+        "contentid": "127955",
+        "title": "여의도공원",
+        "distanceKm": 0.08051858754596473
+      },
+      {
+        "contentid": "2774305",
+        "title": "여의도공원 문화의마당",
+        "distanceKm": 0.24302281948093216
+      },
+      {
+        "contentid": "2855118",
+        "title": "노조미일식",
+        "distanceKm": 0.28384469163414916
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-yihwawon",
+    "place_name_ko": "이화원",
+    "candidates": [
+      {
+        "contentid": "821963",
+        "title": "이화원",
+        "distanceKm": 138.14851321993098
+      },
+      {
+        "contentid": "2891332",
+        "title": "이화원",
+        "distanceKm": 283.22054704194875
+      },
+      {
+        "contentid": "2857264",
+        "title": "이화원 프라이빗",
+        "distanceKm": 84.49177909573409
+      },
+      {
+        "contentid": "1060192",
+        "title": "자라섬 이화원",
+        "distanceKm": 58.9720519692121
+      },
+      {
+        "contentid": "2851231",
+        "title": "시도 플레이스",
+        "distanceKm": 0.06542718377082142
+      },
+      {
+        "contentid": "132903",
+        "title": "청송본관함흥냉면",
+        "distanceKm": 0.07784013319982162
+      },
+      {
+        "contentid": "2843010",
+        "title": "월순철판동태찜",
+        "distanceKm": 0.08004632018015213
+      },
+      {
+        "contentid": "2853889",
+        "title": "연희김밥 본점",
+        "distanceKm": 0.17215928753441445
+      },
+      {
+        "contentid": "2842966",
+        "title": "연희동칼국수 본점",
+        "distanceKm": 0.24436014656803248
+      },
+      {
+        "contentid": "2839885",
+        "title": "목란",
+        "distanceKm": 0.24624776993915198
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-concasse-seongsu",
+    "place_name_ko": "콩카세 성수",
+    "candidates": [
+      {
+        "contentid": "2894934",
+        "title": "온량",
+        "distanceKm": 0.05497845457209509
+      },
+      {
+        "contentid": "2900081",
+        "title": "성수지앵협동조합",
+        "distanceKm": 0.06009328204529122
+      },
+      {
+        "contentid": "2894997",
+        "title": "퀴버 서울숲",
+        "distanceKm": 0.09139445761815973
+      },
+      {
+        "contentid": "2899077",
+        "title": "플레이버타운",
+        "distanceKm": 0.09606410308001964
+      },
+      {
+        "contentid": "2895090",
+        "title": "티룸",
+        "distanceKm": 0.10134801701077045
+      },
+      {
+        "contentid": "2894319",
+        "title": "성수베이킹스튜디오",
+        "distanceKm": 0.11052344942288803
+      },
+      {
+        "contentid": "2895105",
+        "title": "파르코",
+        "distanceKm": 0.11012564226715298
+      },
+      {
+        "contentid": "2843520",
+        "title": "난포",
+        "distanceKm": 0.11642514547875729
+      },
+      {
+        "contentid": "2894761",
+        "title": "엘더버거",
+        "distanceKm": 0.1290291402245997
+      },
+      {
+        "contentid": "2894951",
+        "title": "유어네이키드치즈",
+        "distanceKm": 0.1285378316914003
+      },
+      {
+        "contentid": "2895025",
+        "title": "5to7",
+        "distanceKm": 0.13230817569951286
+      },
+      {
+        "contentid": "2899515",
+        "title": "미테이블 성수점",
+        "distanceKm": 0.13470226241578748
+      },
+      {
+        "contentid": "2899926",
+        "title": "비사벌 전주 콩나물 국밥",
+        "distanceKm": 0.1347150902827489
+      },
+      {
+        "contentid": "2895145",
+        "title": "할머니의 레시피",
+        "distanceKm": 0.13621100684793527
+      },
+      {
+        "contentid": "2894842",
+        "title": "꾸아 성수점",
+        "distanceKm": 0.14253539111616506
+      },
+      {
+        "contentid": "2893977",
+        "title": "제스티살룬 성수",
+        "distanceKm": 0.14251739281118395
+      },
+      {
+        "contentid": "2894710",
+        "title": "쎄콩데live",
+        "distanceKm": 0.16328499935029617
+      },
+      {
+        "contentid": "2895010",
+        "title": "크림라벨 서울숲 본점",
+        "distanceKm": 0.16328499935029617
+      },
+      {
+        "contentid": "2899351",
+        "title": "메쉬커피",
+        "distanceKm": 0.17139514741442977
+      },
+      {
+        "contentid": "2895211",
+        "title": "구욱희씨",
+        "distanceKm": 0.18634103200851115
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-landmark_observatory-photoism-box-gangnam-branch-1",
+    "place_name_ko": "포토이즘 박스 강남1호점",
+    "candidates": [
+      {
+        "contentid": "2821755",
+        "title": "썸띵어바웃커피",
+        "distanceKm": 0.10363264590989012
+      },
+      {
+        "contentid": "2870637",
+        "title": "어거스트힐 강남점",
+        "distanceKm": 0.15315820479809297
+      },
+      {
+        "contentid": "2869928",
+        "title": "마초쉐프 강남본점",
+        "distanceKm": 0.17124228091699042
+      },
+      {
+        "contentid": "2610892",
+        "title": "빅 존스 플레이스",
+        "distanceKm": 0.2271197554805496
+      },
+      {
+        "contentid": "3074766",
+        "title": "슈터스클럽",
+        "distanceKm": 0.24968468782887787
+      },
+      {
+        "contentid": "596511",
+        "title": "국기원(세계태권도본부)",
+        "distanceKm": 0.27951050098516456
+      },
+      {
+        "contentid": "2574118",
+        "title": "강남스테이힐(Gangnam Stay Hill)",
+        "distanceKm": 0.29811648041698613
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-jungwon-landmark_observatory-plan-b-studio-sookmyung-women-s-univ-station-branch",
+    "place_name_ko": "플랜비스튜디오 숙대입구점",
+    "candidates": [
+      {
+        "contentid": "2851009",
+        "title": "한입소반",
+        "distanceKm": 0.17469801499203644
+      },
+      {
+        "contentid": "2855553",
+        "title": "쌍대포소금구이 본점",
+        "distanceKm": 0.2022257336922166
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-fisensio",
+    "place_name_ko": "피센시오",
+    "candidates": [
+      {
+        "contentid": "2867189",
+        "title": "르브런쉭 신사점",
+        "distanceKm": 0.04340309294758329
+      },
+      {
+        "contentid": "2869230",
+        "title": "어썸로즈",
+        "distanceKm": 0.17707378910318047
+      },
+      {
+        "contentid": "2869101",
+        "title": "김북순큰남비집 신사본점",
+        "distanceKm": 0.22278199246271968
+      },
+      {
+        "contentid": "2592885",
+        "title": "엘크레",
+        "distanceKm": 0.2392014620343177
+      },
+      {
+        "contentid": "2867252",
+        "title": "마일스톤 커피",
+        "distanceKm": 0.27522612289817106
+      }
+    ]
+  },
+  {
+    "place_id": "enhypen-food-hanyang-hwaro-dongdaemun-history-culture-park-branch",
+    "place_name_ko": "한양화로 동대문역사점",
+    "candidates": [
+      {
+        "contentid": "2602549",
+        "title": "96번지 트래블러스 롯지",
+        "distanceKm": 0.021333879128940168
+      },
+      {
+        "contentid": "984585",
+        "title": "헬로우 에이피엠 (Hello apm)",
+        "distanceKm": 0.06126213590305647
+      },
+      {
+        "contentid": "2762868",
+        "title": "동화상가",
+        "distanceKm": 0.09912217008042677
+      },
+      {
+        "contentid": "2603723",
+        "title": "플랜에이호스텔",
+        "distanceKm": 0.10099352186758476
+      },
+      {
+        "contentid": "273758",
+        "title": "밀리오레 동대문점",
+        "distanceKm": 0.10720821381442516
+      },
+      {
+        "contentid": "1037031",
+        "title": "[북악하늘길 스카이웨이] 하늘한마당~하늘마루",
+        "distanceKm": 0.21672306564479102
+      },
+      {
+        "contentid": "132182",
+        "title": "서울 평화시장",
+        "distanceKm": 0.22128959983879076
+      },
+      {
+        "contentid": "1906334",
+        "title": "동대문역사문화공원",
+        "distanceKm": 0.23933182622785315
+      },
+      {
+        "contentid": "2470006",
+        "title": "동대문디자인플라자(DDP)",
+        "distanceKm": 0.23933182622785315
+      },
+      {
+        "contentid": "2487791",
+        "title": "서울아프리카페스티벌",
+        "distanceKm": 0.23933182622785315
+      },
+      {
+        "contentid": "2854855",
+        "title": "2025 대한민국 관광기념품 박람회",
+        "distanceKm": 0.23933182622785315
+      },
+      {
+        "contentid": "3351622",
+        "title": "DDP 가을축제: 디자인 라운지",
+        "distanceKm": 0.23933182622785315
+      },
+      {
+        "contentid": "3533382",
+        "title": "엔터테크 서울 2025",
+        "distanceKm": 0.23933182622785315
+      },
+      {
+        "contentid": "2561208",
+        "title": "디키디키",
+        "distanceKm": 0.2624837377075664
+      }
+    ]
+  },
+  {
+    "place_id": "exo-baekhyun-food-elephant",
+    "place_name_ko": "엘리펀트",
+    "candidates": [
+      {
+        "contentid": "2834657",
+        "title": "엘리펀트 빌리지",
+        "distanceKm": 29.317086585764066
+      },
+      {
+        "contentid": "2900364",
+        "title": "마를리",
+        "distanceKm": 0.058822445465379465
+      },
+      {
+        "contentid": "2894728",
+        "title": "탐광",
+        "distanceKm": 0.0647478562666454
+      },
+      {
+        "contentid": "2837198",
+        "title": "소문난성수감자탕 별관",
+        "distanceKm": 0.07947431657694236
+      },
+      {
+        "contentid": "2895269",
+        "title": "텐동식당",
+        "distanceKm": 0.09144758416697657
+      },
+      {
+        "contentid": "2895286",
+        "title": "텐바",
+        "distanceKm": 0.1282558411689232
+      },
+      {
+        "contentid": "2899723",
+        "title": "성수부두",
+        "distanceKm": 0.13187949262742407
+      },
+      {
+        "contentid": "2900554",
+        "title": "레이더",
+        "distanceKm": 0.16300392391461455
+      },
+      {
+        "contentid": "2745594",
+        "title": "성수연방",
+        "distanceKm": 0.16901538059192583
+      },
+      {
+        "contentid": "2900247",
+        "title": "메이플탑",
+        "distanceKm": 0.16934990472162864
+      },
+      {
+        "contentid": "3080130",
+        "title": "호텔포코 성수",
+        "distanceKm": 0.1767890348314612
+      },
+      {
+        "contentid": "2899749",
+        "title": "성수노루",
+        "distanceKm": 0.190944251753328
+      },
+      {
+        "contentid": "2899649",
+        "title": "세스크 멘슬",
+        "distanceKm": 0.1944723514376071
+      },
+      {
+        "contentid": "2850614",
+        "title": "스탈릿성수",
+        "distanceKm": 0.20551583488469308
+      },
+      {
+        "contentid": "2894966",
+        "title": "천하제일 솥뚜껑",
+        "distanceKm": 0.20467164464683787
+      },
+      {
+        "contentid": "2900881",
+        "title": "옹근달",
+        "distanceKm": 0.20785561475169842
+      },
+      {
+        "contentid": "2901229",
+        "title": "가조쿠",
+        "distanceKm": 0.2090546292223475
+      },
+      {
+        "contentid": "2901568",
+        "title": "기후",
+        "distanceKm": 0.23022836944954828
+      },
+      {
+        "contentid": "2899272",
+        "title": "업사이드커피",
+        "distanceKm": 0.23681603634415055
+      },
+      {
+        "contentid": "2900599",
+        "title": "러프러프",
+        "distanceKm": 0.2752789250592055
+      }
+    ]
+  },
+  {
+    "place_id": "exo-xiumin-kpop-inb100",
+    "place_name_ko": "아이앤비100",
+    "candidates": [
+      {
+        "contentid": "2871309",
+        "title": "화화일식",
+        "distanceKm": 0.10332353220425053
+      },
+      {
+        "contentid": "2602777",
+        "title": "호텔 카푸치노",
+        "distanceKm": 0.2738231653643599
+      }
+    ]
+  },
+  {
+    "place_id": "exo-kai-food-kamong",
+    "place_name_ko": "카몽",
+    "candidates": [
+      {
+        "contentid": "2855984",
+        "title": "설눈",
+        "distanceKm": 0.07777823398733591
+      },
+      {
+        "contentid": "231962",
+        "title": "이스탄불문화원",
+        "distanceKm": 0.23327525035629015
+      },
+      {
+        "contentid": "2855762",
+        "title": "3대삼계장인",
+        "distanceKm": 0.2386034595207411
+      },
+      {
+        "contentid": "2783567",
+        "title": "흰물결갤러리",
+        "distanceKm": 0.2912652025076766
+      }
+    ]
+  },
+  {
+    "place_id": "exo-food-our-bakery-apgujeong",
+    "place_name_ko": "아우어베이커리 압구정소망점",
+    "candidates": [
+      {
+        "contentid": "2607620",
+        "title": "게스트하우스강남",
+        "distanceKm": 0.04802894719588481
+      },
+      {
+        "contentid": "2869760",
+        "title": "가담",
+        "distanceKm": 0.0971123302702464
+      },
+      {
+        "contentid": "132892",
+        "title": "삼원가든",
+        "distanceKm": 0.1834375166030055
+      },
+      {
+        "contentid": "1560179",
+        "title": "창희보석예술관",
+        "distanceKm": 0.1949100652510639
+      },
+      {
+        "contentid": "2869330",
+        "title": "압구정면옥",
+        "distanceKm": 0.20295755006349556
+      },
+      {
+        "contentid": "2903331",
+        "title": "치즈룸 안다즈",
+        "distanceKm": 0.24406465681499367
+      },
+      {
+        "contentid": "3466079",
+        "title": "안다즈 서울 강남",
+        "distanceKm": 0.24406465681499367
+      },
+      {
+        "contentid": "1021125",
+        "title": "씨네 드 쉐프(CINE de CHEF)",
+        "distanceKm": 0.2766633453950704
+      },
+      {
+        "contentid": "2849290",
+        "title": "달마시안",
+        "distanceKm": 0.27982150776394465
+      }
+    ]
+  },
+  {
+    "place_id": "exo-food-smt-seoul",
+    "place_name_ko": "SMT 라운지 더현대서울점",
+    "candidates": [
+      {
+        "contentid": "2721755",
+        "title": "페어몬트 앰배서더 서울(Fairmont Ambassador Seoul)",
+        "distanceKm": 0.06723437911733583
+      },
+      {
+        "contentid": "1853800",
+        "title": "콘래드 서울",
+        "distanceKm": 0.12914036514859686
+      }
+    ]
+  },
+  {
+    "place_id": "exo-chanyeol-food-the-world-4-u",
+    "place_name_ko": "좋은세상만들기",
+    "candidates": [
+      {
+        "contentid": "3085020",
+        "title": "호텔로프트",
+        "distanceKm": 0.08762552752250634
+      },
+      {
+        "contentid": "2836227",
+        "title": "또순이네집",
+        "distanceKm": 0.2581290140971885
+      }
+    ]
+  },
+  {
+    "place_id": "exo-landmark_observatory-times-square",
+    "place_name_ko": "CGV 영등포타임스퀘어",
+    "candidates": [
+      {
+        "contentid": "2852660",
+        "title": "송죽장",
+        "distanceKm": 0.1937283655030258
+      },
+      {
+        "contentid": "2763905",
+        "title": "영일시장",
+        "distanceKm": 0.2253201872848815
+      },
+      {
+        "contentid": "2850926",
+        "title": "3일한우국밥",
+        "distanceKm": 0.2987970976037508
+      }
+    ]
+  },
+  {
+    "place_id": "illit-landmark_observatory-cheongchun-film",
+    "place_name_ko": "청춘극장",
+    "candidates": [
+      {
+        "contentid": "130209",
+        "title": "서울 중구문화원",
+        "distanceKm": 0.06797059994608554
+      },
+      {
+        "contentid": "2504510",
+        "title": "롯데시티호텔 명동",
+        "distanceKm": 0.09161664890609175
+      },
+      {
+        "contentid": "2373333",
+        "title": "신석구 사택 터",
+        "distanceKm": 0.1475260277842748
+      },
+      {
+        "contentid": "2789169",
+        "title": "된장예술과술",
+        "distanceKm": 0.2148082594323232
+      },
+      {
+        "contentid": "3094138",
+        "title": "샤오바오우육면 종로본점",
+        "distanceKm": 0.22843092643221985
+      },
+      {
+        "contentid": "2629577",
+        "title": "장수촌 풍천장어",
+        "distanceKm": 0.25068282495725197
+      },
+      {
+        "contentid": "2739478",
+        "title": "전태일기념관",
+        "distanceKm": 0.25454963760316424
+      },
+      {
+        "contentid": "2373360",
+        "title": "우당 이회영 선생 흉상",
+        "distanceKm": 0.2590683683778253
+      },
+      {
+        "contentid": "2819007",
+        "title": "포포인츠 바이 쉐라톤 조선 서울 명동",
+        "distanceKm": 0.2675354902027802
+      }
+    ]
+  },
+  {
+    "place_id": "illit-food-churro-101-hongdae-main-branch",
+    "place_name_ko": "츄로101 홍대본점",
+    "candidates": [
+      {
+        "contentid": "250564",
+        "title": "산띠",
+        "distanceKm": 0.06341558710285582
+      },
+      {
+        "contentid": "2917226",
+        "title": "머큐어 앰배서더 서울 홍대",
+        "distanceKm": 0.1700789906032699
+      },
+      {
+        "contentid": "3425093",
+        "title": "서울 인디스페이스",
+        "distanceKm": 0.18532091994748928
+      },
+      {
+        "contentid": "2576511",
+        "title": "어반우드",
+        "distanceKm": 0.22547365838515077
+      },
+      {
+        "contentid": "2612215",
+        "title": "헤이마 게스트하우스",
+        "distanceKm": 0.2295713674221526
+      },
+      {
+        "contentid": "2907142",
+        "title": "롯데호텔 L7홍대",
+        "distanceKm": 0.23039040444923653
+      },
+      {
+        "contentid": "2607806",
+        "title": "나비호스텔",
+        "distanceKm": 0.26362982534742213
+      },
+      {
+        "contentid": "3533142",
+        "title": "앤드류 게스트하우스",
+        "distanceKm": 0.2695985009683764
+      }
+    ]
+  },
+  {
+    "place_id": "illit-shopping-little-riddle",
+    "place_name_ko": "리틀리들",
+    "candidates": [
+      {
+        "contentid": "2500229",
+        "title": "경의선책거리",
+        "distanceKm": 0.0424414443417611
+      },
+      {
+        "contentid": "2946238",
+        "title": "도자기카페 줄",
+        "distanceKm": 0.0682800571949221
+      },
+      {
+        "contentid": "699241",
+        "title": "김대중도서관",
+        "distanceKm": 0.0774936165459907
+      },
+      {
+        "contentid": "3533142",
+        "title": "앤드류 게스트하우스",
+        "distanceKm": 0.1394807999942391
+      },
+      {
+        "contentid": "2576511",
+        "title": "어반우드",
+        "distanceKm": 0.20437607919360637
+      },
+      {
+        "contentid": "2900483",
+        "title": "AK PLAZA 홍대",
+        "distanceKm": 0.22535146224578742
+      },
+      {
+        "contentid": "3076726",
+        "title": "홀리데이 인 익스프레스 서울 홍대",
+        "distanceKm": 0.22535146224578742
+      },
+      {
+        "contentid": "2612215",
+        "title": "헤이마 게스트하우스",
+        "distanceKm": 0.2344442480843999
+      },
+      {
+        "contentid": "130348",
+        "title": "대안공간 루프",
+        "distanceKm": 0.27120152401569725
+      },
+      {
+        "contentid": "1019327",
+        "title": "긱 라이브하우스",
+        "distanceKm": 0.2958519431581911
+      }
+    ]
+  },
+  {
+    "place_id": "le-sserafim-shopping-cheongnyangni-traditional-market",
+    "place_name_ko": "청량리전통시장",
+    "candidates": [
+      {
+        "contentid": "2759652",
+        "title": "청량리청과물시장",
+        "distanceKm": 0.10445919500168648
+      },
+      {
+        "contentid": "2842974",
+        "title": "할머니냉면",
+        "distanceKm": 0.21392709620125422
+      },
+      {
+        "contentid": "2794740",
+        "title": "청량리함흥냉면",
+        "distanceKm": 0.23998907552270032
+      },
+      {
+        "contentid": "2789203",
+        "title": "경동함흥냉면",
+        "distanceKm": 0.2938324848662781
+      }
+    ]
+  },
+  {
+    "place_id": "le-sserafim-culture-donuimun-museum-village",
+    "place_name_ko": "돈의문박물관마을",
+    "candidates": [
+      {
+        "contentid": "945824",
+        "title": "서울 경교장",
+        "distanceKm": 0.052653050867256246
+      },
+      {
+        "contentid": "130361",
+        "title": "서울역사박물관",
+        "distanceKm": 0.21750201813431336
+      },
+      {
+        "contentid": "1604784",
+        "title": "경희궁 흥화문",
+        "distanceKm": 0.21750201813431336
+      },
+      {
+        "contentid": "1604824",
+        "title": "경희궁공원",
+        "distanceKm": 0.21750201813431336
+      },
+      {
+        "contentid": "3038260",
+        "title": "국립기상박물관",
+        "distanceKm": 0.2452389597172373
+      }
+    ]
+  },
+  {
+    "place_id": "le-sserafim-activity-hongdae-sauna-24",
+    "place_name_ko": "홍대24시불가마사우나",
+    "candidates": [
+      {
+        "contentid": "2900483",
+        "title": "AK PLAZA 홍대",
+        "distanceKm": 0.14251600471955828
+      },
+      {
+        "contentid": "3076726",
+        "title": "홀리데이 인 익스프레스 서울 홍대",
+        "distanceKm": 0.14251600471955828
+      },
+      {
+        "contentid": "2814649",
+        "title": "온정텐동",
+        "distanceKm": 0.15151647952492306
+      },
+      {
+        "contentid": "3533162",
+        "title": "peace in bnb",
+        "distanceKm": 0.16520059093879827
+      },
+      {
+        "contentid": "2946238",
+        "title": "도자기카페 줄",
+        "distanceKm": 0.19259962460004212
+      },
+      {
+        "contentid": "2854456",
+        "title": "연남다방",
+        "distanceKm": 0.23329754982675976
+      },
+      {
+        "contentid": "2607806",
+        "title": "나비호스텔",
+        "distanceKm": 0.2506951147899822
+      },
+      {
+        "contentid": "3533142",
+        "title": "앤드류 게스트하우스",
+        "distanceKm": 0.27001924109043257
+      },
+      {
+        "contentid": "3425093",
+        "title": "서울 인디스페이스",
+        "distanceKm": 0.27433526333899566
+      },
+      {
+        "contentid": "2607446",
+        "title": "AT 30",
+        "distanceKm": 0.27389960671820857
+      },
+      {
+        "contentid": "699241",
+        "title": "김대중도서관",
+        "distanceKm": 0.28402369715842096
+      }
+    ]
+  },
+  {
+    "place_id": "nct-food-coffee-m-stable",
+    "place_name_ko": "커피엠스테이블 청담",
+    "candidates": [
+      {
+        "contentid": "2867828",
+        "title": "우천식육식당 청담본점",
+        "distanceKm": 0.006451458344566603
+      },
+      {
+        "contentid": "2544497",
+        "title": "스시 카이신(鮨海信)",
+        "distanceKm": 0.01252406823275281
+      },
+      {
+        "contentid": "2867487",
+        "title": "청담25",
+        "distanceKm": 0.2252808833283794
+      },
+      {
+        "contentid": "142764",
+        "title": "호텔리베라 청담",
+        "distanceKm": 0.2405395412882999
+      },
+      {
+        "contentid": "3080520",
+        "title": "엔트라호텔",
+        "distanceKm": 0.27794848537434164
+      },
+      {
+        "contentid": "127269",
+        "title": "청담근린공원",
+        "distanceKm": 0.2870473810351249
+      },
+      {
+        "contentid": "2867451",
+        "title": "잡어향기",
+        "distanceKm": 0.3002521462390938
+      }
+    ]
+  },
+  {
+    "place_id": "nct-food-kitchen-soop",
+    "place_name_ko": "키친숲",
+    "candidates": [
+      {
+        "contentid": "2815662",
+        "title": "키친숲",
+        "distanceKm": 7.1445177578078525
+      },
+      {
+        "contentid": "133836",
+        "title": "송원",
+        "distanceKm": 0.10216033166918936
+      },
+      {
+        "contentid": "699156",
+        "title": "평안도족발집",
+        "distanceKm": 0.1123740324821075
+      },
+      {
+        "contentid": "699279",
+        "title": "장충동 족발 골목",
+        "distanceKm": 0.11785723013329037
+      },
+      {
+        "contentid": "2011019",
+        "title": "써미트 호텔 서울",
+        "distanceKm": 0.12236240173044394
+      },
+      {
+        "contentid": "2608038",
+        "title": "USB하우스",
+        "distanceKm": 0.24977265393474285
+      },
+      {
+        "contentid": "3084990",
+        "title": "호텔 더 디자이너스 동대문",
+        "distanceKm": 0.2654270679777349
+      }
+    ]
+  },
+  {
+    "place_id": "nct-food-mokmyeoksanbang",
+    "place_name_ko": "목멱산방",
+    "candidates": [
+      {
+        "contentid": "2574082",
+        "title": "이브(이브게스트하우스)",
+        "distanceKm": 0.04939507062357276
+      },
+      {
+        "contentid": "2739480",
+        "title": "원조남산왕돈까스",
+        "distanceKm": 0.10074455372296998
+      },
+      {
+        "contentid": "2853965",
+        "title": "미나미야마 본점",
+        "distanceKm": 0.12358143294510197
+      },
+      {
+        "contentid": "2570238",
+        "title": "능마루게스트하우스(Nungmaru Guesthouse)",
+        "distanceKm": 0.15959683053686105
+      },
+      {
+        "contentid": "2576479",
+        "title": "레드",
+        "distanceKm": 0.1908283741187046
+      },
+      {
+        "contentid": "836070",
+        "title": "촛불1978",
+        "distanceKm": 0.19348615133044514
+      },
+      {
+        "contentid": "2487684",
+        "title": "남산호스텔",
+        "distanceKm": 0.20188338096677938
+      },
+      {
+        "contentid": "130263",
+        "title": "초전섬유·퀼트박물관",
+        "distanceKm": 0.23380438651055738
+      },
+      {
+        "contentid": "2569959",
+        "title": "아리하우스",
+        "distanceKm": 0.24978026353051197
+      },
+      {
+        "contentid": "2706686",
+        "title": "명동게스트하우스 꼬모",
+        "distanceKm": 0.2645519473796707
+      },
+      {
+        "contentid": "3447859",
+        "title": "남산인권숲",
+        "distanceKm": 0.27078152771446057
+      }
+    ]
+  },
+  {
+    "place_id": "nct-food-the-100-food-truck",
+    "place_name_ko": "더백푸드트럭",
+    "candidates": [
+      {
+        "contentid": "2740116",
+        "title": "해방촌 혼고",
+        "distanceKm": 0.23578741625900929
+      },
+      {
+        "contentid": "2717322",
+        "title": "꾸에바마테라",
+        "distanceKm": 0.26562318807788804
+      }
+    ]
+  },
+  {
+    "place_id": "red-velvet-shopping-cheongdam-dong-luxury-shopping-street",
+    "place_name_ko": "청담동명품거리",
+    "candidates": [
+      {
+        "contentid": "3080501",
+        "title": "에스파스 루이비통 서울",
+        "distanceKm": 0.05393185565946298
+      },
+      {
+        "contentid": "130306",
+        "title": "유 아트 스페이스",
+        "distanceKm": 0.1463321746665457
+      },
+      {
+        "contentid": "2867381",
+        "title": "볼트스테이크하우스",
+        "distanceKm": 0.15091579012792644
+      },
+      {
+        "contentid": "1310950",
+        "title": "청담패션거리",
+        "distanceKm": 0.16552902733729874
+      },
+      {
+        "contentid": "2845220",
+        "title": "페어링룸",
+        "distanceKm": 0.17687746362871226
+      },
+      {
+        "contentid": "2867713",
+        "title": "밍글스",
+        "distanceKm": 0.18259016351097773
+      },
+      {
+        "contentid": "2903214",
+        "title": "쵸이닷",
+        "distanceKm": 0.18578940783170056
+      },
+      {
+        "contentid": "2842790",
+        "title": "몽중헌 청담점",
+        "distanceKm": 0.2232417638749154
+      },
+      {
+        "contentid": "2867754",
+        "title": "스시 장종현",
+        "distanceKm": 0.2657960861106952
+      },
+      {
+        "contentid": "2867271",
+        "title": "청담 마코토",
+        "distanceKm": 0.2870655043153998
+      },
+      {
+        "contentid": "2870435",
+        "title": "권숙수",
+        "distanceKm": 0.2870655043153998
+      },
+      {
+        "contentid": "3076665",
+        "title": "조은숙아트앤라이프스타일",
+        "distanceKm": 0.2870655043153998
+      }
+    ]
+  },
+  {
+    "place_id": "red-velvet-activity-dosan-park",
+    "place_name_ko": "도산근린공원",
+    "candidates": [
+      {
+        "contentid": "2853037",
+        "title": "메종 사우스케이프",
+        "distanceKm": 0.1222354163290381
+      },
+      {
+        "contentid": "130581",
+        "title": "갤러리 마노",
+        "distanceKm": 0.1259596275458062
+      },
+      {
+        "contentid": "2870471",
+        "title": "그랑씨엘",
+        "distanceKm": 0.13356064942795456
+      },
+      {
+        "contentid": "2870076",
+        "title": "파시0914",
+        "distanceKm": 0.14247876789183786
+      },
+      {
+        "contentid": "2855422",
+        "title": "호족반 청담",
+        "distanceKm": 0.16778630034763092
+      },
+      {
+        "contentid": "2870092",
+        "title": "파씨오네",
+        "distanceKm": 0.16778630034763092
+      },
+      {
+        "contentid": "2869737",
+        "title": "저스트 스테이크(Just Steak)",
+        "distanceKm": 0.16982640473106575
+      },
+      {
+        "contentid": "2847862",
+        "title": "꽁티드툴레아",
+        "distanceKm": 0.18507570135842188
+      },
+      {
+        "contentid": "2869782",
+        "title": "갓포아키 도산공원점",
+        "distanceKm": 0.18520080797051222
+      },
+      {
+        "contentid": "2849290",
+        "title": "달마시안",
+        "distanceKm": 0.2070759594218451
+      },
+      {
+        "contentid": "2869549",
+        "title": "스시선수",
+        "distanceKm": 0.2085110380079747
+      },
+      {
+        "contentid": "2731162",
+        "title": "루비떡볶이",
+        "distanceKm": 0.21001420378832125
+      },
+      {
+        "contentid": "2869719",
+        "title": "이치에",
+        "distanceKm": 0.23375380974688822
+      },
+      {
+        "contentid": "2869819",
+        "title": "골드피쉬 딤섬퀴진",
+        "distanceKm": 0.23766824129400632
+      },
+      {
+        "contentid": "2869697",
+        "title": "바랗",
+        "distanceKm": 0.23984630586190228
+      },
+      {
+        "contentid": "132892",
+        "title": "삼원가든",
+        "distanceKm": 0.25269280059233756
+      },
+      {
+        "contentid": "1874704",
+        "title": "하모",
+        "distanceKm": 0.2613823974134497
+      },
+      {
+        "contentid": "2867799",
+        "title": "우돈청",
+        "distanceKm": 0.26782920302712915
+      },
+      {
+        "contentid": "2867691",
+        "title": "우텐더",
+        "distanceKm": 0.2807380889011215
+      },
+      {
+        "contentid": "2869361",
+        "title": "압구정곱창",
+        "distanceKm": 0.28219807406050373
+      }
+    ]
+  },
+  {
+    "place_id": "red-velvet-landmark_observatory-ihwa-mural-village",
+    "place_name_ko": "이화동 벽화마을",
+    "candidates": [
+      {
+        "contentid": "2946109",
+        "title": "손놀림공방",
+        "distanceKm": 0.07511696178138962
+      },
+      {
+        "contentid": "2848108",
+        "title": "개뿔",
+        "distanceKm": 0.08926850308914057
+      },
+      {
+        "contentid": "3533152",
+        "title": "힐제이",
+        "distanceKm": 0.1753791248728645
+      }
+    ]
+  },
+  {
+    "place_id": "seventeen-landmark_observatory-179-art-studio",
+    "place_name_ko": "179아트스튜디오",
+    "candidates": [
+      {
+        "contentid": "130355",
+        "title": "서울특별시교육청 용산도서관",
+        "distanceKm": 0.223420496957035
+      },
+      {
+        "contentid": "129418",
+        "title": "백범광장(백범 김구선생 동상)",
+        "distanceKm": 0.2302611085103768
+      },
+      {
+        "contentid": "130352",
+        "title": "서울특별시교육청 남산도서관",
+        "distanceKm": 0.28230503011416275
+      },
+      {
+        "contentid": "3444607",
+        "title": "남산도서관 구내식당",
+        "distanceKm": 0.28230503011416275
+      }
+    ]
+  },
+  {
+    "place_id": "seventeen-food-daebongjip-sinsa-main",
+    "place_name_ko": "대봉집 신사본점",
+    "candidates": [
+      {
+        "contentid": "2867731",
+        "title": "샤블리",
+        "distanceKm": 0.06929977580066136
+      },
+      {
+        "contentid": "2869506",
+        "title": "왕스덕 논현점",
+        "distanceKm": 0.1775798686751657
+      },
+      {
+        "contentid": "987720",
+        "title": "신사동 가로수길",
+        "distanceKm": 0.19798351651928972
+      },
+      {
+        "contentid": "2871497",
+        "title": "김수사",
+        "distanceKm": 0.23320378719811863
+      },
+      {
+        "contentid": "2856080",
+        "title": "스와니예",
+        "distanceKm": 0.258998331027984
+      },
+      {
+        "contentid": "2870254",
+        "title": "네기다이닝라운지",
+        "distanceKm": 0.27043223086230134
+      },
+      {
+        "contentid": "584698",
+        "title": "스파레이",
+        "distanceKm": 0.2774336523768511
+      },
+      {
+        "contentid": "2871244",
+        "title": "현우동",
+        "distanceKm": 0.2853389177083349
+      },
+      {
+        "contentid": "3465527",
+        "title": "보코 서울 강남",
+        "distanceKm": 0.2852007650705273
+      }
+    ]
+  },
+  {
+    "place_id": "seventeen-food-gilsan-bakery",
+    "place_name_ko": "길산종합빵집",
+    "candidates": [
+      {
+        "contentid": "2871655",
+        "title": "미누씨(minu c)",
+        "distanceKm": 0.13672592336093012
+      },
+      {
+        "contentid": "2847150",
+        "title": "플레어비 도곡점",
+        "distanceKm": 0.2777019317090469
+      },
+      {
+        "contentid": "2855896",
+        "title": "브루스리",
+        "distanceKm": 0.2799862222903235
+      }
+    ]
+  },
+  {
+    "place_id": "seventeen-food-market-o-apgujeong-branch",
+    "place_name_ko": "마켓오 압구정점",
+    "candidates": [
+      {
+        "contentid": "2871160",
+        "title": "투뿔등심 논현 본점",
+        "distanceKm": 0.08071435260512301
+      },
+      {
+        "contentid": "2869697",
+        "title": "바랗",
+        "distanceKm": 0.08962880839299671
+      },
+      {
+        "contentid": "2869929",
+        "title": "자연석돌구이",
+        "distanceKm": 0.1030302039268183
+      },
+      {
+        "contentid": "2853778",
+        "title": "현해",
+        "distanceKm": 0.11222718706807884
+      },
+      {
+        "contentid": "2869531",
+        "title": "스시코우지",
+        "distanceKm": 0.11222718706807884
+      },
+      {
+        "contentid": "2871171",
+        "title": "압구정변강쇠떡볶이",
+        "distanceKm": 0.15723669554528738
+      },
+      {
+        "contentid": "2871222",
+        "title": "현복집 강남본점",
+        "distanceKm": 0.16869037216969074
+      },
+      {
+        "contentid": "2869549",
+        "title": "스시선수",
+        "distanceKm": 0.17200492796880096
+      },
+      {
+        "contentid": "2869782",
+        "title": "갓포아키 도산공원점",
+        "distanceKm": 0.17673276180195915
+      },
+      {
+        "contentid": "2870076",
+        "title": "파시0914",
+        "distanceKm": 0.1870325766177479
+      },
+      {
+        "contentid": "2869737",
+        "title": "저스트 스테이크(Just Steak)",
+        "distanceKm": 0.19790451800531045
+      },
+      {
+        "contentid": "2870471",
+        "title": "그랑씨엘",
+        "distanceKm": 0.20625845510723512
+      },
+      {
+        "contentid": "2853037",
+        "title": "메종 사우스케이프",
+        "distanceKm": 0.20852800120277365
+      },
+      {
+        "contentid": "2867816",
+        "title": "우앤",
+        "distanceKm": 0.24636708777882346
+      },
+      {
+        "contentid": "130581",
+        "title": "갤러리 마노",
+        "distanceKm": 0.2930725812192075
+      }
+    ]
+  },
+  {
+    "place_id": "seventeen-food-new-york-lots-o-bagels",
+    "place_name_ko": "뉴욕라츠오베이글스",
+    "candidates": [
+      {
+        "contentid": "2867799",
+        "title": "우돈청",
+        "distanceKm": 0.02515595146006275
+      },
+      {
+        "contentid": "2867691",
+        "title": "우텐더",
+        "distanceKm": 0.07411481878307528
+      },
+      {
+        "contentid": "2869361",
+        "title": "압구정곱창",
+        "distanceKm": 0.08823479445939555
+      },
+      {
+        "contentid": "2869819",
+        "title": "골드피쉬 딤섬퀴진",
+        "distanceKm": 0.09338117087070835
+      },
+      {
+        "contentid": "2665070",
+        "title": "보보식당",
+        "distanceKm": 0.11886258011867877
+      },
+      {
+        "contentid": "836702",
+        "title": "뱃고동",
+        "distanceKm": 0.12468164849348796
+      },
+      {
+        "contentid": "2869672",
+        "title": "바빌리안테이블",
+        "distanceKm": 0.13903301234002124
+      },
+      {
+        "contentid": "2847862",
+        "title": "꽁티드툴레아",
+        "distanceKm": 0.1408800362623994
+      },
+      {
+        "contentid": "2946112",
+        "title": "향기억",
+        "distanceKm": 0.14198269382429946
+      },
+      {
+        "contentid": "2855422",
+        "title": "호족반 청담",
+        "distanceKm": 0.15079209151968906
+      },
+      {
+        "contentid": "2870092",
+        "title": "파씨오네",
+        "distanceKm": 0.15079209151968906
+      },
+      {
+        "contentid": "2870139",
+        "title": "닭으로가 압구정본점",
+        "distanceKm": 0.16033460510906639
+      },
+      {
+        "contentid": "2869719",
+        "title": "이치에",
+        "distanceKm": 0.18572273947316334
+      },
+      {
+        "contentid": "2849290",
+        "title": "달마시안",
+        "distanceKm": 0.1923151381320702
+      },
+      {
+        "contentid": "2731162",
+        "title": "루비떡볶이",
+        "distanceKm": 0.25902472567958545
+      },
+      {
+        "contentid": "2869781",
+        "title": "몽고네",
+        "distanceKm": 0.2883331265741693
+      }
+    ]
+  },
+  {
+    "place_id": "seventeen-activity-yangjaecheon-stream",
+    "place_name_ko": "양재천",
+    "candidates": [
+      {
+        "contentid": "827585",
+        "title": "양재천 근린공원",
+        "distanceKm": 0.36150746107794435
+      },
+      {
+        "contentid": "2540520",
+        "title": "양재천 벚꽃 등(燈) 축제",
+        "distanceKm": 0.3585788764917522
+      },
+      {
+        "contentid": "2855896",
+        "title": "브루스리",
+        "distanceKm": 0.08335865433881584
+      },
+      {
+        "contentid": "2871655",
+        "title": "미누씨(minu c)",
+        "distanceKm": 0.26554906625455876
+      }
+    ]
+  },
+  {
+    "place_id": "stray-kids-i-n-food-haidilao-coex",
+    "place_name_ko": "하이디라오 COEX점",
+    "candidates": [
+      {
+        "contentid": "131903",
+        "title": "세븐럭카지노(강남코엑스점)",
+        "distanceKm": 0.044911701919347416
+      },
+      {
+        "contentid": "2008490",
+        "title": "오크우드 프리미어 코엑스 센터",
+        "distanceKm": 0.08108049491854821
+      },
+      {
+        "contentid": "130284",
+        "title": "코엑스 아쿠아리움",
+        "distanceKm": 0.12272018567514738
+      },
+      {
+        "contentid": "2507822",
+        "title": "별마당도서관",
+        "distanceKm": 0.12272018567514738
+      },
+      {
+        "contentid": "229901",
+        "title": "코엑스",
+        "distanceKm": 0.12393008546885492
+      },
+      {
+        "contentid": "2456536",
+        "title": "강남 마이스 관광특구",
+        "distanceKm": 0.13230553015396332
+      },
+      {
+        "contentid": "2759626",
+        "title": "코엑스동측광장",
+        "distanceKm": 0.13230553015396332
+      },
+      {
+        "contentid": "3524418",
+        "title": "제2회 고메 잇 강남",
+        "distanceKm": 0.13230553015396332
+      },
+      {
+        "contentid": "3540355",
+        "title": "2025 제14회 강남구 아름다운 건축물 전시회",
+        "distanceKm": 0.13230553015396332
+      },
+      {
+        "contentid": "2870571",
+        "title": "아야진생태찌개 본점",
+        "distanceKm": 0.2632354828966358
+      }
+    ]
+  },
+  {
+    "place_id": "txt-food-downtowner-hannam",
+    "place_name_ko": "다운타우너 한남",
+    "candidates": [
+      {
+        "contentid": "2535455",
+        "title": "아르모니움",
+        "distanceKm": 0.13661380676524268
+      },
+      {
+        "contentid": "2779128",
+        "title": "공기(Gongi)",
+        "distanceKm": 0.20500506299522828
+      },
+      {
+        "contentid": "3428325",
+        "title": "현대카드 뮤직 라이브러리",
+        "distanceKm": 0.205837606313201
+      },
+      {
+        "contentid": "2849620",
+        "title": "Summer Lane",
+        "distanceKm": 0.22343507326770015
+      },
+      {
+        "contentid": "2711768",
+        "title": "현대카드 바이닐앤플라스틱",
+        "distanceKm": 0.22677125238907164
+      },
+      {
+        "contentid": "142771",
+        "title": "임피리얼 팰리스 부티크 호텔",
+        "distanceKm": 0.23928654305515454
+      },
+      {
+        "contentid": "2855723",
+        "title": "휴135",
+        "distanceKm": 0.2595796975359029
+      },
+      {
+        "contentid": "2860052",
+        "title": "치즈플로",
+        "distanceKm": 0.2732679960765018
+      }
+    ]
+  },
+  {
+    "place_id": "txt-soobin-food-pizza-express",
+    "place_name_ko": "피자익스프레스",
+    "candidates": [
+      {
+        "contentid": "2867189",
+        "title": "르브런쉭 신사점",
+        "distanceKm": 0.08475604878602477
+      },
+      {
+        "contentid": "2869230",
+        "title": "어썸로즈",
+        "distanceKm": 0.08743958251594429
+      },
+      {
+        "contentid": "2592885",
+        "title": "엘크레",
+        "distanceKm": 0.14627706470823168
+      },
+      {
+        "contentid": "2869101",
+        "title": "김북순큰남비집 신사본점",
+        "distanceKm": 0.20472074277914667
+      },
+      {
+        "contentid": "2867252",
+        "title": "마일스톤 커피",
+        "distanceKm": 0.2142474831710503
+      },
+      {
+        "contentid": "987720",
+        "title": "신사동 가로수길",
+        "distanceKm": 0.24014195847804248
+      }
+    ]
+  },
+  {
+    "place_id": "txt-yeonjun-food-sunday-burger-club",
+    "place_name_ko": "선데이버거클럽",
+    "candidates": [
+      {
+        "contentid": "2867799",
+        "title": "우돈청",
+        "distanceKm": 0.006003308770817528
+      },
+      {
+        "contentid": "2869819",
+        "title": "골드피쉬 딤섬퀴진",
+        "distanceKm": 0.06418015222497411
+      },
+      {
+        "contentid": "2867691",
+        "title": "우텐더",
+        "distanceKm": 0.09515515725416365
+      },
+      {
+        "contentid": "2869361",
+        "title": "압구정곱창",
+        "distanceKm": 0.10877056904233937
+      },
+      {
+        "contentid": "2847862",
+        "title": "꽁티드툴레아",
+        "distanceKm": 0.11203034869372616
+      },
+      {
+        "contentid": "836702",
+        "title": "뱃고동",
+        "distanceKm": 0.11599002365516947
+      },
+      {
+        "contentid": "2946112",
+        "title": "향기억",
+        "distanceKm": 0.11900609037355508
+      },
+      {
+        "contentid": "2855422",
+        "title": "호족반 청담",
+        "distanceKm": 0.1227741891908342
+      },
+      {
+        "contentid": "2870092",
+        "title": "파씨오네",
+        "distanceKm": 0.1227741891908342
+      },
+      {
+        "contentid": "2665070",
+        "title": "보보식당",
+        "distanceKm": 0.148144862132366
+      },
+      {
+        "contentid": "2869719",
+        "title": "이치에",
+        "distanceKm": 0.1566704590659462
+      },
+      {
+        "contentid": "2870139",
+        "title": "닭으로가 압구정본점",
+        "distanceKm": 0.15558421789663787
+      },
+      {
+        "contentid": "2869672",
+        "title": "바빌리안테이블",
+        "distanceKm": 0.16496725453106142
+      },
+      {
+        "contentid": "2849290",
+        "title": "달마시안",
+        "distanceKm": 0.1963205903610957
+      },
+      {
+        "contentid": "2731162",
+        "title": "루비떡볶이",
+        "distanceKm": 0.22949728008429304
+      },
+      {
+        "contentid": "2869781",
+        "title": "몽고네",
+        "distanceKm": 0.2628274840186726
+      },
+      {
+        "contentid": "130581",
+        "title": "갤러리 마노",
+        "distanceKm": 0.2808765574946286
+      }
+    ]
+  },
+  {
+    "place_id": "txt-soobin-food-ugly-bakery",
+    "place_name_ko": "어글리베이커스베이글 신당 본점",
+    "candidates": [
+      {
+        "contentid": "667493",
+        "title": "신당동천팥죽",
+        "distanceKm": 0.20138417307439568
+      },
+      {
+        "contentid": "2853937",
+        "title": "마복림할머니 막내아들네",
+        "distanceKm": 0.20829429940987612
+      },
+      {
+        "contentid": "697328",
+        "title": "미니네",
+        "distanceKm": 0.21795862851852382
+      },
+      {
+        "contentid": "697234",
+        "title": "삼대할먼네",
+        "distanceKm": 0.2188769350637075
+      },
+      {
+        "contentid": "697349",
+        "title": "아이러브신당동떡볶이",
+        "distanceKm": 0.22526710185853543
+      },
+      {
+        "contentid": "699249",
+        "title": "신당동 떡볶이타운",
+        "distanceKm": 0.24205982082180996
+      },
+      {
+        "contentid": "2719780",
+        "title": "하니칼국수",
+        "distanceKm": 0.24767120390629144
+      }
+    ]
+  },
+  {
+    "place_id": "bts-activity-space-of-bts-myeongdong",
+    "place_name_ko": "스페이스오브비티에스 신라면세점서울점",
+    "candidates": [
+      {
+        "contentid": "990140",
+        "title": "장충체육관",
+        "distanceKm": 0.1372841394173718
+      }
+    ]
+  },
+  {
+    "place_id": "nct-activity-k-pop-square-hongdae",
+    "place_name_ko": "케이팝 스퀘어 홍대",
+    "candidates": [
+      {
+        "contentid": "3306249",
+        "title": "케이팝 스퀘어 홍대",
+        "distanceKm": 0.025535022171136255
+      },
+      {
+        "contentid": "3535136",
+        "title": "케이팝 스퀘어 홍대",
+        "distanceKm": 0.02553583257478501
+      },
+      {
+        "contentid": "2907142",
+        "title": "롯데호텔 L7홍대",
+        "distanceKm": 0.03155748099158342
+      },
+      {
+        "contentid": "2917226",
+        "title": "머큐어 앰배서더 서울 홍대",
+        "distanceKm": 0.07774810447159655
+      },
+      {
+        "contentid": "2918636",
+        "title": "나인브릭호텔",
+        "distanceKm": 0.20820866847957187
+      },
+      {
+        "contentid": "2699359",
+        "title": "홍대스타일 게스트하우스",
+        "distanceKm": 0.23273528826122017
+      },
+      {
+        "contentid": "3533163",
+        "title": "퀸하우스",
+        "distanceKm": 0.24100341798677705
+      },
+      {
+        "contentid": "2700281",
+        "title": "니트하우스",
+        "distanceKm": 0.2621591840297663
+      }
+    ]
+  }
+]

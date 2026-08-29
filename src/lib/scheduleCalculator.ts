@@ -44,15 +44,15 @@ export function buildSchedule(
       };
     }
 
-    const openMin = toMinutes(place.openTime);
-    const closeMin = toMinutes(place.closeTime);
+    const openMin = place.openTime ? toMinutes(place.openTime) : null;
+    const closeMin = place.closeTime ? toMinutes(place.closeTime) : null;
 
     let waitedForOpenMinutes = 0;
-    if (cursor < openMin) {
+    if (openMin !== null && cursor < openMin) {
       waitedForOpenMinutes = openMin - cursor;
       cursor = openMin;
     }
-    const isOpenTimeConflict = cursor > closeMin;
+    const isOpenTimeConflict = closeMin !== null && cursor > closeMin;
 
     const arrival = cursor;
     cursor += place.dwellMinutes;

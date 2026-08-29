@@ -19,7 +19,8 @@ function GenerateInner() {
   const { options, loading } = useRouteOptions(
     region?.id ?? null,
     region?.centerLat ?? null,
-    region?.centerLng ?? null
+    region?.centerLng ?? null,
+    artistIds
   );
   const setMainRoute = useTripStore((s) => s.setMainRoute);
 

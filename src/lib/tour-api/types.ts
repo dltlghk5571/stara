@@ -1,5 +1,7 @@
 // TourAPI(KorService2) 원본 응답 타입. 실제 필드명(mapx/mapy/contentid 등)을 그대로 따른다.
 
+export type Locale = "ko" | "en";
+
 export interface TourApiRawItem {
   contentid: string;
   contenttypeid: string;

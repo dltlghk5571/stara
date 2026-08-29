@@ -36,9 +36,12 @@ async function findNearestPlace(lat: number, lng: number): Promise<Place | null>
 
 export default function EditPage() {
   const router = useRouter();
+  const storeSelectedRegionId = useTripStore((s) => s.selectedRegionId);
+  const storeSelectedArtistIds = useTripStore((s) => s.selectedArtistIds);
   const [selectedCategories, setSelectedCategories] =
     useState<PlaceCategory[]>(USER_FACING_CATEGORIES);
-  const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>([]);
+  // 온보딩에서 고른 아티스트로 기본 필터를 맞춘다(이전엔 항상 빈 배열로 시작해 트립과 무관했음).
+  const [selectedArtistIds, setSelectedArtistIds] = useState<string[]>(storeSelectedArtistIds);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Place[] | null>(null);
   const [searching, setSearching] = useState(false);
@@ -106,12 +109,17 @@ export default function EditPage() {
     else removeCustomPlace(placeId);
   }
 
-  const candidatePlaces = ARTIST_PLACES.filter(
-    (p) =>
-      selectedCategories.includes(p.category) &&
-      (selectedArtistIds.length === 0 ||
-        p.artistIds.some((id) => selectedArtistIds.includes(id)))
-  );
+  // ARTIST_PLACES는 현재 서울 실데이터만 존재 — 다른 지역 트립에서는 서울 장소가
+  // 섞여 나오지 않도록 지역이 서울이 아니면 추천 풀을 비운다(검색/지도탭 추가는 영향 없음).
+  const candidatePlaces =
+    storeSelectedRegionId !== null && storeSelectedRegionId !== "seoul"
+      ? []
+      : ARTIST_PLACES.filter(
+          (p) =>
+            selectedCategories.includes(p.category) &&
+            (selectedArtistIds.length === 0 ||
+              p.artistIds.some((id) => selectedArtistIds.includes(id)))
+        );
 
   const userAddedStops = [
     ...selectedPlaceIds.map(getPlaceById).filter((p): p is Place => !!p),

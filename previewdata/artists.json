@@ -1,0 +1,167 @@
+[
+  {
+    "artist_id": "ateez",
+    "artist_name_ko": "에이티즈",
+    "artist_name_en": "ATEEZ"
+  },
+  {
+    "artist_id": "bigbang-g-dragon",
+    "artist_name_ko": "지드래곤",
+    "artist_name_en": "G-Dragon"
+  },
+  {
+    "artist_id": "bigbang-taeyang",
+    "artist_name_ko": "태양",
+    "artist_name_en": "Taeyang"
+  },
+  {
+    "artist_id": "blackpink",
+    "artist_name_ko": "블랙핑크",
+    "artist_name_en": "BLACKPINK"
+  },
+  {
+    "artist_id": "bts",
+    "artist_name_ko": "방탄소년단",
+    "artist_name_en": "BTS"
+  },
+  {
+    "artist_id": "bts-rm",
+    "artist_name_ko": "알엠",
+    "artist_name_en": "RM"
+  },
+  {
+    "artist_id": "enhypen",
+    "artist_name_ko": "엔하이픈",
+    "artist_name_en": "ENHYPEN"
+  },
+  {
+    "artist_id": "enhypen-jungwon",
+    "artist_name_ko": "정원",
+    "artist_name_en": "Jungwon"
+  },
+  {
+    "artist_id": "enhypen-sunghoon",
+    "artist_name_ko": "성훈",
+    "artist_name_en": "Sunghoon"
+  },
+  {
+    "artist_id": "exo",
+    "artist_name_ko": "엑소",
+    "artist_name_en": "EXO"
+  },
+  {
+    "artist_id": "exo-baekhyun",
+    "artist_name_ko": "백현",
+    "artist_name_en": "Baekhyun"
+  },
+  {
+    "artist_id": "exo-chanyeol",
+    "artist_name_ko": "찬열",
+    "artist_name_en": "Chanyeol"
+  },
+  {
+    "artist_id": "exo-chen",
+    "artist_name_ko": "첸",
+    "artist_name_en": "Chen"
+  },
+  {
+    "artist_id": "exo-kai",
+    "artist_name_ko": "카이",
+    "artist_name_en": "Kai"
+  },
+  {
+    "artist_id": "exo-xiumin",
+    "artist_name_ko": "시우민",
+    "artist_name_en": "Xiumin"
+  },
+  {
+    "artist_id": "illit",
+    "artist_name_ko": "아일릿",
+    "artist_name_en": "ILLIT"
+  },
+  {
+    "artist_id": "ive",
+    "artist_name_ko": "아이브",
+    "artist_name_en": "IVE"
+  },
+  {
+    "artist_id": "le-sserafim",
+    "artist_name_ko": "르세라핌",
+    "artist_name_en": "LE SSERAFIM"
+  },
+  {
+    "artist_id": "nct",
+    "artist_name_ko": "엔시티",
+    "artist_name_en": "NCT"
+  },
+  {
+    "artist_id": "nct-taeyong",
+    "artist_name_ko": "태용",
+    "artist_name_en": "Taeyong"
+  },
+  {
+    "artist_id": "newjeans",
+    "artist_name_ko": "뉴진스",
+    "artist_name_en": "NewJeans"
+  },
+  {
+    "artist_id": "red-velvet",
+    "artist_name_ko": "레드벨벳",
+    "artist_name_en": "Red Velvet"
+  },
+  {
+    "artist_id": "seventeen",
+    "artist_name_ko": "세븐틴",
+    "artist_name_en": "SEVENTEEN"
+  },
+  {
+    "artist_id": "stray-kids",
+    "artist_name_ko": "스트레이 키즈",
+    "artist_name_en": "Stray Kids"
+  },
+  {
+    "artist_id": "stray-kids-i-n",
+    "artist_name_ko": "아이엔",
+    "artist_name_en": "I.N"
+  },
+  {
+    "artist_id": "twice",
+    "artist_name_ko": "트와이스",
+    "artist_name_en": "TWICE"
+  },
+  {
+    "artist_id": "txt",
+    "artist_name_ko": "투모로우바이투게더",
+    "artist_name_en": "TXT"
+  },
+  {
+    "artist_id": "txt-beomgyu",
+    "artist_name_ko": "범규",
+    "artist_name_en": "Beomgyu"
+  },
+  {
+    "artist_id": "txt-soobin",
+    "artist_name_ko": "수빈",
+    "artist_name_en": "Soobin"
+  },
+  {
+    "artist_id": "txt-yeonjun",
+    "artist_name_ko": "연준",
+    "artist_name_en": "Yeonjun"
+  },
+  {
+    "artist_id": "bts-jimin",
+    "artist_name_ko": "지민",
+    "artist_name_en": "Jimin"
+  },
+  {
+    "artist_id": "bts-v",
+    "artist_name_ko": "뷔",
+    "artist_name_en": "V"
+  },
+  {
+    "artist_id": "bts-jin",
+    "artist_name_ko": "진",
+    "artist_name_en": "Jin"
+  }
+]

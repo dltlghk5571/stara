@@ -1,0 +1,17 @@
+[
+  {
+    "city_id": "seoul",
+    "city_name_ko": "서울",
+    "city_name_en": "Seoul"
+  },
+  {
+    "city_id": "busan",
+    "city_name_ko": "부산",
+    "city_name_en": "Busan"
+  },
+  {
+    "city_id": "incheon",
+    "city_name_ko": "인천",
+    "city_name_en": "Incheon"
+  }
+]

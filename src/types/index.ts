@@ -24,7 +24,7 @@ export interface Artist {
   name: string;
   nameEn: string;
   imageUrl?: string;
-  description: string;
+  description?: string;
 }
 
 /** 장소 데이터의 출처. 없으면("stara") STARA가 직접 관리하는 데이터. */
@@ -40,8 +40,9 @@ export interface Place {
   artistIds: string[];
   relationTextKo: string;
   relationTextEn: string;
-  openTime: string; // "HH:mm"
-  closeTime: string; // "HH:mm"
+  /** "HH:mm". 없으면 영업시간 제약 없음으로 취급(scheduleCalculator 참고) */
+  openTime?: string;
+  closeTime?: string;
   dwellMinutes: number;
   imageUrl?: string;
   isFood: boolean;
