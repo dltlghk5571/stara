@@ -13,7 +13,7 @@ import MissionSheet from "@/components/trip/MissionSheet";
 import SubQuestList from "@/components/quest/SubQuestList";
 import { BottomNav, KButton, KCard, Pill } from "@/components/ui/kroute";
 import type { KrouteTab } from "@/components/ui/kroute";
-import { CYAN, LBLUE, LIME, PALGREEN, PINK, WHITE, YELLOW } from "@/lib/kroute-tokens";
+import { CYAN, LBLUE, LIME, MUTED_PINK, PALGREEN, PINK, WHITE, YELLOW } from "@/lib/kroute-tokens";
 import type { Place, Quest } from "@/types";
 
 export interface DiaryPhoto {
@@ -402,7 +402,7 @@ function RouteTab({
                   {p.nameKo}
                 </p>
                 <p style={{ fontFamily: "Nunito", fontSize: 12, fontWeight: 700, color: status === "done" ? "#555" : active ? "#333" : "#bbb" }}>
-                  {status === "done" ? "✓ COMPLETED" : active ? "GO NOW!" : "LOCKED"}
+                  {status === "done" ? "Mission Complete ✓" : active ? "GO NOW!" : "LOCKED"}
                 </p>
               </div>
               {active && <Pill bg={PINK} color={WHITE}>GO! 🎯</Pill>}
@@ -442,7 +442,7 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px", flexShrink: 0 }}>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>My K-ROUTE Diary</h2>
-        <p style={{ fontFamily: "Caveat", fontSize: 17, color: "#888", fontStyle: "italic", marginTop: 2 }}>여행 기록 & 순간들 ✨</p>
+        <p style={{ fontFamily: "Caveat", fontSize: 17, color: MUTED_PINK, fontStyle: "italic", marginTop: 2 }}>여행 기록 & 순간들 ✨</p>
       </div>
 
       {groups.length > 1 && (
@@ -491,7 +491,7 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
                 </div>
                 {photo.note && (
                   <div style={{ padding: "12px 16px" }}>
-                    <p style={{ fontFamily: "Caveat", fontSize: 16, fontStyle: "italic", color: "#555", lineHeight: 1.4 }}>
+                    <p style={{ fontFamily: "Caveat", fontSize: 16, fontStyle: "italic", color: MUTED_PINK, lineHeight: 1.4 }}>
                       &quot;{photo.note}&quot;
                     </p>
                   </div>

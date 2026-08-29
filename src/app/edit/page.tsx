@@ -168,62 +168,66 @@ export default function EditPage() {
         </div>
       )}
 
-      <div className="manual-map">
-        <MapView
-          pins={orderedPlaces.map((p, i) => ({
-            id: p.id,
-            lat: p.latitude,
-            lng: p.longitude,
-            order: i + 1,
-            color: "#243b53",
-            title: p.nameKo,
-          }))}
-          showPath
-          onMapClick={handleMapClick}
-        />
-        {mapNotice && (
-          <div
-            style={{
-              position: "absolute", bottom: "10px", left: "50%", transform: "translateX(-50%)",
-              background: "var(--navy)", color: "#fff", padding: "6px 12px", borderRadius: "100px",
-              fontFamily: "'Space Mono', monospace", fontSize: "10px", pointerEvents: "none", zIndex: 5,
-            }}
-          >
-            {mapNotice}
-          </div>
-        )}
-      </div>
-
-      <div className="locations-title">Selected Stops ({userAddedStops.length})</div>
-      <div className="locations-scroll">
-        {userAddedStops.map((place) => (
-          <div key={place.id} className="loc-card">
-            <div className="remove" onClick={() => removeStop(place.id)}>
-              ✕
+      <div className="kr-editSplit">
+        <div className="manual-map">
+          <MapView
+            pins={orderedPlaces.map((p, i) => ({
+              id: p.id,
+              lat: p.latitude,
+              lng: p.longitude,
+              order: i + 1,
+              color: "#243b53",
+              title: p.nameKo,
+            }))}
+            showPath
+            onMapClick={handleMapClick}
+          />
+          {mapNotice && (
+            <div
+              style={{
+                position: "absolute", bottom: "10px", left: "50%", transform: "translateX(-50%)",
+                background: "var(--navy)", color: "#fff", padding: "6px 12px", borderRadius: "100px",
+                fontFamily: "'Space Mono', monospace", fontSize: "10px", pointerEvents: "none", zIndex: 5,
+              }}
+            >
+              {mapNotice}
             </div>
-            <div className="thumb">📍</div>
-            <div className="name">{place.nameKo}</div>
-          </div>
-        ))}
-      </div>
+          )}
+        </div>
 
-      <div style={{ padding: "16px 20px 0" }}>
-        <div className="locations-title" style={{ padding: 0 }}>추천 장소 둘러보기</div>
-      </div>
-      <FilterBar
-        artists={ARTISTS}
-        selectedArtistIds={selectedArtistIds}
-        onToggleArtist={toggleArtist}
-        selectedCategories={selectedCategories}
-        onToggleCategory={toggleCategory}
-      />
-      <div style={{ minHeight: "420px", flex: 1, display: "flex" }}>
-        <ReelsPanel
-          places={candidatePlaces}
-          baseOrder={orderedPlaces}
-          selectedPlaceIds={selectedPlaceIds}
-          onToggle={togglePlace}
-        />
+        <div className="kr-editReelsCol">
+          <div className="locations-title">Selected Stops ({userAddedStops.length})</div>
+          <div className="locations-scroll">
+            {userAddedStops.map((place) => (
+              <div key={place.id} className="loc-card">
+                <div className="remove" onClick={() => removeStop(place.id)}>
+                  ✕
+                </div>
+                <div className="thumb">📍</div>
+                <div className="name">{place.nameKo}</div>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ padding: "16px 20px 0" }}>
+            <div className="locations-title" style={{ padding: 0 }}>추천 장소 둘러보기</div>
+          </div>
+          <FilterBar
+            artists={ARTISTS}
+            selectedArtistIds={selectedArtistIds}
+            onToggleArtist={toggleArtist}
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+          />
+          <div style={{ minHeight: "420px", flex: 1, display: "flex" }}>
+            <ReelsPanel
+              places={candidatePlaces}
+              baseOrder={orderedPlaces}
+              selectedPlaceIds={selectedPlaceIds}
+              onToggle={togglePlace}
+            />
+          </div>
+        </div>
       </div>
 
       <ScheduleFooter

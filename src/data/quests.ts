@@ -65,13 +65,25 @@ const QUEST_TEXT_BY_CATEGORY: Record<
 };
 
 /**
+ * 장소별 개별 퀘스트 데이터. place.id로 등록해두면 category template보다 우선 사용된다.
+ * 아직 수집된 개별 퀘스트 콘텐츠가 없어 비어 있다 — 채워지는 대로 자동으로 category
+ * template을 대체한다(getQuestsForPlace 참고).
+ */
+const PLACE_QUEST_OVERRIDES: Record<
+  string,
+  { type: QuestType; titleKo: string; titleEn: string; descKo: string; descEn: string }
+> = {};
+
+/**
  * 장소의 필수 체크포인트 퀘스트를 즉석에서 계산한다. place.category만 있으면
  * 되므로, 정적 PLACES 배열에 없는 TourAPI(kto-*) 장소에도 항상 동일하게 동작한다
  * (이전엔 PLACES로만 미리 빌드해둔 QUESTS 테이블을 조회했기 때문에, TourAPI 장소는
  * 필수 퀘스트가 0개로 잡혀 스탬프가 조건 없이 통과되는 버그가 있었다).
+ * 개별 장소 퀘스트(PLACE_QUEST_OVERRIDES)가 있으면 그것을 우선 쓰고, 없으면
+ * category template으로 폴백한다.
  */
 export function getQuestsForPlace(place: Place): Quest[] {
-  const t = QUEST_TEXT_BY_CATEGORY[place.category];
+  const t = PLACE_QUEST_OVERRIDES[place.id] ?? QUEST_TEXT_BY_CATEGORY[place.category];
   return [
     {
       id: `q-${place.id}`,
