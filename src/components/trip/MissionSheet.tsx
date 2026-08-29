@@ -178,7 +178,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             CONGRATULATIONS!
           </h2>
           <p style={{ fontFamily: "Caveat", fontSize: 20, fontStyle: "italic", color: "#555", marginBottom: 16 }}>
-            Mission Complete!
+            Mission Complete ✓
           </p>
           <div
             className="kr-aStampIn"
@@ -198,7 +198,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
           >
             🏅
           </div>
-          <KButton onClick={() => savedPhoto && onComplete(savedPhoto)}>Receive Stamp →</KButton>
+          <KButton onClick={() => savedPhoto && onComplete(savedPhoto)}>Continue →</KButton>
         </KCard>
       </div>
     );
@@ -369,7 +369,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
           )}
 
           <KButton bg={status === "uploading" ? "#eee" : LIME} color={status === "uploading" ? "#aaa" : "#111"} disabled={!canSubmit} onClick={handleSubmit}>
-            {status === "uploading" ? "제출 중…" : "COMPLETE MISSION 🎯"}
+            {status === "uploading" ? "제출 중…" : "Complete Mission"}
           </KButton>
         </div>
       </div>

@@ -246,6 +246,37 @@ button.kr-reset {
 .search-row {
   flex-shrink: 0;
 }
+/* /edit: 지도 높이를 고정 px 대신 뷰포트 비율로 — 모바일에서 38~42vh 수준 유지, 릴스 패널에 충분한 공간 확보 */
+.manual-map {
+  height: 40vh;
+}
+
+/* /edit: 지도 + 릴스 패널을 한 화면에 같이 보여주는 구조는 유지하되,
+   데스크톱에서는 좌우 분할(지도 ~57% / 릴스 ~43%)로 전환한다. */
+.kr-editSplit {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.kr-editReelsCol {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+@media (min-width: 1024px) {
+  .kr-editSplit {
+    flex-direction: row;
+  }
+  .kr-editSplit .manual-map {
+    flex: 0 0 57%;
+    height: auto;
+  }
+  .kr-editReelsCol {
+    flex: 0 0 43%;
+    min-height: 0;
+  }
+}
 .candidate-card {
   box-shadow: 4px 4px 0 #111111 !important;
 }

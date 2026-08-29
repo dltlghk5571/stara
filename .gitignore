@@ -31,3 +31,8 @@ next-env.d.ts
 .claude/settings.local.json
 .gbrain-source
 .env*
+
+# graphify: keep the generated graph/report, drop machine-local paths + rebuildable cache
+graphify-out/cache/
+graphify-out/.graphify_root
+graphify-out/.graphify_python
