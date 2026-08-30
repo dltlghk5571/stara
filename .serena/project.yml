@@ -1,2 +1,2 @@
 project_name: "STARA"
-languages: ["typescript"]
+languages: ["typescript", "bash", "python"]
