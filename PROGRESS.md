@@ -90,6 +90,17 @@ K-pop 아티스트의 발자취를 따라가는 게임형 서울 여행 코스 �
 
 ---
 
+## 이번 주 (8/29) — 서울 실데이터 연동 검증 + 다이어리 버그 수정
+
+`atomic-juggling-scroll` 계획의 Phase 8(TourAPI 지역관광지/음식점 자동보완 검증), Phase 9(TMap/스케줄/퀘스트 회귀 검증) 완료 — 둘 다 코드 변경 없는 검증 전용 단계였고, 실제 트립 구성 반복 QA로 로컬관광지/음식점 자동보완, TMap 렌더링, 스케줄 계산, 퀘스트 문구가 실좌표에서도 정상 동작함을 확인.
+
+### 버그 수정 — 다이어리 탭 장소명 표시 (`e3b0023`)
+- TourAPI로 자동 보완된 장소(`kto-*` id)를 촬영한 사진이 다이어리 탭에서 장소명 대신 raw content id(`kto-2373204`)로 표시되던 문제 발견 및 수정
+- **DB 스키마 변경**: `quest_photos`에 `place_name` 컬럼 추가(nullable, 촬영 시점 장소명 스냅샷) — `drizzle-kit push`로 반영. 재현용 SQL은 `drizzle/0001_quest_photos_place_name.sql`(`ADD COLUMN IF NOT EXISTS`, 여러 번 실행해도 안전)로 남겨둠. 새 환경 적용 방법은 README `### DB 스키마 변경 적용` 참고
+- `TripShellClient.tsx`에 5단계 우선순위 `resolvePlaceName()` 추가(스냅샷 → 동적 장소 목록 → 정적 `PLACES` → raw id) — 이 컬럼 도입 이전 사진(`place_name` null)도 폴백으로 계속 정상 표시됨
+
+---
+
 ## 알려진 이슈 / 다음에 할 일
 
 - **TMap 클라이언트 키 무방비 노출** — SK Open API가 도메인/리퍼러 제한을 지원하지 않음(IP 제한만 있음, 브라우저 앱엔 무의미). 사용량 모니터링 외 뾰족한 대응 수단 없음, 보류 중

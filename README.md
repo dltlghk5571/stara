@@ -35,6 +35,21 @@ Vercel 프로젝트 설정 → Environment Variables 에 아래 값을 등록하
 | `TMAP_API_BASE_URL` | 선택 | 기본값 `apis.openapi.sk.com/tmap` |
 | `TOUR_SEARCH_RADIUS_METERS` | 선택 | 기본값 2000(m) |
 
+`DATABASE_URL`(Neon Postgres 연결 문자열)도 Vercel에 등록되어 있어야 합니다.
+
+### DB 스키마 변경 적용 (새 환경/Vercel)
+
+이 저장소는 `drizzle-kit generate`/`migrate`(마이그레이션 히스토리 트래킹)를 쓰지 않고,
+`src/db/schema.ts`를 기준으로 **`drizzle-kit push`가 실제 DB와 diff해서 반영**하는 방식만 써왔다.
+새 환경(또는 새로 DB를 만든 경우)에 최신 스키마를 적용하려면:
+
+```bash
+DATABASE_URL=... npx drizzle-kit push
+```
+
+이미 최신 스키마가 반영된 DB(예: 운영 Neon DB)에는 다시 실행할 필요가 없다 — `push`는 변경분이 없으면 아무것도 하지 않는다.
+`psql` 등으로 직접 SQL을 적용해야 하는 경우를 위해 `drizzle/`에 각 스키마 변경을 기록한 SQL도 함께 남겨둔다(모두 `ADD COLUMN IF NOT EXISTS` 형태라 여러 번 실행해도 안전).
+
 ## 핵심 파일 구조
 
 ```
