@@ -11,6 +11,7 @@ export async function POST(request: NextRequest) {
 
   const body = (await request.json().catch(() => null)) as {
     placeId?: string;
+    placeName?: string;
     photoUrl?: string;
     note?: string;
     tripId?: string;
@@ -27,6 +28,7 @@ export async function POST(request: NextRequest) {
     .values({
       userId,
       placeId: body.placeId,
+      placeName: body.placeName,
       photoUrl: body.photoUrl,
       note: body.note,
       tripId: body.tripId,

@@ -19,11 +19,26 @@ import type { Place, Quest } from "@/types";
 export interface DiaryPhoto {
   id: string;
   placeId: string;
+  /** 촬영 시점 장소명 스냅샷. 이 필드 도입 이전 사진은 null — resolvePlaceName이 폴백한다. */
+  placeName?: string | null;
   photoUrl: string;
   note: string | null;
   completedAt: string;
   tripId: string | null;
   tripName: string | null;
+}
+
+const NO_PLACE_INFO = "장소 정보 없음";
+
+/** placeId → 장소명 우선순위: 사진 스냅샷 → 현재 trip/route 동적 장소 → static PLACES → 최종 폴백.
+ *  raw placeId(예: kto-*)는 어떤 경로로도 화면에 노출하지 않는다. */
+function resolvePlaceName(photo: DiaryPhoto, dynamicPlacesById: Map<string, Place>): string {
+  if (photo.placeName) return photo.placeName;
+  const dynamic = dynamicPlacesById.get(photo.placeId);
+  if (dynamic) return dynamic.nameKo;
+  const staticPlace = getPlaceById(photo.placeId);
+  if (staticPlace) return staticPlace.nameKo;
+  return NO_PLACE_INFO;
 }
 
 export interface TripGroup {
@@ -53,10 +68,19 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
   const toggleQuest = useTripStore((s) => s.toggleQuest);
   const startedAt = useTripStore((s) => s.startedAt);
   const mainRoutePlaces = useTripStore((s) => s.mainRoutePlaces);
+  const customPlaces = useTripStore((s) => s.customPlaces);
   const startTrip = useTripStore((s) => s.startTrip);
   const completeTrip = useTripStore((s) => s.completeTrip);
 
   const { orderedPlaces, schedule } = useTripPlan();
+
+  // Diary 사진의 placeId를 이름으로 풀 때 쓰는 "현재 trip/route에 있는 동적 장소" 소스.
+  // orderedPlaces(현재 루트) > mainRoutePlaces > customPlaces(둘 다 persisted) 순으로 채움 —
+  // resolvePlaceName의 우선순위 2/3단계에 대응.
+  const dynamicPlacesById = new Map<string, Place>();
+  for (const p of orderedPlaces) dynamicPlacesById.set(p.id, p);
+  for (const p of mainRoutePlaces ?? []) if (!dynamicPlacesById.has(p.id)) dynamicPlacesById.set(p.id, p);
+  for (const p of customPlaces) if (!dynamicPlacesById.has(p.id)) dynamicPlacesById.set(p.id, p);
 
   // /travel, /complete와 동일한 하이드레이션 가드 패턴: zustand persist가 localStorage에서
   // 복원되기 전 첫 렌더는 항상 초기값을 반환하므로(useSyncExternalStore가 SSR 스냅샷을
@@ -141,7 +165,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
           />
         )}
 
-        {tab === "diary" && <DiaryTab groups={diaryGroups} />}
+        {tab === "diary" && <DiaryTab groups={diaryGroups} dynamicPlacesById={dynamicPlacesById} />}
       </div>
 
       <BottomNav active={tab} onChange={setTab} />
@@ -422,7 +446,7 @@ function RouteTab({
   );
 }
 
-function DiaryTab({ groups }: { groups: TripGroup[] }) {
+function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicPlacesById: Map<string, Place> }) {
   const [activeKey, setActiveKey] = useState(groups[0]?.key ?? null);
   const active = groups.find((g) => g.key === activeKey) ?? groups[0];
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
@@ -486,7 +510,7 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
                   <img src={photo.photoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom,transparent,rgba(0,0,0,.35))" }} />
                   <div style={{ position: "absolute", bottom: 8, left: 12 }}>
-                    <Pill bg={WHITE}>📍 {getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}</Pill>
+                    <Pill bg={WHITE}>📍 {resolvePlaceName(photo, dynamicPlacesById)}</Pill>
                   </div>
                 </div>
                 {photo.note && (
@@ -508,6 +532,7 @@ function DiaryTab({ groups }: { groups: TripGroup[] }) {
           index={viewerIndex}
           onIndexChange={setViewerIndex}
           onClose={() => setViewerIndex(null)}
+          dynamicPlacesById={dynamicPlacesById}
         />
       )}
     </div>
@@ -519,11 +544,13 @@ function DiaryViewer({
   index,
   onIndexChange,
   onClose,
+  dynamicPlacesById,
 }: {
   photos: DiaryPhoto[];
   index: number;
   onIndexChange: (i: number) => void;
   onClose: () => void;
+  dynamicPlacesById: Map<string, Place>;
 }) {
   const photo = photos[index];
   const touchStartX = useRef<number | null>(null);
@@ -609,7 +636,7 @@ function DiaryViewer({
 
       <div style={{ marginTop: 16, textAlign: "center" }}>
         <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 14, color: "#fff" }}>
-          {getPlaceById(photo.placeId)?.nameKo ?? photo.placeId}
+          {resolvePlaceName(photo, dynamicPlacesById)}
         </p>
         <p style={{ fontFamily: "Nunito", fontSize: 12, color: "rgba(255,255,255,.6)", marginTop: 4 }}>
           {index + 1} / {photos.length}

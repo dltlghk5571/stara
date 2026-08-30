@@ -27,6 +27,7 @@ export default async function TripPage({ searchParams }: Props) {
     const photos: DiaryPhoto[] = rows.map((r) => ({
       id: r.id,
       placeId: r.placeId,
+      placeName: r.placeName,
       photoUrl: r.photoUrl,
       note: r.note,
       completedAt: r.completedAt.toISOString(),

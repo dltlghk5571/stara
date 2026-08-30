@@ -113,6 +113,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           placeId: place.id,
+          placeName: place.nameKo,
           photoUrl: blob.url,
           note: caption || undefined,
           tripId: activeTripId ?? undefined,
@@ -124,6 +125,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
         photo: {
           id: string;
           placeId: string;
+          placeName: string | null;
           photoUrl: string;
           note: string | null;
           completedAt: string;

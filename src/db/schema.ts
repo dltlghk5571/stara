@@ -13,6 +13,9 @@ export const questPhotos = pgTable("quest_photos", {
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
   placeId: text("place_id").notNull(),
+  /** 촬영 시점의 장소명 스냅샷(nameKo). 이 컬럼 도입 이전 행은 null —
+   *  TripShellClient의 resolvePlaceName이 다른 소스로 폴백한다. */
+  placeName: text("place_name"),
   photoUrl: text("photo_url").notNull(),
   note: text("note"),
   /** 어느 여행(루트)에 속하는지 구분. 이 컬럼 도입 이전 행은 null("이전 기록"으로 묶어서 표시). */
