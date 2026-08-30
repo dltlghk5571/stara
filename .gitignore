@@ -29,8 +29,15 @@ next-env.d.ts
 
 # claude code local settings
 .claude/settings.local.json
+.claude/.headroom_wrap_marker.json
 .gbrain-source
 .env*
+
+# local editor/machine-specific
+*.code-workspace
+
+# data-pipeline backups
+previewdata/*.bak
 
 # graphify: keep the generated graph/report, drop machine-local paths + rebuildable cache
 graphify-out/cache/
