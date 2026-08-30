@@ -1,0 +1,1609 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>K-ROUTE — K-POP 팬 여행 패스포트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Caveat:wght@400;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%;width:100%;background:#111;font-family:'Nunito',sans-serif;color:#111;overflow:hidden;-webkit-font-smoothing:antialiased}
+button{font-family:'Nunito',sans-serif;cursor:pointer;border:none;background:none;color:inherit}
+input{font-family:'Nunito',sans-serif}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#ddd;border-radius:2px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes popIn{0%{transform:scale(0) rotate(-12deg);opacity:0}65%{transform:scale(1.15) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+@keyframes stampIn{0%{transform:scale(3.5) rotate(-20deg);opacity:0}55%{transform:scale(.88) rotate(5deg);opacity:1}75%{transform:scale(1.06) rotate(-2deg)}100%{transform:scale(1) rotate(0)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes confetti{0%{transform:translateY(0) rotate(0) scale(1);opacity:1}100%{transform:translateY(110vh) rotate(720deg) scale(.4);opacity:0}}
+@keyframes bounceIn{0%{transform:scale(.3);opacity:0}50%{transform:scale(1.08)}70%{transform:scale(.94)}100%{transform:scale(1);opacity:1}}
+.aFadeUp{animation:fadeUp .5s ease forwards}
+.aFadeIn{animation:fadeIn .4s ease forwards}
+.aStampIn{animation:stampIn .7s cubic-bezier(.34,1.2,.64,1) forwards}
+.aFloat{animation:float 3s ease-in-out infinite}
+.aSpin{animation:spin 1.5s linear infinite}
+.aSlideUp{animation:slideUp .4s cubic-bezier(.32,.72,0,1) forwards}
+.aBounceIn{animation:bounceIn .6s cubic-bezier(.34,1.4,.64,1) forwards}
+.aD1{animation-delay:.1s}.aD2{animation-delay:.2s}.aD3{animation-delay:.3s}
+.aD4{animation-delay:.4s}.aD5{animation-delay:.5s}.hidden0{opacity:0}
+.scroll-y{overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect} = React;
+
+/* ─── TOKENS ─── */
+const CREAM='#FAF6EF',PINK='#FF3399',LIME='#AAFF00',YELLOW='#FFE566',CYAN='#00D4D4';
+const BLACK='#111111',LBLUE='#D6EEFF',PALGREEN='#E8FFD6',WHITE='#FFFFFF';
+const SHADOW='4px 4px 0 '+BLACK, BSHADOW='3px 3px 0 '+BLACK, BORDER='2.5px solid '+BLACK;
+
+/* ─── DATA ─── */
+const ARTISTS=[
+  {id:'bts',name:'BTS',initials:'BT',circleColor:'#C4B5FD'},
+  {id:'blackpink',name:'BLACKPINK',initials:'BP',circleColor:'#FBCFE8'},
+  {id:'aespa',name:'aespa',initials:'AE',circleColor:'#BAE6FD'},
+  {id:'newjeans',name:'NewJeans',initials:'NJ',circleColor:'#BBF7D0'},
+  {id:'straykids',name:'Stray Kids',initials:'SK',circleColor:'#FED7AA'},
+  {id:'ive',name:'IVE',initials:'IV',circleColor:'#FECACA'},
+  {id:'nct',name:'NCT',initials:'NC',circleColor:'#99F6E4'},
+  {id:'twice',name:'TWICE',initials:'TW',circleColor:'#FDE68A'},
+];
+
+const REGIONS=[
+  {id:'seoul',name:'Seoul',artistId:'bts',x:55,y:28,cities:['Gangnam-gu','Yongsan-gu','Mapo-gu'],
+    photo:'photo-1538485399081-7191377e8241',desc:'vibrant capital city'},
+  {id:'jeonju',name:'Jeonju',artistId:'ive',x:33,y:60,cities:['Wansan-gu','Deokjin-gu'],
+    photo:'photo-1519817914152-22d216bb9170',desc:'historic hanok village capital'},
+  {id:'gyeongju',name:'Gyeongju',artistId:'nct',x:72,y:60,cities:['Gyeongju-si'],
+    photo:'photo-1597466765535-d5ee1e3f80b4',desc:'ancient Silla Kingdom heritage'},
+  {id:'busan',name:'Busan',artistId:'blackpink',x:76,y:73,cities:['Haeundae-gu','Suyeong-gu'],
+    photo:'photo-1583579011440-bd09a0dd9fd0',desc:'coastal second city'},
+  {id:'jeju',name:'Jeju',artistId:'twice',x:36,y:90,cities:['Jeju-si','Seogwipo-si'],
+    photo:'photo-1546417971-347f6fa2b77d',desc:'beautiful island paradise'},
+];
+
+const getMissions=(city)=>[
+  {id:'m1',name:city+' Photo Spot',desc:'Take a photo at the famous K-drama filming location loved by your favorite artists!',stamp:'📸',location:city+' Central'},
+  {id:'m2',name:city+' Café Tour',desc:'Order the artist signature drink at this iconic café featured in K-content.',stamp:'☕',location:city+' Café District'},
+  {id:'m3',name:city+' Merch Hunt',desc:'Find and collect exclusive limited-edition merchandise from the official K-pop shop.',stamp:'🎁',location:city+' Shopping Street'},
+];
+
+
+/* ─── SHARED COMPONENTS ─── */
+function Pill({children,bg,color,style={}}){
+  return(
+    <span style={{display:'inline-flex',alignItems:'center',gap:3,padding:'4px 12px',
+      borderRadius:50,border:BORDER,background:bg||LIME,color:color||BLACK,
+      fontFamily:'Outfit',fontWeight:700,fontSize:12,whiteSpace:'nowrap',...style}}>
+      {children}
+    </span>
+  );
+}
+
+function KBtn({children,onClick,bg,color,outline,disabled,style={}}){
+  const bgC=outline?'transparent':(bg||PINK);
+  const col=color||(outline?BLACK:WHITE);
+  const [pressed,setPressed]=useState(false);
+  return(
+    <button onClick={disabled?undefined:onClick}
+      onMouseDown={()=>{if(!disabled)setPressed(true)}}
+      onMouseUp={()=>setPressed(false)}
+      onMouseLeave={()=>setPressed(false)}
+      onTouchStart={()=>{if(!disabled)setPressed(true)}}
+      onTouchEnd={()=>setPressed(false)}
+      style={{width:'100%',padding:'16px',borderRadius:50,border:BORDER,
+        fontFamily:'Outfit',fontWeight:900,fontSize:16,letterSpacing:'.5px',
+        cursor:disabled?'not-allowed':'pointer',
+        background:bgC,color:col,
+        boxShadow:disabled?'none':pressed?'1px 1px 0 '+BLACK:BSHADOW,
+        transform:pressed?'translate(2px,2px)':'none',
+        opacity:disabled?.5:1,transition:'transform .08s,box-shadow .08s',...style}}>
+      {children}
+    </button>
+  );
+}
+
+function KCard({children,style={},className=''}){
+  return(
+    <div className={className}
+      style={{background:WHITE,border:BORDER,borderRadius:16,boxShadow:SHADOW,...style}}>
+      {children}
+    </div>
+  );
+}
+
+function BackBtn({onClick}){
+  return(
+    <button onClick={onClick}
+      style={{width:40,height:40,borderRadius:10,border:BORDER,background:WHITE,
+        boxShadow:BSHADOW,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0}}>
+      ←
+    </button>
+  );
+}
+
+function BottomNav({active,onChange}){
+  const tabs=[
+    {id:'cover',label:'Cover',icon:'🏠'},
+    {id:'route',label:'Route',icon:'🗺️'},
+    {id:'stamps',label:'Stamps',icon:'🏅'},
+    {id:'diary',label:'Diary',icon:'📖'},
+  ];
+  return(
+    <div style={{display:'flex',borderTop:BORDER,background:WHITE,flexShrink:0}}>
+      {tabs.map(t=>(
+        <button key={t.id} onClick={()=>onChange(t.id)}
+          style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',
+            padding:'10px 0',gap:3,background:'none',border:'none',cursor:'pointer'}}>
+          <div style={{width:44,height:44,borderRadius:50,display:'flex',alignItems:'center',
+            justifyContent:'center',fontSize:20,
+            background:active===t.id?PINK:'transparent',
+            border:active===t.id?BORDER:'2.5px solid transparent',
+            boxShadow:active===t.id?BSHADOW:'none',transition:'all .15s'}}>
+            {t.icon}
+          </div>
+          <span style={{fontSize:11,fontWeight:700,fontFamily:'Outfit',
+            color:active===t.id?PINK:BLACK}}>
+            {t.label}
+          </span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/* ─── SHELL (module-level so component reference is stable) ─── */
+function Shell({children,overlay}){
+  return(
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',
+      height:'100vh',width:'100vw',background:'#111'}}>
+      <div style={{width:'100%',maxWidth:430,height:'100%',maxHeight:900,
+        position:'relative',overflow:'hidden',
+        boxShadow:'0 0 60px rgba(0,0,0,.8)'}}>
+        {children}
+        {overlay}
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════
+   SCREENS
+════════════════════════════════════════ */
+
+function LoadingScreen({onDone}){
+  useEffect(()=>{const t=setTimeout(onDone,2600);return()=>clearTimeout(t)},[]);
+  return(
+    <div style={{height:'100%',background:PINK,display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',padding:32,position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:-80,right:-80,width:240,height:240,borderRadius:'50%',border:'3px solid rgba(0,0,0,.12)'}}/>
+      <div style={{position:'absolute',bottom:-60,left:-60,width:200,height:200,borderRadius:'50%',border:'3px solid rgba(0,0,0,.12)'}}/>
+      <div style={{position:'absolute',top:'18%',left:'-8%',width:130,height:130,borderRadius:'50%',border:'2px solid rgba(255,255,255,.2)'}}/>
+
+      {/* K-TRAVEL PASSPORT pill at top */}
+      <div className="aFadeUp hidden0" style={{position:'absolute',top:60,left:'50%',transform:'translateX(-50%)'}}>
+        <Pill bg={LIME} style={{fontSize:12,padding:'5px 16px',letterSpacing:.5}}>K-TRAVEL PASSPORT</Pill>
+      </div>
+
+      {/* Sparkles + Title */}
+      <div className="aFadeUp" style={{marginBottom:4,position:'relative'}}>
+        <div style={{position:'absolute',top:-20,left:-28,fontSize:22,color:CYAN}}>✦</div>
+        <div style={{position:'absolute',top:-8,right:-24,fontSize:14,color:YELLOW}}>✦</div>
+        <div style={{position:'absolute',bottom:-10,right:-16,fontSize:18,color:CYAN}}>✦</div>
+        <h1 style={{fontFamily:'Outfit',fontWeight:900,fontSize:78,lineHeight:1,
+          color:BLACK,letterSpacing:'-3px',textAlign:'center'}}>
+          ✦K-ROUTE
+        </h1>
+      </div>
+      <div className="aFadeUp aD2 hidden0" style={{marginTop:4}}>
+        <p style={{fontFamily:'Caveat',fontWeight:700,fontSize:24,color:CYAN,
+          fontStyle:'italic',textAlign:'center'}}>
+          {'your K-culture guide! ✦'}
+        </p>
+      </div>
+
+      {/* Illustrated card */}
+      <div className="aFadeUp aD3 hidden0" style={{marginTop:28,width:'100%',maxWidth:270}}>
+        <div style={{background:'#FFF9E6',border:BORDER,borderRadius:20,boxShadow:SHADOW,
+          padding:20,textAlign:'center',position:'relative'}}>
+          {/* Decorative stamps in corners */}
+          <div style={{position:'absolute',top:10,left:14,fontSize:18,opacity:.5}}>☕</div>
+          <div style={{position:'absolute',top:10,right:14,fontSize:18,opacity:.5}}>📸</div>
+          <div style={{fontSize:60}} className="aFloat">🗺️</div>
+          <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:15,marginTop:8,color:BLACK}}>
+            KOREA ADVENTURE
+          </p>
+          <p style={{fontFamily:'Caveat',fontSize:15,color:'#888',fontStyle:'italic',marginTop:2}}>
+            Collect stamps · Build routes
+          </p>
+        </div>
+      </div>
+
+      <div className="aFadeUp aD4 hidden0" style={{marginTop:24,width:'100%',maxWidth:280}}>
+        <KBtn bg={CYAN} color={BLACK} onClick={onDone}>START EXPEDITION 🚀</KBtn>
+      </div>
+      <p className="aFadeUp aD5 hidden0"
+        style={{marginTop:14,fontFamily:'Nunito',fontSize:12,color:'rgba(255,255,255,.7)',fontWeight:600}}>
+        v1.0.0 · Made with K-Love 💕
+      </p>
+    </div>
+  );
+}
+
+function SignInScreen({onNext}){
+  const [email,setEmail]=useState('');
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column',
+      padding:'0 24px',overflowY:'auto'}}>
+      <div style={{alignSelf:'center',marginTop:52,marginBottom:20}}>
+        {/* X logo circle — matches STARA wireframe */}
+        <div style={{width:64,height:64,borderRadius:'50%',background:WHITE,border:BORDER,
+          boxShadow:SHADOW,display:'flex',alignItems:'center',justifyContent:'center'}}>
+          <div style={{width:46,height:46,borderRadius:'50%',border:'2.5px solid '+PINK,
+            display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:22,color:PINK}}>✕</span>
+          </div>
+        </div>
+      </div>
+      <h1 style={{fontFamily:'Outfit',fontWeight:900,fontSize:28,textAlign:'center'}}>
+        Welcome to K-ROUTE
+      </h1>
+      <div style={{marginTop:10,textAlign:'center'}}>
+        <Pill bg='#E8FFF4' style={{fontSize:12,border:'2px solid #B2EDD4'}}>
+          YOUR K-TRAVEL PASSPORT ✨
+        </Pill>
+      </div>
+      <div style={{marginTop:28,display:'flex',flexDirection:'column',gap:12}}>
+        {['🔍  Continue with Google','🍎  Continue with Apple'].map(s=>(
+          <button key={s} onClick={onNext}
+            style={{display:'flex',alignItems:'center',justifyContent:'center',gap:8,
+              padding:'14px 20px',borderRadius:50,border:BORDER,background:WHITE,
+              fontFamily:'Outfit',fontWeight:700,fontSize:15,cursor:'pointer',
+              boxShadow:BSHADOW}}>
+            {s}
+          </button>
+        ))}
+        <div style={{display:'flex',alignItems:'center',gap:10,margin:'4px 0'}}>
+          <div style={{flex:1,height:2,background:'#E5E0D8'}}/>
+          <span style={{fontFamily:'Nunito',fontSize:13,color:'#999',fontWeight:600}}>or</span>
+          <div style={{flex:1,height:2,background:'#E5E0D8'}}/>
+        </div>
+        <input value={email} onChange={e=>setEmail(e.target.value)}
+          placeholder="your@email.com"
+          style={{width:'100%',padding:'14px 20px',borderRadius:50,border:BORDER,
+            background:WHITE,fontSize:15,fontWeight:600,outline:'none',boxShadow:BSHADOW}}/>
+        <KBtn onClick={onNext}>CONTINUE WITH EMAIL →</KBtn>
+      </div>
+      <p style={{textAlign:'center',fontSize:12,color:'#aaa',margin:'16px 0 32px',fontWeight:500}}>
+        By continuing, you agree to our Terms of Service
+      </p>
+    </div>
+  );
+}
+
+function ArtistSelectScreen({onNext}){
+  const [sel,setSel]=useState(null);
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'48px 24px 12px'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+          <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:13,letterSpacing:1,color:'#888'}}>
+            PICK YOUR BIAS
+          </span>
+          <div style={{width:38,height:38,borderRadius:10,border:BORDER,background:WHITE,
+            boxShadow:BSHADOW,display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>
+            ☰
+          </div>
+        </div>
+        <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:26,lineHeight:1.2}}>
+          Select your travel mate!
+        </h2>
+        <p style={{fontFamily:'Nunito',fontSize:13,color:'#666',marginTop:6,lineHeight:1.5}}>
+          Choose an artist to customize your curated stamps and route experiences.
+        </p>
+      </div>
+      <div className="scroll-y" style={{flex:1,padding:'0 24px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:12,paddingBottom:8}}>
+          {ARTISTS.map(a=>{
+            const isSel=sel===a.id;
+            return(
+              <button key={a.id} onClick={()=>setSel(a.id)} className="aFadeUp"
+                style={{display:'flex',flexDirection:'column',alignItems:'center',gap:6,
+                  padding:'12px 8px',borderRadius:16,
+                  border:isSel?'2.5px solid '+PINK:BORDER,
+                  background:WHITE,cursor:'pointer',position:'relative',
+                  boxShadow:isSel?'4px 4px 0 '+PINK:SHADOW}}>
+                <div style={{width:54,height:54,borderRadius:12,background:a.circleColor,
+                  border:BORDER,display:'flex',alignItems:'center',justifyContent:'center',
+                  fontFamily:'Outfit',fontWeight:900,fontSize:16,color:BLACK}}>
+                  {a.initials}
+                </div>
+                <span style={{fontFamily:'Outfit',fontWeight:700,fontSize:11,
+                  color:BLACK,textAlign:'center',lineHeight:1.2}}>
+                  {a.name}
+                </span>
+                {isSel&&(
+                  <div style={{position:'absolute',bottom:-10,left:'50%',transform:'translateX(-50%)',
+                    background:PINK,borderRadius:50,border:BORDER,padding:'2px 10px',
+                    fontFamily:'Outfit',fontWeight:900,fontSize:10,color:WHITE,
+                    whiteSpace:'nowrap',boxShadow:'2px 2px 0 '+BLACK,zIndex:1}}>
+                    BIAS ✦
+                  </div>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <div style={{padding:'20px 24px 32px'}}>
+        <KBtn bg={LIME} color={BLACK} disabled={!sel} onClick={()=>onNext(sel)}>
+          CONTINUE TO REGION MAP →
+        </KBtn>
+      </div>
+    </div>
+  );
+}
+
+function MapScreen({onSelectRegion,activeTab,onTabChange}){
+  const [hov,setHov]=useState(null);
+  const pillBg={seoul:PINK,jeonju:YELLOW,gyeongju:WHITE,busan:CYAN,jeju:LIME};
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'48px 24px 12px'}}>
+        <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:12,letterSpacing:1,color:'#888'}}>
+          CHOOSE REGION
+        </span>
+        <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:24,marginTop:4}}>
+          Where are we headed? 🗺️
+        </h2>
+        <p style={{fontFamily:'Nunito',fontSize:13,color:'#666',marginTop:4,lineHeight:1.5}}>
+          Each region is filled with unique cultural missions & K-content pop-ups.
+        </p>
+      </div>
+
+      {/* Korea map */}
+      <div style={{flex:1,position:'relative',overflow:'hidden',margin:'0 20px 8px',
+        borderRadius:20,border:BORDER,background:LBLUE}}>
+        <svg style={{width:'100%',height:'100%',display:'block'}} viewBox="0 0 300 400" preserveAspectRatio="xMidYMid meet">
+          <rect width="300" height="400" fill={LBLUE}/>
+          {/* Korea mainland */}
+          <path d="M122,56 C133,50 152,48 170,53 C186,58 201,71 211,92 C219,109 221,130 218,152 C215,172 208,188 214,208 C220,228 218,246 209,262 C200,278 185,289 168,295 C154,300 139,299 125,293 C111,287 99,274 91,257 C83,240 80,220 81,200 C82,180 89,162 89,142 C89,122 96,102 107,84 C115,70 117,64 122,56 Z"
+            fill="#B8CEB8" stroke={BLACK} strokeWidth="1.5" strokeLinejoin="round"/>
+          {/* Jeju island */}
+          <ellipse cx="110" cy="354" rx="33" ry="18" fill="#B8CEB8" stroke={BLACK} strokeWidth="1.5"/>
+        </svg>
+        {/* Overlaid region pills */}
+        {REGIONS.map(r=>{
+          const bg=pillBg[r.id]||WHITE;
+          const isH=hov===r.id;
+          return(
+            <button key={r.id}
+              onClick={()=>onSelectRegion(r)}
+              onMouseEnter={()=>setHov(r.id)}
+              onMouseLeave={()=>setHov(null)}
+              style={{position:'absolute',left:r.x+'%',top:r.y+'%',
+                transform:'translate(-50%,-50%)',
+                display:'flex',alignItems:'center',gap:5,
+                padding:'6px 12px 6px 8px',borderRadius:50,border:BORDER,background:bg,
+                fontFamily:'Outfit',fontWeight:700,fontSize:12,color:BLACK,
+                cursor:'pointer',whiteSpace:'nowrap',zIndex:10,
+                boxShadow:isH?SHADOW:BSHADOW,transition:'box-shadow .15s'}}>
+              <span style={{width:8,height:8,borderRadius:'50%',display:'inline-block',flexShrink:0,
+                background:r.id==='seoul'?WHITE:r.id==='jeju'?BLACK:BLACK,border:'1.5px solid '+BLACK}}/>
+              {r.name}
+              {r.id==='seoul'&&<span style={{fontSize:9}}>✦</span>}
+            </button>
+          );
+        })}
+      </div>
+
+      <BottomNav active={activeTab||'route'} onChange={onTabChange}/>
+    </div>
+  );
+}
+
+function RegionDetailScreen({region,onSelect,onBack}){
+  const artist=ARTISTS.find(a=>a.id===region.artistId);
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      {/* Photo header */}
+      <div style={{height:210,position:'relative',flexShrink:0,overflow:'hidden'}}>
+        <img src={'https://images.unsplash.com/'+region.photo+'?w=430&h=210&fit=crop&auto=format'}
+          alt={region.name} style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+        <div style={{position:'absolute',inset:0,
+          background:'linear-gradient(to bottom,rgba(0,0,0,.18),rgba(0,0,0,.55))'}}/>
+        <div style={{position:'absolute',top:16,left:16}}>
+          <BackBtn onClick={onBack}/>
+        </div>
+        <div style={{position:'absolute',bottom:14,left:16}}>
+          <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:26,color:WHITE,
+            textShadow:'2px 2px 0 rgba(0,0,0,.4)'}}>
+            {region.name}, Korea
+          </h2>
+        </div>
+        <div style={{position:'absolute',bottom:16,right:16}}>
+          <Pill bg={YELLOW} style={{fontSize:12}}>🏅 6 STAMPS</Pill>
+        </div>
+      </div>
+
+      <div className="scroll-y" style={{flex:1,padding:'16px 24px'}}>
+        <p style={{fontFamily:'Nunito',fontSize:14,color:'#666',marginBottom:14,lineHeight:1.6}}>
+          {"Korea's "+region.desc+" — discover K-drama filming spots, cafés, and hidden gems."}
+        </p>
+
+        {/* Quest card */}
+        <KCard style={{padding:16,marginBottom:14}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+            <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:14}}>Available Quests</span>
+            <Pill bg={PALGREEN} style={{fontSize:11}}>3 MISSIONS</Pill>
+          </div>
+          {getMissions(region.cities[0]).map((m,i)=>(
+            <div key={m.id} style={{display:'flex',alignItems:'center',gap:10,
+              padding:'10px 0',borderBottom:i<2?'1.5px solid #F0EBE3':'none'}}>
+              <div style={{width:8,height:8,borderRadius:'50%',flexShrink:0,
+                background:i===0?'#22c55e':i===1?YELLOW:'#ddd',border:BORDER}}/>
+              <div style={{flex:1}}>
+                <p style={{fontFamily:'Outfit',fontWeight:700,fontSize:13}}>{m.name}</p>
+                <p style={{fontFamily:'Nunito',fontSize:11,color:'#888'}}>{m.location}</p>
+              </div>
+              <span style={{fontSize:18}}>{m.stamp}</span>
+            </div>
+          ))}
+        </KCard>
+
+        {/* Artist curator */}
+        <KCard style={{padding:14,background:LBLUE,marginBottom:14}}>
+          <div style={{display:'flex',gap:10,alignItems:'center'}}>
+            <div style={{width:44,height:44,borderRadius:12,background:WHITE,border:BORDER,
+              display:'flex',alignItems:'center',justifyContent:'center',
+              fontFamily:'Outfit',fontWeight:900,fontSize:15,flexShrink:0}}>
+              {artist.initials}
+            </div>
+            <div>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:13}}>Curator: {artist.name}</p>
+              <p style={{fontFamily:'Nunito',fontSize:12,color:'#555'}}>Personalized spots selected for you</p>
+            </div>
+          </div>
+        </KCard>
+
+        {/* Cities */}
+        <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:14,marginBottom:10}}>Select a City</p>
+        <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:8}}>
+          {region.cities.map((c,i)=>(
+            <button key={c} onClick={()=>onSelect(c)}
+              style={{display:'flex',alignItems:'center',justifyContent:'space-between',
+                padding:'14px 16px',borderRadius:12,border:BORDER,background:WHITE,
+                fontFamily:'Outfit',fontWeight:700,fontSize:14,cursor:'pointer',
+                boxShadow:BSHADOW,textAlign:'left'}}>
+              <span>{c}</span>
+              <div style={{display:'flex',alignItems:'center',gap:8}}>
+                {i===0&&<Pill bg={LIME} style={{fontSize:10,padding:'2px 8px'}}>Popular</Pill>}
+                <span style={{fontSize:18}}>→</span>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div style={{padding:'12px 24px 28px',flexShrink:0}}>
+        <KBtn onClick={()=>onSelect(region.cities[0])}>SELECT THIS REGION ✦</KBtn>
+      </div>
+    </div>
+  );
+}
+
+function CityConfirmScreen({region,city,onConfirm,onCancel}){
+  const artist=ARTISTS.find(a=>a.id===region.artistId);
+  const emojiMap={seoul:'🏙️',busan:'🌊',jeju:'🌺',jeonju:'🏯',gyeongju:'⛩️'};
+  const bgMap={seoul:LBLUE,busan:'#D6F5FF',jeju:PALGREEN,jeonju:'#F0E8FF',gyeongju:'#FFEFD6'};
+  return(
+    <div style={{height:'100%',background:'#F0EBE3',display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',padding:24}}>
+      <KCard style={{width:'100%',maxWidth:360,overflow:'hidden',padding:0}}>
+        <div style={{height:160,background:bgMap[region.id]||LBLUE,
+          display:'flex',alignItems:'center',justifyContent:'center',borderBottom:BORDER}}>
+          <span style={{fontSize:72}}>{emojiMap[region.id]||'🗺️'}</span>
+        </div>
+        <div style={{padding:24}}>
+          <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:22,marginBottom:4}}>
+            {'Select '+city+'?'}
+          </h2>
+          <p style={{fontFamily:'Caveat',fontSize:18,color:'#888',fontStyle:'italic',marginBottom:18}}>
+            {artist.name+' is ready to guide you!'}
+          </p>
+          <div style={{display:'flex',gap:10}}>
+            <button onClick={onCancel}
+              style={{flex:1,padding:'14px',borderRadius:50,border:BORDER,
+                background:WHITE,fontFamily:'Outfit',fontWeight:700,
+                fontSize:14,cursor:'pointer',boxShadow:BSHADOW}}>
+              Cancel
+            </button>
+            <KBtn bg={LIME} color={BLACK} onClick={onConfirm} style={{flex:2}}>
+              {"Let's Go! 🎉"}
+            </KBtn>
+          </div>
+        </div>
+      </KCard>
+    </div>
+  );
+}
+
+function RouteGeneratingScreen({city,onDone}){
+  const [prog,setProg]=useState(0);
+  const steps=['Analyzing K-drama spots...','Calculating optimal path...','Setting mission points...','Finalizing your route! 🎉'];
+  const step=Math.min(Math.floor(prog/26),steps.length-1);
+  useEffect(()=>{
+    const iv=setInterval(()=>{
+      setProg(p=>{
+        if(p>=100){clearInterval(iv);setTimeout(onDone,600);return 100;}
+        return p+1.6;
+      });
+    },50);
+    return()=>clearInterval(iv);
+  },[]);
+  return(
+    <div style={{height:'100%',display:'flex',flexDirection:'column',alignItems:'center',
+      justifyContent:'center',padding:32,
+      background:'linear-gradient(135deg,#FFF0E6 0%,#E8FFD6 50%,'+LBLUE+' 100%)'}}>
+      {/* Dashed spinner */}
+      <div style={{position:'relative',marginBottom:28}}>
+        <div style={{width:100,height:100,borderRadius:'50%',border:'3px dashed '+BLACK,
+          display:'flex',alignItems:'center',justifyContent:'center',
+          animation:'spin 4s linear infinite'}}>
+          <div style={{width:80,height:80,borderRadius:'50%',background:WHITE,border:BORDER,
+            boxShadow:SHADOW,display:'flex',alignItems:'center',justifyContent:'center',fontSize:40}}>
+            ✈️
+          </div>
+        </div>
+      </div>
+      <Pill bg={YELLOW} style={{fontSize:13,padding:'6px 18px',marginBottom:20}}>
+        NATURAL COURSE · OPTIMAL PATH
+      </Pill>
+      <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:24,textAlign:'center',marginBottom:4}}>
+        Generating Route
+      </h2>
+      <p style={{fontFamily:'Caveat',fontSize:18,color:'#666',textAlign:'center',fontStyle:'italic',marginBottom:28}}>
+        {'Creating your '+city+' experience...'}
+      </p>
+      <div style={{width:'100%',maxWidth:320,display:'flex',flexDirection:'column',gap:8}}>
+        {steps.map((s,i)=>(
+          <div key={s} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 14px',
+            borderRadius:12,border:BORDER,
+            background:i<=step?PALGREEN:WHITE,
+            boxShadow:i<=step?SHADOW:'none',opacity:i>step+1?.4:1,transition:'all .3s'}}>
+            <div style={{width:22,height:22,borderRadius:'50%',flexShrink:0,
+              background:i<step?LIME:i===step?YELLOW:'#eee',border:BORDER,
+              display:'flex',alignItems:'center',justifyContent:'center',
+              fontFamily:'Outfit',fontWeight:900,fontSize:11}}>
+              {i<step?'✓':i===step?'●':(i+1)}
+            </div>
+            <span style={{fontFamily:'Nunito',fontWeight:700,fontSize:13,color:i<=step?BLACK:'#999'}}>{s}</span>
+          </div>
+        ))}
+      </div>
+      <div style={{width:'100%',maxWidth:320,marginTop:20}}>
+        <div style={{height:8,borderRadius:50,border:BORDER,overflow:'hidden',background:'#eee'}}>
+          <div style={{height:'100%',background:PINK,borderRadius:50,width:prog+'%',transition:'width .1s'}}/>
+        </div>
+        <p style={{textAlign:'center',fontSize:12,color:'#888',marginTop:6,fontWeight:700}}>
+          {Math.round(prog)}%
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function RoutePreviewScreen({city,missions,onConfirm,onTabChange}){
+  const stops=[
+    {name:'HYBE Insight',desc:'Interactive museum celebrating music & artists',loc:'Yongsan',dist:'0.2 km',done:true},
+    {name:'Lotte Duty Free Star Avenue',desc:'Interactive K-star handprints & visuals',loc:'Myeongdong',dist:'2.5 km',done:false},
+    {name:'K-Star Road Gangnam',desc:'Iconic art toy statues (GangnamDols)',loc:'Cheongdam',dist:'5.1 km',active:true},
+    {name:'SMTOWN MV Spot',desc:'Legendary music video backdrop locations',loc:'Samseong',dist:'6.0 km',done:false},
+    {name:'K-Pop Theme Cafe',desc:'Themed beverages, cup sleeves & merch',loc:'Hongdae',dist:'8.3 km',done:false},
+  ];
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      {/* Header */}
+      <div style={{padding:'48px 24px 12px',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:4}}>
+          <div style={{width:36,height:36,borderRadius:10,border:BORDER,background:WHITE,
+            boxShadow:BSHADOW,display:'flex',alignItems:'center',justifyContent:'center',fontSize:16}}>
+            ←
+          </div>
+          <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:16,flex:1}}>YOUR CUSTOM ROUTE</span>
+          <Pill bg={CYAN} style={{fontSize:11}}>{stops.length+' SPOTS ▶'}</Pill>
+        </div>
+        <p style={{fontFamily:'Caveat',fontSize:18,color:PINK,fontStyle:'italic',fontWeight:600}}>
+          Curated selection of hot K-culture spots!
+        </p>
+      </div>
+
+      {/* Map illustration */}
+      <div style={{margin:'0 24px 14px',borderRadius:16,border:BORDER,overflow:'hidden',
+        height:150,flexShrink:0,background:'#FFF4E6',boxShadow:SHADOW,position:'relative'}}>
+        <svg style={{width:'100%',height:'100%'}} viewBox="0 0 340 150">
+          {/* Route map mock */}
+          <rect width="340" height="150" fill="#FFF4E6"/>
+          <ellipse cx="80" cy="90" rx="70" ry="55" fill="#FFE8CC" opacity=".8"/>
+          <ellipse cx="240" cy="70" rx="90" ry="55" fill={LBLUE} opacity=".7"/>
+          {/* Dashed route line */}
+          <path d="M55,95 Q120,60 170,85 Q220,110 270,72 Q300,55 310,70"
+            fill="none" stroke={PINK} strokeWidth="2.5" strokeDasharray="7,4"/>
+          {/* Numbered pins */}
+          {[{cx:55,cy:95,n:1},{cx:170,cy:85,n:2},{cx:230,cy:68,n:3},{cx:305,cy:68,n:4}].map(p=>(
+            <g key={p.n}>
+              <circle cx={p.cx} cy={p.cy} r={p.n===1?14:12}
+                fill={p.n===1?PINK:p.n===3?YELLOW:WHITE} stroke={BLACK} strokeWidth="2"/>
+              <text x={p.cx} y={p.cy+4} textAnchor="middle"
+                fontFamily="Outfit" fontWeight="900" fontSize="10" fill={p.n===1?WHITE:BLACK}>
+                {p.n}
+              </text>
+            </g>
+          ))}
+          {/* START HERE badge */}
+          <rect x="30" y="70" width="64" height="18" rx="5" fill={BLACK}/>
+          <text x="62" y="82" textAnchor="middle" fontFamily="Outfit" fontWeight="900" fontSize="8" fill={WHITE}>
+            START HERE!
+          </text>
+        </svg>
+      </div>
+
+      {/* Stop list */}
+      <div className="scroll-y" style={{flex:1,padding:'0 24px'}}>
+        {stops.map((s,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:12,
+            padding:'12px 14px',borderRadius:12,border:BORDER,marginBottom:8,
+            background:s.done?PALGREEN:s.active?YELLOW:WHITE,
+            boxShadow:s.active?SHADOW:'2px 2px 0 '+BLACK}}>
+            <div style={{width:30,height:30,borderRadius:'50%',
+              background:BLACK,border:BORDER,flexShrink:0,
+              display:'flex',alignItems:'center',justifyContent:'center',
+              fontFamily:'Outfit',fontWeight:900,fontSize:12,color:WHITE}}>
+              {i+1}
+            </div>
+            <div style={{flex:1,minWidth:0}}>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:13,
+                whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}>
+                {s.name}
+              </p>
+              <p style={{fontFamily:'Nunito',fontSize:11,color:'#666',marginTop:1}}>
+                {'📍 '+s.loc+' · '+s.dist}
+              </p>
+            </div>
+            {s.done&&<span style={{fontSize:18,flexShrink:0}}>✅</span>}
+            {s.active&&<Pill bg={PINK} color={WHITE} style={{fontSize:10,padding:'3px 8px',flexShrink:0}}>NEXT UP</Pill>}
+          </div>
+        ))}
+      </div>
+      <div style={{padding:'12px 24px 16px',flexShrink:0}}>
+        <KBtn bg='#FF6600' color={WHITE} onClick={onConfirm}>CONFIRM THIS ROUTE ✨</KBtn>
+      </div>
+      <BottomNav active="route" onChange={onTabChange}/>
+    </div>
+  );
+}
+
+function RouteConfirmScreen({onYes,onNo}){
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',padding:24}}>
+      <KCard style={{width:'100%',maxWidth:360,padding:28,textAlign:'center'}}>
+        <span style={{fontSize:48,display:'block',marginBottom:16}}>🗺️</span>
+        <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:22,marginBottom:24}}>
+          Confirm this route?
+        </h2>
+        <div style={{display:'flex',flexDirection:'column',gap:10}}>
+          <KBtn onClick={onYes} style={{fontSize:18}}>{"YES, LET'S GO! 🚀"}</KBtn>
+          <KBtn outline onClick={onNo}>No, build my own</KBtn>
+        </div>
+      </KCard>
+    </div>
+  );
+}
+
+function TravelStartScreen({city,onEnter}){
+  const confettiItems=[...Array(14)].map((_,i)=>({
+    left:Math.round(10+i*6),
+    dur:Math.round((1.5+i*.12)*10)/10,
+    delay:Math.round(i*.035*10)/10,
+    color:[LIME,CYAN,YELLOW,WHITE][i%4],
+    rot:i*25,
+  }));
+  return(
+    <div style={{height:'100%',background:PINK,display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',padding:32,
+      position:'relative',overflow:'hidden'}}>
+      <div style={{position:'absolute',top:-60,right:-60,width:220,height:220,borderRadius:'50%',border:'3px solid rgba(0,0,0,.1)'}}/>
+      <div style={{position:'absolute',bottom:-50,left:-50,width:180,height:180,borderRadius:'50%',border:'3px solid rgba(0,0,0,.1)'}}/>
+      {confettiItems.map((c,i)=>(
+        <div key={i} style={{position:'absolute',width:10,height:14,borderRadius:3,
+          left:c.left+'%',top:'-20px',background:c.color,
+          animation:'confetti '+c.dur+'s ease-in '+c.delay+'s both',
+          transform:'rotate('+c.rot+'deg)'}}/>
+      ))}
+      <div className="aBounceIn" style={{width:100,height:100,borderRadius:'50%',
+        background:YELLOW,border:BORDER,boxShadow:SHADOW,
+        display:'flex',alignItems:'center',justifyContent:'center',
+        fontSize:52,marginBottom:24}}>
+        🎉
+      </div>
+      <h1 style={{fontFamily:'Outfit',fontWeight:900,fontSize:34,color:BLACK,
+        textAlign:'center',marginBottom:8,letterSpacing:'-1px'}}>
+        HAVE A GREAT TRIP!
+      </h1>
+      <p style={{fontFamily:'Caveat',fontSize:22,color:WHITE,fontStyle:'italic',
+        textAlign:'center',marginBottom:32}}>
+        {city+' adventure awaits you ✨'}
+      </p>
+      <div style={{width:'100%',maxWidth:300}}>
+        <KBtn bg={LIME} color={BLACK} onClick={onEnter}>ENTER K-ROUTE →</KBtn>
+      </div>
+    </div>
+  );
+}
+
+function MissionMapScreen({city,missions,completedIdx,onMissionTap,activeTab,onTabChange}){
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      {/* Header */}
+      <div style={{padding:'48px 24px 14px',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:10}}>
+          <div style={{width:36,height:36,borderRadius:10,border:BORDER,background:WHITE,
+            boxShadow:BSHADOW,display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,flexShrink:0}}>
+            ←
+          </div>
+          <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:15,flex:1,letterSpacing:'-.3px'}}>
+            {city.toUpperCase()+' EXPLORATION'}
+          </span>
+          <Pill bg={LIME} style={{fontSize:10,flexShrink:0}}>{completedIdx+'/'+missions.length+' COMPLETE ✓'}</Pill>
+        </div>
+      </div>
+
+      {/* Quests Journey Map card — lavender */}
+      <div style={{padding:'0 24px 14px',flexShrink:0}}>
+        <div style={{border:BORDER,borderRadius:16,boxShadow:BSHADOW,background:'#F0E8FF',padding:'14px 16px'}}>
+          <div style={{display:'flex',alignItems:'center',gap:10}}>
+            <div style={{width:44,height:44,flexShrink:0,position:'relative'}}>
+              {[{top:4,left:4,c:PINK,s:9},{top:20,left:18,c:PINK,s:7},{top:8,left:30,c:PINK,s:8}].map((d,i)=>(
+                <div key={i} style={{position:'absolute',top:d.top,left:d.left,
+                  width:d.s,height:d.s,borderRadius:'50%',background:d.c,border:'1.5px solid '+BLACK}}/>
+              ))}
+            </div>
+            <div>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:14}}>Quests Journey Map</p>
+              <p style={{fontFamily:'Caveat',fontSize:14,fontStyle:'italic',color:PINK}}>
+                Earn stamps for exclusive merch rewards!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Missions checklist */}
+      <div className="scroll-y" style={{flex:1,padding:'0 24px 8px'}}>
+        <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:16,marginBottom:12}}>Missions Checklist</p>
+        {missions.map((m,i)=>{
+          const done=i<completedIdx, active=i===completedIdx, locked=i>completedIdx;
+          return(
+            <button key={m.id}
+              onClick={active?()=>onMissionTap(i):undefined}
+              style={{width:'100%',display:'flex',alignItems:'center',gap:12,
+                padding:'13px 14px',borderRadius:14,border:BORDER,marginBottom:8,
+                background:done?PALGREEN:active?YELLOW:WHITE,
+                boxShadow:active?SHADOW:'2px 2px 0 '+BLACK,
+                cursor:active?'pointer':'default',textAlign:'left'}}>
+              <div style={{width:36,height:36,borderRadius:'50%',flexShrink:0,
+                background:done?LIME:active?WHITE:'#f0f0f0',
+                border:'2px solid '+(locked?'#ccc':BLACK),
+                display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>
+                {locked?'🔒':m.stamp}
+              </div>
+              <div style={{flex:1}}>
+                <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:14,
+                  color:locked?'#aaa':BLACK,marginBottom:2}}>
+                  {m.name}
+                </p>
+                <p style={{fontFamily:'Nunito',fontSize:12,fontWeight:700,
+                  color:done?'#555':active?'#333':'#bbb'}}>
+                  {'Mission #'+(i+1)+' · '+(done?'COMPLETED':active?'GO NOW!':'LOCKED')}
+                </p>
+              </div>
+              {done&&<span style={{fontSize:20,flexShrink:0,color:'#22c55e',fontWeight:900}}>✓</span>}
+              {active&&<Pill bg={PINK} color={WHITE} style={{fontSize:11,padding:'4px 12px',flexShrink:0}}>GO! 🎯</Pill>}
+              {locked&&<span style={{fontSize:16,flexShrink:0}}>🔒</span>}
+            </button>
+          );
+        })}
+      </div>
+      <BottomNav active={activeTab||'route'} onChange={onTabChange}/>
+    </div>
+  );
+}
+
+function MissionDetailSheet({mission,onSuccess,onClose}){
+  const [photoTaken,setPhotoTaken]=useState(false);
+  const [checking,setChecking]=useState(false);
+  const handlePhoto=()=>{setPhotoTaken(true);setChecking(true);setTimeout(()=>setChecking(false),1800);};
+  return(
+    <div style={{position:'absolute',inset:0,zIndex:50,
+      background:'rgba(0,0,0,.65)',display:'flex',flexDirection:'column'}}
+      onClick={onClose}>
+      <div style={{flex:1}}/>
+      <div className="aSlideUp" style={{borderRadius:'24px 24px 0 0',border:BORDER,
+        borderBottom:'none',background:WHITE,maxHeight:'80%'}}
+        onClick={e=>e.stopPropagation()}>
+        <div style={{display:'flex',justifyContent:'center',padding:'12px 0 8px'}}>
+          <div style={{width:40,height:4,borderRadius:50,background:'#ddd'}}/>
+        </div>
+        <div className="scroll-y" style={{maxHeight:580,padding:'0 24px 32px'}}>
+          <div style={{marginBottom:14}}>
+            <Pill bg={YELLOW} style={{fontSize:12}}>ACTIVE MISSION 🎯</Pill>
+          </div>
+          <div style={{display:'flex',gap:12,alignItems:'flex-start',marginBottom:14}}>
+            <div style={{width:56,height:56,borderRadius:16,border:BORDER,background:PALGREEN,
+              display:'flex',alignItems:'center',justifyContent:'center',
+              fontSize:28,flexShrink:0,boxShadow:BSHADOW}}>
+              {mission.stamp}
+            </div>
+            <div style={{flex:1}}>
+              <h3 style={{fontFamily:'Outfit',fontWeight:900,fontSize:18,marginBottom:2}}>{mission.name}</h3>
+              <p style={{fontFamily:'Nunito',fontSize:12,color:'#888'}}>📍 {mission.location}</p>
+            </div>
+            <button onClick={onClose}
+              style={{width:32,height:32,borderRadius:8,border:BORDER,background:'#f5f5f5',
+                display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,cursor:'pointer'}}>
+              ✕
+            </button>
+          </div>
+          <p style={{fontFamily:'Nunito',fontSize:14,color:'#555',lineHeight:1.6,marginBottom:14}}>
+            {mission.desc}
+          </p>
+          {/* Photo area */}
+          {!photoTaken?(
+            <div style={{border:'2px dashed '+PINK,borderRadius:16,padding:'28px 20px',
+              textAlign:'center',marginBottom:14,background:'#FFF5FA',cursor:'pointer'}}
+              onClick={handlePhoto}>
+              <div style={{fontSize:36,marginBottom:8}}>📷</div>
+              <p style={{fontFamily:'Outfit',fontWeight:700,fontSize:14,marginBottom:4}}>Upload Mission Photo</p>
+              <p style={{fontFamily:'Nunito',fontSize:12,color:'#bbb'}}>Tap to take or upload a photo</p>
+            </div>
+          ):(
+            <div style={{border:BORDER,borderRadius:16,padding:'20px',
+              background:checking?LBLUE:PALGREEN,marginBottom:14,textAlign:'center'}}>
+              {checking?(
+                <div>
+                  <div className="aSpin" style={{width:36,height:36,borderRadius:'50%',
+                    border:'3px solid '+BLACK,borderTopColor:PINK,margin:'0 auto 8px'}}/>
+                  <p style={{fontFamily:'Nunito',fontWeight:700,fontSize:13}}>Verifying mission...</p>
+                </div>
+              ):(
+                <div>
+                  <div style={{fontSize:36,marginBottom:6}}>✅</div>
+                  <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:14,color:'#22c55e'}}>Mission Verified!</p>
+                </div>
+              )}
+            </div>
+          )}
+          <div style={{background:LBLUE,border:BORDER,borderRadius:12,padding:'12px 14px',marginBottom:14}}>
+            <p style={{fontFamily:'Nunito',fontSize:12,color:'#555'}}>
+              {'💡 Complete this mission to earn your '+mission.stamp+' stamp and unlock the next challenge!'}
+            </p>
+          </div>
+          {!photoTaken?(
+            <KBtn bg='#FF6600' color={WHITE} onClick={handlePhoto}>COMPLETE MISSION 🎯</KBtn>
+          ):checking?(
+            <KBtn disabled bg='#eee' color='#aaa'>Verifying...</KBtn>
+          ):(
+            <KBtn bg={LIME} color={BLACK} onClick={onSuccess}>COLLECT STAMP 💜</KBtn>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MissionSuccessOverlay({mission,missionIdx,totalMissions,onContinue}){
+  const [show,setShow]=useState(false);
+  useEffect(()=>{const t=setTimeout(()=>setShow(true),300);return()=>clearTimeout(t)},[]);
+  const isLast=missionIdx>=totalMissions-1;
+  const confettiItems=[...Array(16)].map((_,i)=>({
+    left:Math.round(i*6+2),
+    dur:Math.round((1.4+i*.1)*10)/10,
+    delay:Math.round(i*.032*10)/10,
+    color:[PINK,LIME,YELLOW,CYAN][i%4],
+    rot:i*22,
+  }));
+  return(
+    <div style={{position:'absolute',inset:0,zIndex:60,
+      background:'rgba(0,0,0,.72)',display:'flex',alignItems:'center',
+      justifyContent:'center',padding:24}}>
+      {show&&confettiItems.map((c,i)=>(
+        <div key={i} style={{position:'absolute',width:10,height:14,borderRadius:3,
+          left:c.left+'%',top:'-20px',background:c.color,
+          animation:'confetti '+c.dur+'s ease-in '+c.delay+'s both',
+          transform:'rotate('+c.rot+'deg)'}}/>
+      ))}
+      <KCard className="aBounceIn" style={{width:'100%',maxWidth:320,padding:28,textAlign:'center'}}>
+        <div style={{width:80,height:80,borderRadius:'50%',background:YELLOW,border:BORDER,
+          boxShadow:SHADOW,display:'flex',alignItems:'center',justifyContent:'center',
+          fontSize:40,margin:'0 auto 16px'}}>
+          ⭐
+        </div>
+        <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:22,color:PINK,marginBottom:4}}>
+          CONGRATULATIONS!
+        </h2>
+        <p style={{fontFamily:'Caveat',fontSize:22,fontStyle:'italic',color:'#555',marginBottom:8}}>
+          Mission Complete!
+        </p>
+        <div className={show?'aStampIn':''} style={{width:72,height:72,borderRadius:16,border:BORDER,
+          background:PALGREEN,boxShadow:SHADOW,display:'flex',alignItems:'center',
+          justifyContent:'center',fontSize:36,margin:'8px auto 14px'}}>
+          {mission.stamp}
+        </div>
+        <p style={{fontFamily:'Nunito',fontSize:13,color:'#888',marginBottom:20}}>
+          {(missionIdx+1)+' of '+totalMissions+' missions complete'}
+        </p>
+        <KBtn onClick={onContinue}>
+          {isLast?'VIEW ROUTE COMPLETE 🏆':'COLLECT STAMP 💜'}
+        </KBtn>
+      </KCard>
+    </div>
+  );
+}
+
+function RouteCompleteScreen({city,onCollect}){
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',padding:28,overflow:'hidden'}}>
+      <div className="aFloat" style={{width:90,height:90,borderRadius:'50%',background:YELLOW,
+        border:BORDER,boxShadow:SHADOW,display:'flex',alignItems:'center',justifyContent:'center',
+        fontSize:44,marginBottom:20}}>
+        🏆
+      </div>
+      <div style={{marginBottom:10}}>
+        <Pill bg={PINK} color={WHITE} style={{fontSize:13}}>QUEST COMPLETED 🎉</Pill>
+      </div>
+      <h1 style={{fontFamily:'Outfit',fontWeight:900,fontSize:30,textAlign:'center',
+        marginBottom:20,letterSpacing:'-1px'}}>
+        ROUTE COMPLETE!
+      </h1>
+      <KCard style={{width:'100%',maxWidth:340,overflow:'hidden',marginBottom:24}}>
+        <div style={{background:'linear-gradient(135deg,'+LBLUE+','+PALGREEN+')',
+          padding:'16px 20px',borderBottom:BORDER,display:'flex',alignItems:'center',gap:12}}>
+          <span style={{fontSize:36}}>🎬</span>
+          <div>
+            <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:14}}>
+              {city.toUpperCase()+' K-DRAMA HERO'}
+            </p>
+            <p style={{fontFamily:'Caveat',fontSize:15,fontStyle:'italic',color:'#666'}}>All missions completed!</p>
+          </div>
+        </div>
+        <div style={{padding:'12px 20px',display:'flex',gap:8,alignItems:'center'}}>
+          <Pill bg={PALGREEN} style={{fontSize:11}}>3/3 MISSIONS ✓</Pill>
+          <Pill bg={LBLUE} style={{fontSize:11}}>+1 STAMP</Pill>
+        </div>
+      </KCard>
+      <div style={{width:'100%',maxWidth:340}}>
+        <KBtn bg={CYAN} color={BLACK} onClick={onCollect}>RECEIVE STAMP →</KBtn>
+      </div>
+    </div>
+  );
+}
+
+function CustomMapScreen({city,onGenerate,onTabChange}){
+  const [places,setPlaces]=useState([
+    {id:'p1',name:'Main Square',emoji:'📍'},
+    {id:'p2',name:'K-Drama Café',emoji:'☕'},
+  ]);
+  const [search,setSearch]=useState('');
+  const [confirm,setConfirm]=useState(null);
+  const suggestions=[
+    {name:city+' Cultural Center',emoji:'🎭'},
+    {name:city+' Night Market',emoji:'🌙'},
+    {name:city+' K-Pop Café',emoji:'🎵'},
+    {name:city+' Hanbok Shop',emoji:'👘'},
+  ].filter(s=>search.length>0&&s.name.toLowerCase().includes(search.toLowerCase()));
+  const removePlace=id=>setPlaces(ps=>ps.filter(p=>p.id!==id));
+  const addPlace=(name,emoji)=>{
+    setPlaces(ps=>[...ps,{id:'p'+Date.now(),name,emoji}]);
+    setConfirm(null);setSearch('');
+  };
+  const nodes=[{x:40,y:25},{x:130,y:42},{x:68,y:82},{x:152,y:98},{x:60,y:132}];
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'48px 24px 12px',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+          <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:16}}>BUILD YOUR ROUTE</span>
+          <Pill bg={CYAN} style={{fontSize:11}}>CUSTOM ✕</Pill>
+        </div>
+        <p style={{fontFamily:'Caveat',fontSize:16,color:'#888',fontStyle:'italic'}}>
+          Add your favorite spots to the map
+        </p>
+      </div>
+      {/* Search */}
+      <div style={{padding:'0 24px 8px',flexShrink:0,position:'relative'}}>
+        <div style={{position:'relative'}}>
+          <input value={search} onChange={e=>setSearch(e.target.value)}
+            placeholder="Search places to add..."
+            style={{width:'100%',padding:'12px 16px 12px 40px',borderRadius:50,
+              border:BORDER,background:WHITE,fontSize:14,fontWeight:600,
+              outline:'none',boxShadow:BSHADOW}}/>
+          <span style={{position:'absolute',left:14,top:'50%',transform:'translateY(-50%)',fontSize:16}}>🔍</span>
+        </div>
+        {suggestions.length>0&&(
+          <div style={{position:'absolute',left:24,right:24,top:'100%',
+            border:BORDER,borderRadius:12,overflow:'hidden',background:WHITE,
+            boxShadow:SHADOW,zIndex:20}}>
+            {suggestions.map(s=>(
+              <button key={s.name} onClick={()=>setConfirm(s)}
+                style={{width:'100%',display:'flex',alignItems:'center',gap:10,
+                  padding:'10px 14px',borderBottom:'1px solid #f0f0f0',cursor:'pointer',
+                  background:'none',fontFamily:'Nunito',fontWeight:700,fontSize:13,textAlign:'left'}}>
+                <span style={{fontSize:18}}>{s.emoji}</span>
+                <span style={{flex:1}}>{s.name}</span>
+                <span style={{color:PINK,fontFamily:'Outfit',fontWeight:900,fontSize:12}}>ADD +</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+      {/* Mini map */}
+      <div style={{margin:'0 24px 8px',borderRadius:16,border:BORDER,height:170,
+        overflow:'hidden',flexShrink:0,background:LBLUE,boxShadow:SHADOW}}>
+        <svg style={{width:'100%',height:'100%'}} viewBox="0 0 220 170">
+          {places.slice(0,-1).map((_,i)=>(
+            i<nodes.length-1&&(
+              <line key={i} x1={nodes[i].x} y1={nodes[i].y}
+                x2={nodes[i+1].x} y2={nodes[i+1].y}
+                stroke={BLACK} strokeWidth="2" strokeDasharray="5,4"/>
+            )
+          ))}
+          {places.map((_,i)=>(
+            i<nodes.length&&(
+              <g key={i}>
+                <circle cx={nodes[i].x} cy={nodes[i].y} r={15}
+                  fill={LIME} stroke={BLACK} strokeWidth="2"/>
+                <text x={nodes[i].x} y={nodes[i].y+4} textAnchor="middle"
+                  fontFamily="Outfit" fontWeight="900" fontSize="11" fill={BLACK}>
+                  {i+1}
+                </text>
+              </g>
+            )
+          ))}
+        </svg>
+      </div>
+      {/* Stop list */}
+      <div className="scroll-y" style={{flex:1,padding:'0 24px'}}>
+        <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:13,marginBottom:8,color:'#666'}}>
+          {'SELECTED STOPS ('+places.length+')'}
+        </p>
+        {places.map((p,i)=>(
+          <div key={p.id} style={{display:'flex',alignItems:'center',gap:10,
+            padding:'10px 12px',borderRadius:10,border:BORDER,marginBottom:8,
+            background:i===0?PALGREEN:YELLOW,boxShadow:BSHADOW}}>
+            <span style={{width:24,height:24,borderRadius:'50%',background:BLACK,
+              color:WHITE,display:'flex',alignItems:'center',justifyContent:'center',
+              fontFamily:'Outfit',fontWeight:900,fontSize:11,flexShrink:0}}>
+              {i+1}
+            </span>
+            <span style={{fontSize:16}}>{p.emoji}</span>
+            <span style={{fontFamily:'Outfit',fontWeight:700,fontSize:13,flex:1}}>{p.name}</span>
+            <button onClick={()=>removePlace(p.id)}
+              style={{width:24,height:24,borderRadius:6,border:BORDER,background:WHITE,
+                display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,cursor:'pointer'}}>
+              ✕
+            </button>
+          </div>
+        ))}
+        {places.length<2&&(
+          <p style={{fontFamily:'Nunito',fontSize:13,color:PINK,fontWeight:700,textAlign:'center',marginTop:4}}>
+            Add at least 2 stops to generate a route
+          </p>
+        )}
+      </div>
+      <div style={{padding:'12px 24px 28px',flexShrink:0}}>
+        <KBtn disabled={places.length<2} onClick={()=>onGenerate(places)}>GENERATE ROUTE 🚀</KBtn>
+      </div>
+      {/* Confirm overlay */}
+      {confirm&&(
+        <div style={{position:'absolute',inset:0,zIndex:50,background:'rgba(0,0,0,.65)',
+          display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+          <KCard className="aBounceIn" style={{width:'100%',maxWidth:320,overflow:'hidden',padding:0}}>
+            <div style={{background:BLACK,padding:'12px 16px'}}>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:12,color:WHITE,letterSpacing:1}}>
+                SEARCHING STOPS...
+              </p>
+            </div>
+            <div style={{padding:24,textAlign:'center'}}>
+              <div style={{width:56,height:56,borderRadius:'50%',background:YELLOW,border:BORDER,
+                boxShadow:BSHADOW,display:'flex',alignItems:'center',justifyContent:'center',
+                fontSize:28,margin:'0 auto 12px'}}>
+                📍
+              </div>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:16,marginBottom:4}}>ADD TO ROUTE?</p>
+              <p style={{fontFamily:'Outfit',fontWeight:700,fontSize:14,color:PINK,marginBottom:16}}>
+                {confirm.emoji+' '+confirm.name}
+              </p>
+              <KBtn onClick={()=>addPlace(confirm.name,confirm.emoji)}>YES, ADD TO ROUTE! ✦</KBtn>
+              <button onClick={()=>setConfirm(null)}
+                style={{marginTop:10,fontFamily:'Nunito',fontWeight:700,fontSize:13,
+                  color:'#888',cursor:'pointer'}}>
+                Cancel
+              </button>
+            </div>
+          </KCard>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HomeCoverScreen({region,city,completedMissions,totalMissions,onContinueMission,onTabChange}){
+  const pct=totalMissions>0?Math.round((completedMissions/totalMissions)*100):0;
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'48px 24px 16px',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',gap:12,marginBottom:16}}>
+          <div style={{width:48,height:48,borderRadius:'50%',background:PINK,border:BORDER,
+            boxShadow:BSHADOW,display:'flex',alignItems:'center',justifyContent:'center',
+            fontFamily:'Outfit',fontWeight:900,fontSize:18,color:WHITE}}>
+            K
+          </div>
+          <div>
+            <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:11,color:'#888',letterSpacing:1}}>WELCOME BACK!</p>
+            <Pill bg={CYAN} style={{fontSize:11,marginTop:3}}>✦ SEOUL SPECIAL</Pill>
+          </div>
+        </div>
+        <h1 style={{fontFamily:'Outfit',fontWeight:900,fontSize:24,lineHeight:1.2}}>
+          K-CONTENT TRAVEL PASSPORT
+        </h1>
+        <p style={{fontFamily:'Caveat',fontSize:18,color:'#888',fontStyle:'italic',marginTop:4}}>
+          Your journey continues...
+        </p>
+      </div>
+      {/* Active route card */}
+      {region&&(
+        <div style={{padding:'0 24px',flexShrink:0}}>
+          <KCard style={{padding:0,overflow:'hidden',background:LBLUE,marginBottom:14}}>
+            <div style={{padding:'14px 16px',borderBottom:BORDER,
+              display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+              <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:14}}>Active Route</span>
+              <Pill bg={WHITE} style={{fontSize:10}}>IN PROGRESS</Pill>
+            </div>
+            <div style={{padding:'12px 16px'}}>
+              <p style={{fontFamily:'Outfit',fontWeight:700,fontSize:15,marginBottom:8}}>
+                {city+' · '+region.name}
+              </p>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:5}}>
+                <span style={{fontFamily:'Nunito',fontSize:13,fontWeight:600,color:'#555'}}>Mission Progress</span>
+                <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:13}}>
+                  {completedMissions+'/'+totalMissions}
+                </span>
+              </div>
+              <div style={{height:6,borderRadius:50,border:'1.5px solid '+BLACK,overflow:'hidden',background:'#f0f0f0'}}>
+                <div style={{height:'100%',background:PINK,borderRadius:50,width:pct+'%',transition:'width .5s'}}/>
+              </div>
+            </div>
+          </KCard>
+        </div>
+      )}
+      {/* Action buttons */}
+      <div style={{padding:'0 24px',flexShrink:0,display:'flex',gap:10,marginBottom:14}}>
+        <KBtn bg={LIME} color={BLACK} onClick={onContinueMission} style={{flex:1,padding:'12px'}}>
+          {completedMissions===totalMissions&&totalMissions>0?'VIEW ROUTE ✓':'CONTINUE →'}
+        </KBtn>
+        <KBtn bg={PINK} color={WHITE} onClick={()=>onTabChange('route')} style={{flex:1,padding:'12px'}}>
+          EXPLORE 🗺️
+        </KBtn>
+      </div>
+      {/* Tags */}
+      <div style={{padding:'0 24px',flexShrink:0,display:'flex',gap:8,flexWrap:'wrap',marginBottom:14}}>
+        {['K-Drama Spots','Cafés','Photo Zones','Night Markets'].map(t=>(
+          <Pill key={t} bg={WHITE} style={{fontSize:11}}>{t}</Pill>
+        ))}
+      </div>
+      {/* Recent stamps */}
+      <div className="scroll-y" style={{flex:1,padding:'0 24px'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:10}}>
+          <span style={{fontFamily:'Outfit',fontWeight:900,fontSize:14}}>Recent Stamps</span>
+          <button onClick={()=>onTabChange('stamps')}
+            style={{fontFamily:'Outfit',fontWeight:700,fontSize:12,color:PINK,cursor:'pointer'}}>
+            See All →
+          </button>
+        </div>
+        <div style={{display:'flex',gap:10,paddingBottom:8}}>
+          {STAMP_CARDS.slice(0,3).map((s,i)=>(
+            <div key={s.id} style={{flex:1,border:BORDER,borderRadius:12,
+              background:WHITE,boxShadow:BSHADOW,textAlign:'center',padding:'12px 8px'}}>
+              <div style={{fontSize:28,marginBottom:4,filter:i<1?'none':'grayscale(1) opacity(.4)'}}>
+                {s.icon}
+              </div>
+              <span style={{fontFamily:'Outfit',fontWeight:700,fontSize:10}}>{s.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <BottomNav active="cover" onChange={onTabChange}/>
+    </div>
+  );
+}
+
+const STAMP_CARDS=[
+  {id:'s1',name:'T-Money Go',loc:'Seoul Stn',color:LBLUE,icon:'🎫'},
+  {id:'s2',name:'Hanok Village',loc:'Bukchon',color:'#FFFBD6',icon:'🏛️'},
+  {id:'s3',name:'Sweet Treats',loc:'Boseong Cafe',color:'#F0E8FF',icon:'☕'},
+  {id:'s4',name:'Cutie Booth',loc:'Myeongdong',color:'#F5F5F5',icon:'📷'},
+  {id:'s5',name:'K-Pop Stage',loc:'Hongdae',color:'#F5F5F5',icon:'🎤'},
+  {id:'s6',name:'Hangang Views',loc:'Yongsan',color:'#F5F5F5',icon:'🌊'},
+];
+
+function StampsScreen({unlockedCount,activeTab,onTabChange}){
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'48px 24px 12px',flexShrink:0}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:4}}>
+          <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:24}}>Mission Stamps</h2>
+          <Pill bg={CYAN} style={{fontSize:12}}>{'LEVEL '+Math.max(1,unlockedCount)}</Pill>
+        </div>
+        <p style={{fontFamily:'Caveat',fontSize:18,color:'#888',fontStyle:'italic'}}>
+          {"Collect 'em all to level up! 🎌"}
+        </p>
+      </div>
+
+      {/* Progress card — lavender */}
+      <div style={{padding:'0 24px 14px',flexShrink:0}}>
+        <div style={{border:BORDER,borderRadius:16,boxShadow:SHADOW,overflow:'hidden',background:'#F0E8FF'}}>
+          <div style={{padding:'16px 20px',display:'flex',alignItems:'center'}}>
+            <div style={{flex:1}}>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:28,lineHeight:1}}>
+                {unlockedCount+' / '+STAMP_CARDS.length}
+              </p>
+              <p style={{fontFamily:'Nunito',fontSize:13,color:'#666',marginTop:3}}>Seoul Day 2 Complete</p>
+            </div>
+            <div style={{width:1.5,height:44,background:'rgba(0,0,0,.12)',margin:'0 16px'}}/>
+            <div style={{flex:1}}>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:13,color:PINK}}>Next Reward:</p>
+              <p style={{fontFamily:'Nunito',fontWeight:700,fontSize:13}}>AR Sticker Pack 🎉</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stamp grid */}
+      <div className="scroll-y" style={{flex:1,padding:'0 24px 8px'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,paddingBottom:8}}>
+          {STAMP_CARDS.map((s,i)=>{
+            const unlocked=i<unlockedCount;
+            return(
+              <KCard key={s.id} style={{padding:0,overflow:'hidden'}}>
+                <div style={{background:unlocked?s.color:'#F5F5F5',
+                  padding:'24px 16px',textAlign:'center',borderBottom:BORDER}}>
+                  <div style={{width:64,height:64,borderRadius:'50%',margin:'0 auto',
+                    border:'2.5px solid '+(unlocked?BLACK:'#ccc'),
+                    display:'flex',alignItems:'center',justifyContent:'center',
+                    fontSize:30,filter:unlocked?'none':'grayscale(1) opacity(.35)'}}>
+                    {s.icon}
+                  </div>
+                </div>
+                <div style={{padding:'10px 12px',textAlign:'center'}}>
+                  <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:13,marginBottom:2,
+                    color:unlocked?BLACK:'#bbb'}}>
+                    {s.name}
+                  </p>
+                  <p style={{fontFamily:'Nunito',fontSize:11,color:'#999',marginBottom:8}}>{s.loc}</p>
+                  {unlocked
+                    ?<Pill bg={LIME} style={{fontSize:10,padding:'3px 12px'}}>STAMPED</Pill>
+                    :<Pill bg='#e8e8e8' color='#aaa' style={{fontSize:10,padding:'3px 12px',border:'2px solid #ddd'}}>LOCKED</Pill>}
+                </div>
+              </KCard>
+            );
+          })}
+        </div>
+      </div>
+      <BottomNav active={activeTab||'stamps'} onChange={onTabChange}/>
+    </div>
+  );
+}
+
+function DiaryScreen({completedCities,activeTab,onTabChange}){
+  const allEntries=[
+    {city:'Seoul',date:'Aug 14, 2026',photo:'photo-1538485399081-7191377e8241',
+      caption:'Amazing day exploring Gangnam! The cafés were absolutely perfect.',tag:'Gangnam-gu'},
+    {city:'Busan',date:'Aug 12, 2026',photo:'photo-1583579011440-bd09a0dd9fd0',
+      caption:'Haeundae beach at sunset was everything ✨',tag:'Haeundae'},
+    {city:'Jeju',date:'Aug 10, 2026',photo:'photo-1546417971-347f6fa2b77d',
+      caption:'Hallasan hike was worth every single step!',tag:'Jeju-si'},
+  ];
+  const entries=allEntries.slice(0,Math.max(1,completedCities.length));
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column'}}>
+      <div style={{padding:'48px 24px 12px',flexShrink:0,
+        display:'flex',alignItems:'flex-start',justifyContent:'space-between'}}>
+        <div>
+          <h2 style={{fontFamily:'Outfit',fontWeight:900,fontSize:24}}>My K-ROUTE Diary</h2>
+          <p style={{fontFamily:'Caveat',fontSize:17,color:'#888',fontStyle:'italic',marginTop:2}}>
+            Travel memories & moments ✨
+          </p>
+        </div>
+        <div style={{width:38,height:38,borderRadius:10,border:BORDER,background:YELLOW,
+          boxShadow:BSHADOW,display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>
+          ✏️
+        </div>
+      </div>
+      <div className="scroll-y" style={{flex:1,padding:'0 24px 8px'}}>
+        {entries.map((e,i)=>(
+          <KCard key={i} style={{marginBottom:16,padding:0,overflow:'hidden'}}>
+            <div style={{height:160,position:'relative'}}>
+              <img src={'https://images.unsplash.com/'+e.photo+'?w=380&h=160&fit=crop&auto=format'}
+                alt={e.city} style={{width:'100%',height:'100%',objectFit:'cover'}}/>
+              <div style={{position:'absolute',inset:0,
+                background:'linear-gradient(to bottom,transparent,rgba(0,0,0,.4))'}}/>
+              <div style={{position:'absolute',bottom:8,left:12}}>
+                <Pill bg={WHITE} style={{fontSize:10}}>📍 {e.tag}</Pill>
+              </div>
+              <div style={{position:'absolute',top:8,right:12}}>
+                <Pill bg={YELLOW} style={{fontSize:10}}>{e.date}</Pill>
+              </div>
+            </div>
+            <div style={{padding:'12px 16px'}}>
+              <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:15,marginBottom:4}}>{e.city}</p>
+              <p style={{fontFamily:'Caveat',fontSize:16,fontStyle:'italic',color:'#555',lineHeight:1.4}}>
+                {'"'+e.caption+'"'}
+              </p>
+            </div>
+          </KCard>
+        ))}
+      </div>
+      <BottomNav active={activeTab||'diary'} onChange={onTabChange}/>
+    </div>
+  );
+}
+
+function DiaryPromptScreen({city,onView,onSkip}){
+  return(
+    <div style={{height:'100%',background:CREAM,display:'flex',flexDirection:'column',
+      alignItems:'center',justifyContent:'center',padding:28}}>
+      <Pill bg={YELLOW} style={{fontSize:13,padding:'6px 18px',marginBottom:20}}>
+        MEMORIES SAVED! 📸
+      </Pill>
+      <h1 style={{fontFamily:'Outfit',fontWeight:900,fontSize:25,textAlign:'center',
+        marginBottom:8,letterSpacing:'-.5px'}}>
+        YOUR TRIP DIARY IS READY
+      </h1>
+      <p style={{fontFamily:'Caveat',fontSize:20,color:'#888',fontStyle:'italic',
+        textAlign:'center',marginBottom:28}}>
+        {city+' adventure is saved ✨'}
+      </p>
+      <KCard style={{width:'100%',maxWidth:340,padding:16,marginBottom:24}}>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <div style={{width:52,height:52,borderRadius:12,background:LBLUE,border:BORDER,
+            display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,flexShrink:0}}>
+            📖
+          </div>
+          <div style={{flex:1}}>
+            <p style={{fontFamily:'Outfit',fontWeight:900,fontSize:14}}>{city+' Trip'}</p>
+            <p style={{fontFamily:'Nunito',fontSize:12,color:'#888'}}>3 missions · Today</p>
+          </div>
+          <Pill bg={LIME} style={{fontSize:10}}>NEW!</Pill>
+        </div>
+      </KCard>
+      <div style={{width:'100%',maxWidth:340,display:'flex',flexDirection:'column',gap:10}}>
+        <KBtn bg='#22c55e' color={WHITE} onClick={onView}>VIEW DIARY 📖</KBtn>
+        <KBtn outline onClick={onSkip}>SKIP FOR NOW</KBtn>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════
+   APP
+════════════════════════════════════════ */
+function App(){
+  const [screen,setScreen]=useState('loading');
+  const [selArtist,setSelArtist]=useState(null);
+  const [selRegion,setSelRegion]=useState(null);
+  const [selCity,setSelCity]=useState('');
+  const [missions,setMissions]=useState([]);
+  const [activeMissionIdx,setActiveMissionIdx]=useState(null);
+  const [completedMissions,setCompletedMissions]=useState(0);
+  const [showMissionDetail,setShowMissionDetail]=useState(false);
+  const [showMissionSuccess,setShowMissionSuccess]=useState(false);
+  const [activeTab,setActiveTab]=useState('cover');
+  const [completedCities,setCompletedCities]=useState([]);
+
+  const go=s=>setScreen(s);
+
+  const handleTabChange=tab=>{
+    setActiveTab(tab);
+    if(tab==='route'){
+      if(selRegion&&missions.length>0)go('mission-map');
+      else go('map');
+    }else if(tab==='cover'){
+      if(selRegion)go('home');else go('signin');
+    }else if(tab==='stamps'){
+      go('stamps');
+    }else if(tab==='diary'){
+      go('diary');
+    }
+  };
+
+  const handleMissionSuccess=()=>{
+    setShowMissionDetail(false);
+    setShowMissionSuccess(true);
+  };
+
+  const handleSuccessContinue=()=>{
+    setShowMissionSuccess(false);
+    const next=completedMissions+1;
+    setCompletedMissions(next);
+    if(next>=missions.length){
+      go('route-complete');
+    }
+  };
+
+  const handleCollectStamp=()=>{
+    if(selCity)setCompletedCities(cs=>[...cs,selCity]);
+    go('diary-prompt');
+  };
+
+  // Build overlay
+  let overlay=null;
+  if(showMissionSuccess&&activeMissionIdx!==null&&missions[activeMissionIdx]){
+    overlay=(
+      <MissionSuccessOverlay
+        mission={missions[activeMissionIdx]}
+        missionIdx={activeMissionIdx}
+        totalMissions={missions.length}
+        onContinue={handleSuccessContinue}
+      />
+    );
+  }else if(showMissionDetail&&activeMissionIdx!==null&&missions[activeMissionIdx]){
+    overlay=(
+      <MissionDetailSheet
+        mission={missions[activeMissionIdx]}
+        onSuccess={handleMissionSuccess}
+        onClose={()=>{setShowMissionDetail(false);setActiveMissionIdx(null)}}
+      />
+    );
+  }
+
+  // Current screen content
+  let content=null;
+  if(screen==='loading'){
+    content=<LoadingScreen onDone={()=>go('signin')}/>;
+  }else if(screen==='signin'){
+    content=<SignInScreen onNext={()=>go('artist-select')}/>;
+  }else if(screen==='artist-select'){
+    content=<ArtistSelectScreen onNext={id=>{setSelArtist(id);go('map')}}/>;
+  }else if(screen==='map'){
+    content=(
+      <MapScreen
+        onSelectRegion={r=>{setSelRegion(r);go('region-detail')}}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
+    );
+  }else if(screen==='region-detail'&&selRegion){
+    content=(
+      <RegionDetailScreen
+        region={selRegion}
+        onSelect={city=>{setSelCity(city);go('city-confirm')}}
+        onBack={()=>go('map')}
+      />
+    );
+  }else if(screen==='city-confirm'&&selRegion){
+    content=(
+      <CityConfirmScreen
+        region={selRegion}
+        city={selCity}
+        onConfirm={()=>go('route-generating')}
+        onCancel={()=>go('region-detail')}
+      />
+    );
+  }else if(screen==='route-generating'){
+    content=(
+      <RouteGeneratingScreen
+        city={selCity}
+        onDone={()=>{setMissions(getMissions(selCity));setCompletedMissions(0);go('route-preview')}}
+      />
+    );
+  }else if(screen==='route-preview'){
+    content=(
+      <RoutePreviewScreen
+        city={selCity}
+        missions={missions}
+        onConfirm={()=>go('route-confirm')}
+        onTabChange={handleTabChange}
+      />
+    );
+  }else if(screen==='route-confirm'){
+    content=<RouteConfirmScreen onYes={()=>go('travel-start')} onNo={()=>go('custom-map')}/>;
+  }else if(screen==='travel-start'){
+    content=(
+      <TravelStartScreen
+        city={selCity}
+        onEnter={()=>{setActiveTab('cover');go('home')}}
+      />
+    );
+  }else if(screen==='home'){
+    content=(
+      <HomeCoverScreen
+        region={selRegion}
+        city={selCity}
+        completedMissions={completedMissions}
+        totalMissions={missions.length}
+        onContinueMission={()=>{setActiveTab('route');go('mission-map')}}
+        onTabChange={handleTabChange}
+      />
+    );
+  }else if(screen==='mission-map'&&selRegion){
+    content=(
+      <MissionMapScreen
+        city={selCity}
+        missions={missions}
+        completedIdx={completedMissions}
+        onMissionTap={idx=>{setActiveMissionIdx(idx);setShowMissionDetail(true)}}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
+    );
+  }else if(screen==='route-complete'){
+    content=<RouteCompleteScreen city={selCity} onCollect={handleCollectStamp}/>;
+  }else if(screen==='custom-map'){
+    content=(
+      <CustomMapScreen
+        city={selCity}
+        onGenerate={()=>{setMissions(getMissions(selCity));setCompletedMissions(0);go('travel-start')}}
+        onTabChange={handleTabChange}
+      />
+    );
+  }else if(screen==='stamps'){
+    content=(
+      <StampsScreen
+        unlockedCount={completedCities.length}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
+    );
+  }else if(screen==='diary'){
+    content=(
+      <DiaryScreen
+        completedCities={completedCities}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
+    );
+  }else if(screen==='diary-prompt'){
+    content=(
+      <DiaryPromptScreen
+        city={selCity}
+        onView={()=>{setActiveTab('diary');go('diary')}}
+        onSkip={()=>{setActiveTab('cover');go('home')}}
+      />
+    );
+  }else{
+    content=(
+      <div style={{height:'100%',background:CREAM,display:'flex',alignItems:'center',
+        justifyContent:'center'}}>
+        <KBtn onClick={()=>go('loading')}>Restart</KBtn>
+      </div>
+    );
+  }
+
+  return <Shell overlay={overlay}>{content}</Shell>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
