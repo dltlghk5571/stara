@@ -14,37 +14,41 @@ function initialsOf(name: string): string {
 
 export default function OnboardingArtistsPage() {
   const router = useRouter();
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<string[]>([]);
+
+  function toggleArtist(id: string) {
+    setSelected((prev) => (prev.includes(id) ? prev.filter((a) => a !== id) : [...prev, id]));
+  }
 
   function handleContinue() {
-    if (!selected) return;
-    router.push(`/onboarding/region?artists=${selected}`);
+    if (selected.length === 0) return;
+    router.push(`/onboarding/region?artists=${selected.join(",")}`);
   }
 
   return (
     <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
-        <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, letterSpacing: 1, color: "#888" }}>
+        <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, letterSpacing: 1, color: "#666" }}>
           PICK YOUR BIAS
         </span>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, lineHeight: 1.2, marginTop: 4 }}>
           Select your travel mate!
         </h2>
         <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 6, lineHeight: 1.5 }}>
-          아티스트 한 명을 골라주세요 — 취향에 맞춰 루트를 만들어드려요.
+          좋아하는 아티스트를 골라주세요(여러 명 선택 가능) — 취향에 맞춰 루트를 만들어드려요.
         </p>
       </div>
 
       <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px" }}>
         <div className="kr-artistGrid">
           {ARTISTS.map((artist, i) => {
-            const isSel = selected === artist.id;
+            const isSel = selected.includes(artist.id);
             return (
               <button
                 key={artist.id}
                 type="button"
                 className="kr-reset"
-                onClick={() => setSelected(artist.id)}
+                onClick={() => toggleArtist(artist.id)}
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -89,7 +93,7 @@ export default function OnboardingArtistsPage() {
       </div>
 
       <div style={{ padding: "20px 24px 32px" }}>
-        <KButton bg={LIME} color={BLACK} disabled={!selected} onClick={handleContinue}>
+        <KButton bg={LIME} color={BLACK} disabled={selected.length === 0} onClick={handleContinue}>
           CONTINUE TO REGION MAP →
         </KButton>
       </div>
