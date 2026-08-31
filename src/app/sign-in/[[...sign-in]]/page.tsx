@@ -42,7 +42,7 @@ export default function Page() {
       <div style={{ marginTop: 24, width: "100%", maxWidth: 360 }}>
         <SignIn appearance={{ variables: { colorPrimary: PINK } }} />
       </div>
-      <p style={{ marginTop: "auto", paddingTop: 20, textAlign: "center", fontSize: 12, color: "#aaa", fontWeight: 500 }}>
+      <p style={{ marginTop: "auto", paddingTop: 20, textAlign: "center", fontSize: 12, color: "#666", fontWeight: 500 }}>
         By continuing, you agree to STARA&apos;s Terms &amp; Privacy Policy.
       </p>
     </div>

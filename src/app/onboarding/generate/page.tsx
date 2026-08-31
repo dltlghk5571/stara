@@ -132,7 +132,7 @@ function GenerateInner() {
           <div key={option.id}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
               <b style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>{option.labelEn}</b>
-              <span style={{ fontFamily: "Nunito", fontSize: 11, color: "#888", fontWeight: 700 }}>
+              <span style={{ fontFamily: "Nunito", fontSize: 11, color: "#666", fontWeight: 700 }}>
                 {option.stopCount} stops · {Math.round(option.totalMinutes / 60)}h
               </span>
             </div>

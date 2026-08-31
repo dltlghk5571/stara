@@ -59,7 +59,7 @@ export default function MyCollectionPage() {
       <TopBar title="내 컬렉션북" backHref="/trip" />
       <main style={{ margin: "0 auto", display: "flex", width: "100%", maxWidth: 400, flex: 1, flexDirection: "column", justifyContent: "center", gap: 16, padding: "24px 20px" }}>
         {checking ? (
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, color: "#aaa" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, color: "#666" }}>
             <Loader2 size={24} className="animate-spin" />
             <p style={{ fontFamily: "Nunito", fontSize: 12 }}>불러오는 중...</p>
           </div>

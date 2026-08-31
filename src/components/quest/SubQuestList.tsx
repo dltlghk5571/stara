@@ -51,13 +51,13 @@ export default function SubQuestList({ quest, completedQuestIds, onToggle }: Pro
               fontFamily: "Outfit",
               fontWeight: 700,
               fontSize: 13,
-              color: done ? "#aaa" : "#111",
+              color: done ? "#666" : "#111",
               textDecoration: done ? "line-through" : "none",
             }}
           >
             {quest.titleKo}
           </span>
-          <span style={{ display: "block", fontFamily: "Nunito", fontSize: 11, color: "#888" }}>
+          <span style={{ display: "block", fontFamily: "Nunito", fontSize: 11, color: "#666" }}>
             {quest.descriptionKo}
           </span>
         </span>

@@ -243,7 +243,7 @@ function CoverTab({
           K
         </div>
         <div>
-          <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 11, color: "#888", letterSpacing: 1 }}>WELCOME BACK!</p>
+          <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 11, color: "#666", letterSpacing: 1 }}>WELCOME BACK!</p>
           <div style={{ marginTop: 3 }}>
             <Pill bg={CYAN}>✦ {holderName}</Pill>
           </div>
@@ -253,7 +253,7 @@ function CoverTab({
       <h1 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24, lineHeight: 1.2 }}>
         K-CONTENT TRAVEL PASSPORT
       </h1>
-      <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#888", fontStyle: "italic", marginTop: 4, marginBottom: 16 }}>
+      <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", fontStyle: "italic", marginTop: 4, marginBottom: 16 }}>
         Your journey continues…
       </p>
 
@@ -300,7 +300,7 @@ function StampsTab({ orderedPlaces, earnedStampIds }: { orderedPlaces: Place[]; 
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>Mission Stamps</h2>
         <Pill bg={CYAN}>LEVEL {level}</Pill>
       </div>
-      <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#888", fontStyle: "italic", marginBottom: 14 }}>
+      <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", fontStyle: "italic", marginBottom: 14 }}>
         Collect &apos;em all to level up! 🎌
       </p>
 
@@ -422,10 +422,10 @@ function RouteTab({
                 {status === "locked" ? "🔒" : status === "done" ? "✓" : "⏳"}
               </div>
               <div style={{ flex: 1 }}>
-                <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14, color: status === "locked" ? "#aaa" : "#111", marginBottom: 2 }}>
+                <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14, color: status === "locked" ? "#666" : "#111", marginBottom: 2 }}>
                   {p.nameKo}
                 </p>
-                <p style={{ fontFamily: "Nunito", fontSize: 12, fontWeight: 700, color: status === "done" ? "#555" : active ? "#333" : "#bbb" }}>
+                <p style={{ fontFamily: "Nunito", fontSize: 12, fontWeight: 700, color: status === "done" ? "#555" : active ? "#333" : "#666" }}>
                   {status === "done" ? "Mission Complete ✓" : active ? "GO NOW!" : "LOCKED"}
                 </p>
               </div>
@@ -455,7 +455,7 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
     return (
       <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, textAlign: "center" }}>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>My K-ROUTE Diary</h2>
-        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#888", marginTop: 12 }}>첫 미션을 완료하면 다이어리가 채워져요.</p>
+        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 12 }}>첫 미션을 완료하면 다이어리가 채워져요.</p>
       </div>
     );
   }
@@ -498,7 +498,7 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
       <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 8px" }}>
         {days.map(([day, photos]) => (
           <div key={day} style={{ marginBottom: 8 }}>
-            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, color: "#888", marginBottom: 8 }}>{day}</p>
+            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, color: "#666", marginBottom: 8 }}>{day}</p>
             {photos.map((photo) => (
               <KCard
                 key={photo.id}

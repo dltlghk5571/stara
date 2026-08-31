@@ -98,7 +98,7 @@ export default function HomePage() {
           <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 15, marginTop: 8, color: BLACK }}>
             KOREA ADVENTURE
           </p>
-          <p style={{ fontFamily: "Caveat", fontSize: 15, color: "#888", fontStyle: "italic", marginTop: 2 }}>
+          <p style={{ fontFamily: "Caveat", fontSize: 15, color: "#666", fontStyle: "italic", marginTop: 2 }}>
             스탬프를 모으고 · 루트를 완성하세요
           </p>
         </div>

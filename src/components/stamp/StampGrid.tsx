@@ -63,7 +63,7 @@ export default function StampGrid({ orderedPlaces, earnedStampIds }: Props) {
               </div>
             </div>
             <div style={{ padding: "10px 12px", textAlign: "center" }}>
-              <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, marginBottom: 2, color: earned ? BLACK : "#bbb" }}>
+              <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, marginBottom: 2, color: earned ? BLACK : "#666" }}>
                 {place.nameKo}
               </p>
               {earned ? (
@@ -71,7 +71,7 @@ export default function StampGrid({ orderedPlaces, earnedStampIds }: Props) {
                   STAMPED
                 </Pill>
               ) : (
-                <Pill bg="#e8e8e8" color="#aaa" style={{ fontSize: 10, padding: "3px 12px", border: "2px solid #ddd" }}>
+                <Pill bg="#e8e8e8" color="#666" style={{ fontSize: 10, padding: "3px 12px", border: "2px solid #ddd" }}>
                   LOCKED
                 </Pill>
               )}

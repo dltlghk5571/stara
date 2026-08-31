@@ -41,7 +41,7 @@ export default async function CollectionPage({
     return (
       <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", background: "#FAF6EF" }}>
         <TopBar title="컬렉션북" backHref="/" />
-        <p style={{ padding: 24, textAlign: "center", fontFamily: "Nunito", fontSize: 14, color: "#888" }}>
+        <p style={{ padding: 24, textAlign: "center", fontFamily: "Nunito", fontSize: 14, color: "#666" }}>
           존재하지 않는 컬렉션북이에요
         </p>
       </div>

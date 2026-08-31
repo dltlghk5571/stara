@@ -128,7 +128,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
             <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 22, marginBottom: 8 }}>
               Select {region.nameEn}?
             </h2>
-            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#888", marginBottom: 24 }}>
+            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginBottom: 24 }}>
               선택한 지역을 기준으로 루트를 만들어드려요.
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
