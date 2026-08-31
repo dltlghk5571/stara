@@ -5,7 +5,7 @@ import { upload } from "@vercel/blob/client";
 import { useTripStore } from "@/store/tripStore";
 import { getQuestsForPlace } from "@/data/quests";
 import { haversineKm } from "@/lib/distance";
-import { GPS_MISSION_RADIUS_METERS } from "@/config";
+import { GPS_MISSION_CHECK_ENABLED, GPS_MISSION_RADIUS_METERS } from "@/config";
 import { KButton, KCard, Pill } from "@/components/ui/kroute";
 import { LIME, PALGREEN, PINK, YELLOW } from "@/lib/kroute-tokens";
 import type { DiaryPhoto } from "@/components/trip/TripShellClient";
@@ -42,14 +42,16 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const [savedPhoto, setSavedPhoto] = useState<DiaryPhoto | null>(null);
 
   const [gps, setGps] = useState<GpsStatus>(() =>
-    typeof navigator !== "undefined" && navigator.geolocation ? "checking" : "unavailable"
+    GPS_MISSION_CHECK_ENABLED && typeof navigator !== "undefined" && navigator.geolocation
+      ? "checking"
+      : "unavailable"
   );
   const [gpsDistanceM, setGpsDistanceM] = useState<number | null>(null);
 
   const quest = getQuestsForPlace(place)[0];
 
   function fetchLocation() {
-    if (!navigator.geolocation) return; // gps는 이미 "unavailable"로 초기화됨
+    if (!GPS_MISSION_CHECK_ENABLED || !navigator.geolocation) return; // gps는 이미 "unavailable"로 초기화됨
     navigator.geolocation.getCurrentPosition(
       (pos) => {
         const km = haversineKm(
@@ -253,7 +255,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
               <h3 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 18, marginBottom: 2 }}>
                 {quest?.titleKo ?? place.nameKo}
               </h3>
-              <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#888" }}>📍 {place.nameKo}</p>
+              <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#666" }}>📍 {place.nameKo}</p>
             </div>
             <button
               type="button"
@@ -331,7 +333,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
               <>
                 <div style={{ fontSize: 36, marginBottom: 8 }}>📷</div>
                 <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Upload Mission Photo</p>
-                <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#bbb" }}>Tap to take or upload a photo</p>
+                <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#666" }}>Tap to take or upload a photo</p>
               </>
             )}
             <input
@@ -370,7 +372,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             </p>
           )}
 
-          <KButton bg={status === "uploading" ? "#eee" : LIME} color={status === "uploading" ? "#aaa" : "#111"} disabled={!canSubmit} onClick={handleSubmit}>
+          <KButton bg={status === "uploading" ? "#eee" : LIME} color={status === "uploading" ? "#666" : "#111"} disabled={!canSubmit} onClick={handleSubmit}>
             {status === "uploading" ? "제출 중…" : "Complete Mission"}
           </KButton>
         </div>

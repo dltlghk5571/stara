@@ -31,3 +31,6 @@ export const TOUR_SEARCH_RADIUS_METERS = Number(
 
 /** 미션 인증 시 사용자 위치가 장소로부터 이 반경(m) 안이어야 통과로 본다. */
 export const GPS_MISSION_RADIUS_METERS = 200;
+
+/** 미션 인증 GPS 검증 기능 스위치. false면 위치를 아예 확인하지 않고 항상 통과시킨다(잠시 꺼둠). */
+export const GPS_MISSION_CHECK_ENABLED = false;
