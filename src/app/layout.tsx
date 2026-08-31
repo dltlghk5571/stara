@@ -32,7 +32,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html
+      lang="ko"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-neutral-900`}
+    >
       <head>
         {/* stara_full_prototype_en.html 이 쓰는 것과 동일한 구글 폰트 — 프로토타입 CSS가
             'Fraunces'/'Plus Jakarta Sans'/'Caveat'/'Space Mono'를 문자열로 그대로 참조하므로
@@ -43,7 +46,13 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="flex min-h-full flex-col overflow-x-hidden bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-50">
+      {/* 지도 앱 특성상 스마트폰 화면 사용을 기준으로 설계 — 넓은 화면(데스크톱)에서는
+          실제 폰처럼 가운데 정렬된 좁은 프레임으로 보이게 하고, 폰 화면(<=430px)에서는
+          그대로 꽉 채운다. kroute.html 프로토타입의 Shell 컴포넌트와 동일한 값. */}
+      <body
+        className="mx-auto flex min-h-full max-w-[430px] flex-col overflow-x-hidden bg-slate-50 text-slate-900 shadow-[0_0_60px_rgba(0,0,0,0.6)] dark:bg-slate-950 dark:text-slate-50"
+        style={{ transform: "translateZ(0)" }} /* position:fixed 오버레이가 뷰포트 전체가 아니라 이 프레임 안에만 뜨도록 containing block 지정 */
+      >
         <ClerkProvider>{children}</ClerkProvider>
         {/*
           일반 <script> 태그(next/script 아님) — TMap SDK가 내부적으로 document.write()로
