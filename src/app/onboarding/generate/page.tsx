@@ -119,7 +119,7 @@ function GenerateInner() {
   }
 
   return (
-    <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20 }}>Pick a route</h2>
         <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 4 }}>
@@ -127,7 +127,7 @@ function GenerateInner() {
         </p>
       </div>
 
-      <div className="kr-scrollY" style={{ flex: 1, padding: "6px 24px 20px", display: "flex", flexDirection: "column", gap: 18 }}>
+      <div className="kr-scrollY" style={{ flex: 1, minHeight: 0, padding: "6px 24px 20px", display: "flex", flexDirection: "column", gap: 18 }}>
         {options.map((option, i) => (
           <div key={option.id}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>

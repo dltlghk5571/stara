@@ -54,7 +54,7 @@ function RegionMapInner() {
   }
 
   return (
-    <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
         <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 12, letterSpacing: 1, color: "#666" }}>
           CHOOSE REGION

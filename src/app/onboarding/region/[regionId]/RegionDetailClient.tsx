@@ -47,7 +47,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
   }
 
   return (
-    <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ height: 210, position: "relative", flexShrink: 0, overflow: "hidden", background: "linear-gradient(135deg,#FF3399,#FF6DBE)" }}>
         <div style={{ position: "absolute", top: 16, left: 16 }}>
           <BackButton onClick={() => router.push("/onboarding/region")} />
@@ -62,7 +62,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
         </div>
       </div>
 
-      <div className="kr-scrollY" style={{ flex: 1, padding: "16px 24px" }}>
+      <div className="kr-scrollY" style={{ flex: 1, minHeight: 0, padding: "16px 24px" }}>
         <KCard
           style={{ padding: 14, background: representativeArtist ? LBLUE : "#F0F0F0", marginBottom: 14, display: "flex", gap: 10, alignItems: "center" }}
         >

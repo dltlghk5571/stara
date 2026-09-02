@@ -26,7 +26,7 @@ export default function OnboardingArtistsPage() {
   }
 
   return (
-    <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
+    <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
         <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, letterSpacing: 1, color: "#666" }}>
           PICK YOUR BIAS
@@ -39,7 +39,7 @@ export default function OnboardingArtistsPage() {
         </p>
       </div>
 
-      <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px" }}>
+      <div className="kr-scrollY" style={{ flex: 1, minHeight: 0, padding: "0 24px" }}>
         <div className="kr-artistGrid">
           {ARTISTS.map((artist, i) => {
             const isSel = selected.includes(artist.id);
