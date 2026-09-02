@@ -35,6 +35,7 @@ next-env.d.ts
 
 # local editor/machine-specific
 *.code-workspace
+.codex/
 
 # data-pipeline backups
 previewdata/*.bak
