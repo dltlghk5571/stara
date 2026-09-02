@@ -56,7 +56,7 @@ export default function CollectionShare({ username }: Props) {
       <a
         href={cardUrl}
         download={`stara-${username}.png`}
-        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-600 dark:border-slate-600 dark:text-slate-300"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-600 dark:border-slate-600 dark:text-slate-600"
       >
         <Download size={18} /> 이미지 다운로드
       </a>

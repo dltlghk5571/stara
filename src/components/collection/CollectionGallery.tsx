@@ -9,7 +9,7 @@ interface Props {
 export default function CollectionGallery({ photos }: Props) {
   if (photos.length === 0) {
     return (
-      <p className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-400 dark:border-slate-700">
+      <p className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-600 dark:border-slate-700">
         아직 등록된 인증샷이 없어요
       </p>
     );
@@ -34,11 +34,11 @@ export default function CollectionGallery({ photos }: Props) {
               <p className="truncate text-sm font-semibold text-slate-800 dark:text-slate-100">
                 {place?.nameKo ?? photo.placeId}
               </p>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-slate-600">
                 {new Date(photo.completedAt).toLocaleDateString("ko-KR")}
               </p>
               {photo.note && (
-                <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
+                <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-600">
                   {photo.note}
                 </p>
               )}

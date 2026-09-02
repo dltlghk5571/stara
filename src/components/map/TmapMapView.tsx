@@ -225,7 +225,7 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
     <div className={`relative ${className ?? "h-full w-full"}`}>
       <div ref={containerRef} className="h-full w-full" />
       {!ready && !locError && (
-        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-sm text-slate-400 dark:bg-slate-800">
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-sm text-slate-600 dark:bg-slate-800">
           지도를 불러오는 중...
         </div>
       )}

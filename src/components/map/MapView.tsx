@@ -8,7 +8,7 @@ import { MapErrorBoundary } from "./MapErrorBoundary";
 const TmapMapView = dynamic(() => import("./TmapMapView"), {
   ssr: false,
   loading: () => (
-    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-sm text-slate-400 dark:bg-slate-800">
+    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-sm text-slate-600 dark:bg-slate-800">
       지도를 불러오는 중...
     </div>
   ),
