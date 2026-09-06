@@ -5,19 +5,6 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { REGIONS } from "@/data/regions";
 import { BLACK, CREAM, CYAN, LIME, WHITE, YELLOW } from "@/lib/kroute-tokens";
 
-/** 프로토타입의 8개 지역(r1~r8) 배치를 그대로 따른다. 인천은 프로토타입에 없던 지역이라
- * 서울 인근에 같은 .kr-regionSlot 스타일로 하나 더 붙였다(실제 데이터 수집 대상이라 빼지 않음). */
-const REGION_LAYOUT: Record<string, string> = {
-  seoul: "r1",
-  gangwon: "r2",
-  gyeonggi: "r3",
-  gyeongsang: "r4",
-  jeolla: "r5",
-  chungcheong: "r6",
-  busan: "r7",
-  jeju: "r8",
-};
-
 const REGION_PILL_BG: Record<string, string> = {
   seoul: "#FF3399",
   incheon: "#FFC9C9",
@@ -30,12 +17,31 @@ const REGION_PILL_BG: Record<string, string> = {
   jeju: LIME,
 };
 
-const INCHEON_STYLE: React.CSSProperties = {
-  width: 66,
-  height: 46,
-  left: "4%",
-  top: "12%",
+/* 지도 박스를 남한 경위도 bbox로 보고 각 지역 중심좌표(regions.ts)를 그대로 투영한다.
+ * 실루엣 path도 같은 투영으로 찍은 좌표라 라벨이 항상 육지 위에 앉는다.
+ * viewBox 높이 118 = 본토(0~100) 아래에 제주 섬 공간. */
+const VIEW_H = 118;
+const LNG0 = 125.8, LNG_SPAN = 4.1;
+const LAT1 = 38.6, LAT_SPAN = 4.4;
+const projX = (lng: number) => ((lng - LNG0) / LNG_SPAN) * 100;
+const projY = (lat: number) => ((LAT1 - lat) / LAT_SPAN) * 100;
+
+/** 제주는 본토 bbox 밖이라 지도 아래 섬 위치로 고정, 수도권 3개는 겹쳐서 살짝 벌린다. */
+const REGION_POS: Record<string, { x: number; y: number }> = {
+  jeju: { x: 18, y: 108 },
+  incheon: { x: 22, y: 31 },
+  seoul: { x: 35, y: 21 },
+  gyeonggi: { x: 50, y: 29 },
+  busan: { x: 76, y: 78 },
 };
+const regionPos = (r: (typeof REGIONS)[number]) =>
+  REGION_POS[r.id] ?? { x: projX(r.centerLng), y: projY(r.centerLat) };
+
+/** 같은 투영으로 찍은 남한 해안선 러프 폴리곤(북서 강화 → 시계방향). */
+const KOREA_PATH =
+  "M13.4 17 L23.2 5.7 L51.2 5.7 L63.4 1.1 L79.3 19.3 L89 37.5 L91.5 58 L86.6 70.5 " +
+  "L81.7 79.5 L68.3 85.2 L51.2 87.5 L42.7 88.6 L36.6 93.2 L17.1 97.7 L13.4 86.4 " +
+  "L18.3 67 L15.9 51.1 L7.3 42 L18.3 36.4 L14.6 26.1 Z";
 
 function RegionMapInner() {
   const router = useRouter();
@@ -67,35 +73,31 @@ function RegionMapInner() {
         </p>
       </div>
 
-      <div style={{ flex: 1, margin: "0 20px 20px" }} className="kr-regionMap">
-        {/* 대략적인 한반도(남한) 실루엣 — 지역 슬롯 좌표가 실제 지리와 얼추 맞게 배치돼 있어 방향 감만 준다 */}
-        <svg
-          className="kr-regionMapShape"
-          viewBox="0 0 100 115"
-          preserveAspectRatio="none"
-          aria-hidden
-        >
-          <path d="M22 13 L30 7 L44 5 L58 8 L70 13 L75 25 L71 39 L73 53 L67 68 L58 79 L46 88 L35 87 L29 76 L21 67 L15 54 L20 43 L13 34 L18 22 Z" />
-          <ellipse cx="24" cy="105" rx="9" ry="5" />
+      <div style={{ flex: 1 }} className="kr-regionMap">
+        {/* 남한 실루엣 — 라벨과 같은 투영으로 찍어서 라벨이 항상 육지 위에 앉는다 */}
+        <svg className="kr-regionMapShape" viewBox={`0 0 100 ${VIEW_H}`} preserveAspectRatio="none" aria-hidden>
+          <path d={KOREA_PATH} />
+          <ellipse cx="15" cy="108" rx="10" ry="5.5" />
         </svg>
         {REGIONS.map((region) => {
-          const layoutClass = REGION_LAYOUT[region.id];
           const bg = REGION_PILL_BG[region.id] || WHITE;
+          const { x, y } = regionPos(region);
           return (
             <div
               key={region.id}
-              className={`kr-regionSlot${layoutClass ? ` ${layoutClass}` : ""}`}
+              className="kr-regionSlot"
               style={{
+                left: `${x}%`,
+                top: `${(y / VIEW_H) * 100}%`,
                 background: bg,
                 color: bg === "#FF3399" ? WHITE : BLACK,
-                opacity: region.available ? 1 : 0.75,
-                ...(layoutClass ? {} : INCHEON_STYLE),
+                opacity: region.available ? 1 : 0.72,
               }}
               onClick={() => handleTap(region.id, region.available)}
             >
               {region.nameEn}
               {!region.available && (
-                <span style={{ display: "block", fontSize: 8, opacity: 0.7, fontWeight: 700 }}>SOON</span>
+                <span style={{ display: "block", fontSize: 7, opacity: 0.7, fontWeight: 700 }}>SOON</span>
               )}
             </div>
           );
