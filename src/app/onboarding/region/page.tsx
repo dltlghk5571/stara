@@ -68,6 +68,16 @@ function RegionMapInner() {
       </div>
 
       <div style={{ flex: 1, margin: "0 20px 20px" }} className="kr-regionMap">
+        {/* 대략적인 한반도(남한) 실루엣 — 지역 슬롯 좌표가 실제 지리와 얼추 맞게 배치돼 있어 방향 감만 준다 */}
+        <svg
+          className="kr-regionMapShape"
+          viewBox="0 0 100 115"
+          preserveAspectRatio="none"
+          aria-hidden
+        >
+          <path d="M22 13 L30 7 L44 5 L58 8 L70 13 L75 25 L71 39 L73 53 L67 68 L58 79 L46 88 L35 87 L29 76 L21 67 L15 54 L20 43 L13 34 L18 22 Z" />
+          <ellipse cx="24" cy="105" rx="9" ry="5" />
+        </svg>
         {REGIONS.map((region) => {
           const layoutClass = REGION_LAYOUT[region.id];
           const bg = REGION_PILL_BG[region.id] || WHITE;

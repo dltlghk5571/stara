@@ -39,7 +39,7 @@ export default function Page() {
           YOUR K-TRAVEL PASSPORT ✨
         </Pill>
       </div>
-      <div style={{ marginTop: 24, width: "100%", maxWidth: 360 }}>
+      <div style={{ marginTop: 24, width: "100%", maxWidth: 400, display: "flex", justifyContent: "center" }}>
         <SignIn appearance={{ variables: { colorPrimary: PINK } }} />
       </div>
       <p style={{ marginTop: "auto", paddingTop: 20, textAlign: "center", fontSize: 12, color: "#666", fontWeight: 500 }}>

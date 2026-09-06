@@ -174,8 +174,21 @@ button.kr-reset {
   background: #d6eeff;
   overflow: hidden;
 }
+.kr-regionMapShape {
+  position: absolute;
+  inset: 6%;
+  pointer-events: none;
+}
+.kr-regionMapShape path,
+.kr-regionMapShape ellipse {
+  fill: #eaf7df;
+  stroke: #9fc9ad;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
 .kr-regionSlot {
   position: absolute;
+  z-index: 1;
   border-radius: 50px;
   display: flex;
   align-items: center;
