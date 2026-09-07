@@ -13,6 +13,8 @@ import MissionSheet from "@/components/trip/MissionSheet";
 import SubQuestList from "@/components/quest/SubQuestList";
 import { BottomNav, KButton, KCard, Pill } from "@/components/ui/kroute";
 import type { KrouteTab } from "@/components/ui/kroute";
+import { useT, useLocale, placeName } from "@/i18n";
+import type { Locale } from "@/i18n";
 import { CYAN, LBLUE, LIME, MUTED_PINK, PALGREEN, PINK, WHITE, YELLOW } from "@/lib/kroute-tokens";
 import type { Place, Quest } from "@/types";
 
@@ -28,17 +30,20 @@ export interface DiaryPhoto {
   tripName: string | null;
 }
 
-const NO_PLACE_INFO = "장소 정보 없음";
-
 /** placeId → 장소명 우선순위: 사진 스냅샷 → 현재 trip/route 동적 장소 → static PLACES → 최종 폴백.
  *  raw placeId(예: kto-*)는 어떤 경로로도 화면에 노출하지 않는다. */
-function resolvePlaceName(photo: DiaryPhoto, dynamicPlacesById: Map<string, Place>): string {
+function resolvePlaceName(
+  photo: DiaryPhoto,
+  dynamicPlacesById: Map<string, Place>,
+  locale: Locale,
+  noPlaceInfo: string,
+): string {
   if (photo.placeName) return photo.placeName;
   const dynamic = dynamicPlacesById.get(photo.placeId);
-  if (dynamic) return dynamic.nameKo;
+  if (dynamic) return placeName(dynamic, locale);
   const staticPlace = getPlaceById(photo.placeId);
-  if (staticPlace) return staticPlace.nameKo;
-  return NO_PLACE_INFO;
+  if (staticPlace) return placeName(staticPlace, locale);
+  return noPlaceInfo;
 }
 
 export interface TripGroup {
@@ -57,6 +62,8 @@ interface Props {
 export default function TripShellClient({ initialDiaryGroups, initialTab }: Props) {
   const router = useRouter();
   const { user } = useUser();
+  const t = useT();
+  const { locale } = useLocale();
   const [tab, setTab] = useState<Tab>(initialTab ?? "cover");
   const [missionPlace, setMissionPlace] = useState<Place | null>(null);
   const [sessionPhotos, setSessionPhotos] = useState<DiaryPhoto[]>([]);
@@ -125,8 +132,14 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
     }
   }
 
-  const diaryGroups = mergeSessionIntoGroups(initialDiaryGroups, sessionPhotos, activeTripId, activeTripName);
-  const holderName = user?.fullName || user?.username || "STARA Traveler";
+  const diaryGroups = mergeSessionIntoGroups(
+    initialDiaryGroups,
+    sessionPhotos,
+    activeTripId,
+    activeTripName,
+    t("trip.thisTrip"),
+  );
+  const holderName = user?.fullName || user?.username || t("trip.defaultHolder");
 
   return (
     <div style={{ height: "100dvh", display: "flex", flexDirection: "column", background: "#FAF6EF" }}>
@@ -185,7 +198,8 @@ function mergeSessionIntoGroups(
   initial: TripGroup[],
   session: DiaryPhoto[],
   activeTripId: string | null,
-  activeTripName: string | null
+  activeTripName: string | null,
+  thisTripLabel: string
 ): TripGroup[] {
   if (session.length === 0) return initial;
   const key = activeTripId ?? "legacy";
@@ -197,7 +211,7 @@ function mergeSessionIntoGroups(
       photos: [...session, ...merged[existingIndex].photos],
     };
   } else {
-    merged.unshift({ key, name: activeTripName ?? "이번 여행", photos: session });
+    merged.unshift({ key, name: activeTripName ?? thisTripLabel, photos: session });
   }
   return merged;
 }
@@ -219,6 +233,7 @@ function CoverTab({
   onCreateNew: () => void;
   onEdit: () => void;
 }) {
+  const t = useT();
   const pct = totalCount > 0 ? Math.round((earnedCount / totalCount) * 100) : 0;
   return (
     <div className="kr-scrollY" style={{ height: "100%", padding: "48px 24px 24px" }}>
@@ -243,7 +258,7 @@ function CoverTab({
           K
         </div>
         <div>
-          <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 11, color: "#666", letterSpacing: 1 }}>WELCOME BACK!</p>
+          <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 11, color: "#666", letterSpacing: 1 }}>{t("trip.welcomeBack")}</p>
           <div style={{ marginTop: 3 }}>
             <Pill bg={CYAN}>✦ {holderName}</Pill>
           </div>
@@ -251,22 +266,22 @@ function CoverTab({
       </div>
 
       <h1 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24, lineHeight: 1.2 }}>
-        K-CONTENT TRAVEL PASSPORT
+        {t("trip.passportTitle")}
       </h1>
       <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", fontStyle: "italic", marginTop: 4, marginBottom: 16 }}>
-        Your journey continues…
+        {t("trip.journeyContinues")}
       </p>
 
       {activeTripName && (
         <KCard style={{ padding: 0, overflow: "hidden", background: LBLUE, marginBottom: 14 }}>
           <div style={{ padding: "14px 16px", borderBottom: "2.5px solid #111111", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>Active Route</span>
-            <Pill bg={WHITE} style={{ fontSize: 10 }}>IN PROGRESS</Pill>
+            <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>{t("trip.activeRoute")}</span>
+            <Pill bg={WHITE} style={{ fontSize: 10 }}>{t("trip.inProgress")}</Pill>
           </div>
           <div style={{ padding: "12px 16px" }}>
             <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 15, marginBottom: 8 }}>{activeTripName}</p>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 5 }}>
-              <span style={{ fontFamily: "Nunito", fontSize: 13, fontWeight: 600, color: "#555" }}>Mission Progress</span>
+              <span style={{ fontFamily: "Nunito", fontSize: 13, fontWeight: 600, color: "#555" }}>{t("trip.missionProgress")}</span>
               <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13 }}>{earnedCount}/{totalCount}</span>
             </div>
             <div style={{ height: 6, borderRadius: 50, border: "1.5px solid #111111", overflow: "hidden", background: "#f0f0f0" }}>
@@ -278,13 +293,13 @@ function CoverTab({
 
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         <KButton bg={LIME} color="#111" onClick={onContinue}>
-          {earnedCount === totalCount && totalCount > 0 ? "VIEW ROUTE ✓" : "CONTINUE →"}
+          {earnedCount === totalCount && totalCount > 0 ? t("trip.viewRoute") : t("trip.continueCta")}
         </KButton>
         <KButton bg={PINK} color={WHITE} onClick={onCreateNew}>
-          + CREATE NEW ROUTE
+          {t("trip.createNewRoute")}
         </KButton>
         <KButton outline onClick={onEdit}>
-          루트 직접 편집하기
+          {t("trip.editRoute")}
         </KButton>
       </div>
     </div>
@@ -292,16 +307,17 @@ function CoverTab({
 }
 
 function StampsTab({ orderedPlaces, earnedStampIds }: { orderedPlaces: Place[]; earnedStampIds: string[] }) {
+  const t = useT();
   const level = levelFromStamps(earnedStampIds.length);
   const reward = nextRewardLabel(earnedStampIds.length);
   return (
     <div className="kr-scrollY" style={{ height: "100%", padding: "48px 24px 24px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
-        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>Mission Stamps</h2>
-        <Pill bg={CYAN}>LEVEL {level}</Pill>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>{t("trip.missionStamps")}</h2>
+        <Pill bg={CYAN}>{t("trip.level", { n: level })}</Pill>
       </div>
       <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", fontStyle: "italic", marginBottom: 14 }}>
-        Collect &apos;em all to level up! 🎌
+        {t("trip.collectAll")}
       </p>
 
       <KCard style={{ overflow: "hidden", background: "#F0E8FF", marginBottom: 14 }}>
@@ -310,11 +326,11 @@ function StampsTab({ orderedPlaces, earnedStampIds }: { orderedPlaces: Place[]; 
             <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 28, lineHeight: 1 }}>
               {earnedStampIds.length} / {orderedPlaces.length}
             </p>
-            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 3 }}>미션을 완료할 때마다 스탬프가 쌓여요</p>
+            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 3 }}>{t("trip.stampsHint")}</p>
           </div>
           <div style={{ width: 1.5, height: 44, background: "rgba(0,0,0,.12)", margin: "0 16px" }} />
           <div style={{ flex: 1 }}>
-            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, color: PINK }}>Next Reward:</p>
+            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, color: PINK }}>{t("trip.nextReward")}</p>
             <p style={{ fontFamily: "Nunito", fontWeight: 700, fontSize: 13 }}>{reward} 🎉</p>
           </div>
         </div>
@@ -344,12 +360,14 @@ function RouteTab({
   onOpenMission: (i: number) => void;
   onFinish: () => void;
 }) {
+  const t = useT();
+  const { locale } = useLocale();
   const doneCount = orderedPlaces.filter((_, i) => statusOf(i) === "done").length;
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 14px", flexShrink: 0 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 15, flex: 1 }}>다음 체크포인트를 탭해서 미션 진행</span>
+          <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 15, flex: 1 }}>{t("trip.tapNextCheckpoint")}</span>
           <Pill bg={LIME}>🏅 {doneCount}/{orderedPlaces.length}</Pill>
         </div>
       </div>
@@ -362,7 +380,7 @@ function RouteTab({
             lng: p.longitude,
             order: i + 1,
             color: "#111111",
-            title: p.nameKo,
+            title: placeName(p, locale),
             status: statusOf(i),
           }))}
           showPath
@@ -380,7 +398,7 @@ function RouteTab({
       )}
 
       <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 8px" }}>
-        <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 16, marginBottom: 12 }}>Missions Checklist</p>
+        <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 16, marginBottom: 12 }}>{t("trip.missionsChecklist")}</p>
         {orderedPlaces.map((p, i) => {
           const status = statusOf(i);
           const active = status === "next";
@@ -423,13 +441,13 @@ function RouteTab({
               </div>
               <div style={{ flex: 1 }}>
                 <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14, color: status === "locked" ? "#666" : "#111", marginBottom: 2 }}>
-                  {p.nameKo}
+                  {placeName(p, locale)}
                 </p>
                 <p style={{ fontFamily: "Nunito", fontSize: 12, fontWeight: 700, color: status === "done" ? "#555" : active ? "#333" : "#666" }}>
-                  {status === "done" ? "Mission Complete ✓" : active ? "GO NOW!" : "LOCKED"}
+                  {status === "done" ? t("trip.missionComplete") : active ? t("trip.goNow") : t("stamps.locked")}
                 </p>
               </div>
-              {active && <Pill bg={PINK} color={WHITE}>GO! 🎯</Pill>}
+              {active && <Pill bg={PINK} color={WHITE}>{t("trip.goBadge")}</Pill>}
             </button>
           );
         })}
@@ -437,7 +455,7 @@ function RouteTab({
         {allDone && orderedPlaces.length > 0 && (
           <div style={{ marginTop: 10 }}>
             <KButton bg={PINK} color={WHITE} onClick={onFinish}>
-              모든 체크포인트 완료 — 여행 마무리하기
+              {t("trip.allDoneWrapUp")}
             </KButton>
           </div>
         )}
@@ -447,6 +465,8 @@ function RouteTab({
 }
 
 function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicPlacesById: Map<string, Place> }) {
+  const t = useT();
+  const { locale } = useLocale();
   const [activeKey, setActiveKey] = useState(groups[0]?.key ?? null);
   const active = groups.find((g) => g.key === activeKey) ?? groups[0];
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
@@ -454,19 +474,19 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
   if (groups.length === 0) {
     return (
       <div style={{ height: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, textAlign: "center" }}>
-        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>My K-ROUTE Diary</h2>
-        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 12 }}>첫 미션을 완료하면 다이어리가 채워져요.</p>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>{t("trip.diaryTitle")}</h2>
+        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 12 }}>{t("trip.diaryEmpty")}</p>
       </div>
     );
   }
 
-  const days = groupByDay(active.photos);
+  const days = groupByDay(active.photos, locale);
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px", flexShrink: 0 }}>
-        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>My K-ROUTE Diary</h2>
-        <p style={{ fontFamily: "Caveat", fontSize: 17, color: MUTED_PINK, fontStyle: "italic", marginTop: 2 }}>여행 기록 & 순간들 ✨</p>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>{t("trip.diaryTitle")}</h2>
+        <p style={{ fontFamily: "Caveat", fontSize: 17, color: MUTED_PINK, fontStyle: "italic", marginTop: 2 }}>{t("trip.diarySubtitle")}</p>
       </div>
 
       {groups.length > 1 && (
@@ -510,7 +530,7 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
                   <img src={photo.photoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                   <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom,transparent,rgba(0,0,0,.35))" }} />
                   <div style={{ position: "absolute", bottom: 8, left: 12 }}>
-                    <Pill bg={WHITE}>📍 {resolvePlaceName(photo, dynamicPlacesById)}</Pill>
+                    <Pill bg={WHITE}>📍 {resolvePlaceName(photo, dynamicPlacesById, locale, t("trip.noPlaceInfo"))}</Pill>
                   </div>
                 </div>
                 {photo.note && (
@@ -552,6 +572,8 @@ function DiaryViewer({
   onClose: () => void;
   dynamicPlacesById: Map<string, Place>;
 }) {
+  const t = useT();
+  const { locale } = useLocale();
   const photo = photos[index];
   const touchStartX = useRef<number | null>(null);
 
@@ -613,7 +635,7 @@ function DiaryViewer({
             type="button"
             className="kr-reset"
             onClick={goPrev}
-            aria-label="이전 사진"
+            aria-label={t("trip.prevPhoto")}
             style={{ position: "absolute", left: 8, zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", fontSize: 18 }}
           >
             ‹
@@ -626,7 +648,7 @@ function DiaryViewer({
             type="button"
             className="kr-reset"
             onClick={goNext}
-            aria-label="다음 사진"
+            aria-label={t("trip.nextPhoto")}
             style={{ position: "absolute", right: 8, zIndex: 10, width: 36, height: 36, borderRadius: "50%", background: "rgba(0,0,0,.4)", color: "#fff", fontSize: 18 }}
           >
             ›
@@ -636,7 +658,7 @@ function DiaryViewer({
 
       <div style={{ marginTop: 16, textAlign: "center" }}>
         <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 14, color: "#fff" }}>
-          {resolvePlaceName(photo, dynamicPlacesById)}
+          {resolvePlaceName(photo, dynamicPlacesById, locale, t("trip.noPlaceInfo"))}
         </p>
         <p style={{ fontFamily: "Nunito", fontSize: 12, color: "rgba(255,255,255,.6)", marginTop: 4 }}>
           {index + 1} / {photos.length}
@@ -651,10 +673,10 @@ function DiaryViewer({
   );
 }
 
-function groupByDay(photos: DiaryPhoto[]): [string, DiaryPhoto[]][] {
+function groupByDay(photos: DiaryPhoto[], locale: Locale): [string, DiaryPhoto[]][] {
   const map = new Map<string, DiaryPhoto[]>();
   for (const photo of photos) {
-    const day = new Date(photo.completedAt).toLocaleDateString("ko-KR", {
+    const day = new Date(photo.completedAt).toLocaleDateString(locale === "ko" ? "ko-KR" : "en-US", {
       month: "long",
       day: "numeric",
     });
