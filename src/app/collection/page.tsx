@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import TopBar from "@/components/layout/TopBar";
 import { KButton } from "@/components/ui/kroute";
 import { BORDER, CREAM } from "@/lib/kroute-tokens";
+import { useT } from "@/i18n";
 
 interface LocalUser {
   username: string;
@@ -16,6 +17,7 @@ interface LocalUser {
 export default function MyCollectionPage() {
   const { isSignedIn, isLoaded } = useUser();
   const router = useRouter();
+  const t = useT();
   const [usernameCheckDone, setUsernameCheckDone] = useState(false);
   const [username, setUsername] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +50,7 @@ export default function MyCollectionPage() {
     const data = await res.json();
     setSubmitting(false);
     if (!res.ok) {
-      setError(data.error ?? "실패했어요");
+      setError(data.error ?? t("collection.genericError"));
       return;
     }
     router.replace(`/collection/${data.user.username}`);
@@ -56,36 +58,36 @@ export default function MyCollectionPage() {
 
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", background: CREAM }}>
-      <TopBar title="내 컬렉션북" backHref="/trip" />
+      <TopBar title={t("collection.title")} backHref="/trip" />
       <main style={{ margin: "0 auto", display: "flex", width: "100%", maxWidth: 400, flex: 1, flexDirection: "column", justifyContent: "center", gap: 16, padding: "24px 20px" }}>
         {checking ? (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, color: "#666" }}>
             <Loader2 size={24} className="animate-spin" />
-            <p style={{ fontFamily: "Nunito", fontSize: 12 }}>불러오는 중...</p>
+            <p style={{ fontFamily: "Nunito", fontSize: 12 }}>{t("common.loading")}</p>
           </div>
         ) : !isSignedIn ? (
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12, textAlign: "center" }}>
             <p style={{ fontFamily: "Nunito", fontSize: 14, color: "#666" }}>
-              로그인하면 체크포인트 인증샷으로 컬렉션북을 만들 수 있어요
+              {t("collection.signedOutHint")}
             </p>
             <Link href="/sign-in" style={{ width: "100%", maxWidth: 240 }}>
-              <KButton>로그인</KButton>
+              <KButton>{t("nav.signIn")}</KButton>
             </Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <label style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 13 }}>
-              컬렉션북 주소에 쓸 아이디를 정해줘
+              {t("collection.chooseUsername")}
             </label>
             <input
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              placeholder="영소문자, 숫자, _ 3-20자"
+              placeholder={t("collection.usernamePlaceholder")}
               style={{ minHeight: 44, borderRadius: 12, border: BORDER, padding: "0 14px", fontFamily: "Nunito", fontSize: 14, outline: "none" }}
             />
             {error && <p style={{ fontSize: 12, color: "#e11d48" }}>{error}</p>}
             <KButton type="submit" disabled={submitting || username.length < 3}>
-              시작하기
+              {t("collection.start")}
             </KButton>
           </form>
         )}

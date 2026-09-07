@@ -1,4 +1,7 @@
+"use client";
+
 import { getPlaceById } from "@/data/places";
+import { useLocale, useT, placeName } from "@/i18n";
 import type { questPhotos } from "@/db/schema";
 
 interface Props {
@@ -7,10 +10,13 @@ interface Props {
 
 /** 체크포인트별 인증샷 기록 목록 */
 export default function CollectionGallery({ photos }: Props) {
+  const { locale } = useLocale();
+  const t = useT();
+
   if (photos.length === 0) {
     return (
       <p className="rounded-2xl border border-dashed border-slate-300 p-6 text-center text-sm text-slate-900">
-        아직 등록된 인증샷이 없어요
+        {t("collection.galleryEmpty")}
       </p>
     );
   }
@@ -32,10 +38,12 @@ export default function CollectionGallery({ photos }: Props) {
             />
             <div className="flex min-w-0 flex-col justify-center">
               <p className="truncate text-sm font-semibold text-slate-900">
-                {place?.nameKo ?? photo.placeId}
+                {place ? placeName(place, locale) : photo.placeId}
               </p>
               <p className="text-xs text-slate-900">
-                {new Date(photo.completedAt).toLocaleDateString("ko-KR")}
+                {new Date(photo.completedAt).toLocaleDateString(
+                  locale === "ko" ? "ko-KR" : "en-US",
+                )}
               </p>
               {photo.note && (
                 <p className="mt-1 truncate text-xs text-slate-900">

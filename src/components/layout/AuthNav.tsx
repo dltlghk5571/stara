@@ -4,10 +4,12 @@ import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 import { BookImage, LogIn } from "lucide-react";
 import { PINK } from "@/lib/kroute-tokens";
+import { useT } from "@/i18n";
 
 /** 어느 화면에서든 로그인/내 컬렉션북에 닿을 수 있는 진입점 */
 export default function AuthNav() {
   const { isSignedIn, isLoaded } = useUser();
+  const t = useT();
 
   if (!isLoaded) return null;
 
@@ -28,7 +30,7 @@ export default function AuthNav() {
           color: PINK,
         }}
       >
-        <LogIn size={16} /> 로그인
+        <LogIn size={16} /> {t("nav.signIn")}
       </Link>
     );
   }
@@ -37,7 +39,7 @@ export default function AuthNav() {
     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
       <Link
         href="/collection"
-        aria-label="내 컬렉션북"
+        aria-label={t("nav.myCollection")}
         style={{
           display: "flex",
           height: 36,
