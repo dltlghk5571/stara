@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
 import type { Place } from "@/types";
 import { MAIN_ROUTE_SIGNGU_CD } from "./relatedTourism";
+import { useLocale } from "@/i18n";
+import type { Locale } from "@/lib/tour-api/types";
 
 const EMPTY = new Map<string, number>();
 const sessionCache = new Map<string, Promise<Map<string, number>>>();
 
 async function fetchScores(
-  anchors: { name: string; signguCd: string }[]
+  anchors: { name: string; signguCd: string }[],
+  locale: Locale
 ): Promise<Map<string, number>> {
   try {
     const res = await fetch("/api/tourism/related", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ anchors }),
+      body: JSON.stringify({ anchors, locale }),
     });
     if (!res.ok) return EMPTY;
     const json = (await res.json()) as { scores?: Record<string, number> };
@@ -36,7 +39,8 @@ export function useRelatedTourismSignal(mainPlaces: Place[]): Map<string, number
     })
     .filter((a): a is { name: string; signguCd: string } => !!a);
 
-  const key = anchors.length > 0 ? anchors.map((a) => a.name).join(">") : null;
+  const { locale } = useLocale();
+  const key = anchors.length > 0 ? `${locale}:${anchors.map((a) => a.name).join(">")}` : null;
   const [loaded, setLoaded] = useState<Loaded | null>(null);
 
   useEffect(() => {
@@ -45,7 +49,7 @@ export function useRelatedTourismSignal(mainPlaces: Place[]): Map<string, number
     let cancelled = false;
     let request = sessionCache.get(key);
     if (!request) {
-      request = fetchScores(anchors);
+      request = fetchScores(anchors, locale);
       sessionCache.set(key, request);
     }
 

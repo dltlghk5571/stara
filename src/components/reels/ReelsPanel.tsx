@@ -5,6 +5,7 @@ import type { Place } from "@/types";
 import ReelCard from "./ReelCard";
 import PlaceDetailSheet from "./PlaceDetailSheet";
 import { estimateAddedMinutes } from "@/lib/routeOptimizer";
+import { useT } from "@/i18n";
 
 interface Props {
   places: Place[];
@@ -16,6 +17,7 @@ interface Props {
 // 릴스 패널은 지도와 별도 영역(하단 시트/사이드 패널)에 있으므로
 // 지도의 터치 제스처와 겹치지 않는다. touch-action으로 세로 스크롤만 허용해 안정성을 높인다.
 export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onToggle }: Props) {
+  const t = useT();
   const [index, setIndex] = useState(0);
   const [detailPlace, setDetailPlace] = useState<Place | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -46,7 +48,7 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
   if (places.length === 0) {
     return (
       <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "24px", textAlign: "center", fontSize: "13px", color: "var(--gray)" }}>
-        조건에 맞는 장소가 없습니다. 필터를 조정해보세요.
+        {t("reels.noMatch")}
       </div>
     );
   }
@@ -68,7 +70,7 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
         onKeyDown={handleKeyDown}
         tabIndex={0}
         role="listbox"
-        aria-label="추천 장소 카드"
+        aria-label={t("reels.cardsAria")}
         style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain", padding: "0 16px 16px", outline: "none", touchAction: "pan-y" }}
       >
         {places.map((place) => (

@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       request,
       onBeforeGenerateToken: async () => {
         const { userId } = await auth();
-        if (!userId) throw new Error("로그인이 필요해요");
+        if (!userId) throw new Error("Sign-in required");
         return {
           // 아이폰 카메라 기본 포맷(HEIC)도 받아야 함 — jpeg/png/webp로 제한하면
           // "고효율성(HEIC)" 설정을 쓰는 대다수 아이폰 사용자의 업로드가 그냥 막힘.

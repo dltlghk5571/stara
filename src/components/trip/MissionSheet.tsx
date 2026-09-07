@@ -7,6 +7,7 @@ import { getQuestsForPlace } from "@/data/quests";
 import { haversineKm } from "@/lib/distance";
 import { GPS_MISSION_CHECK_ENABLED, GPS_MISSION_RADIUS_METERS } from "@/config";
 import { KButton, KCard, Pill } from "@/components/ui/kroute";
+import { useT, useLocale, placeName, questTitle, questDesc } from "@/i18n";
 import { LIME, PALGREEN, PINK, YELLOW } from "@/lib/kroute-tokens";
 import type { DiaryPhoto } from "@/components/trip/TripShellClient";
 import type { Place } from "@/types";
@@ -29,6 +30,8 @@ type GpsStatus = "checking" | "ok" | "far" | "unavailable";
  * 영구히 막히지 않도록 검증을 건너뛰고 통과시킨다.
  */
 export default function MissionSheet({ place, onClose, onComplete }: Props) {
+  const t = useT();
+  const { locale } = useLocale();
   const activeTripId = useTripStore((s) => s.activeTripId);
   const activeTripName = useTripStore((s) => s.activeTripName);
   const toggleQuest = useTripStore((s) => s.toggleQuest);
@@ -179,10 +182,10 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             ⭐
           </div>
           <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 22, color: PINK, marginBottom: 4 }}>
-            CONGRATULATIONS!
+            {t("mission.congratulations")}
           </h2>
           <p style={{ fontFamily: "Caveat", fontSize: 20, fontStyle: "italic", color: "#555", marginBottom: 16 }}>
-            Mission Complete ✓
+            {t("trip.missionComplete")}
           </p>
           <div
             className="kr-aStampIn"
@@ -202,7 +205,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
           >
             🏅
           </div>
-          <KButton onClick={() => savedPhoto && onComplete(savedPhoto)}>Continue →</KButton>
+          <KButton onClick={() => savedPhoto && onComplete(savedPhoto)}>{t("mission.continueCta")}</KButton>
         </KCard>
       </div>
     );
@@ -226,11 +229,11 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
         </div>
         <div className="kr-scrollY" style={{ maxHeight: 580, padding: "0 24px 32px" }}>
           <div style={{ marginBottom: 14, display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <Pill bg={YELLOW}>ACTIVE MISSION 🎯</Pill>
-            {gps === "checking" && <Pill bg="#eee" color="#666">📍 위치 확인 중…</Pill>}
-            {gps === "ok" && <Pill bg={PALGREEN}>📍 위치 확인됨</Pill>}
-            {gps === "far" && <Pill bg="#FFD6D6">📍 {gpsDistanceM}m 떨어짐</Pill>}
-            {gps === "unavailable" && <Pill bg="#eee" color="#666">📍 위치 확인 생략</Pill>}
+            <Pill bg={YELLOW}>{t("mission.activeBadge")}</Pill>
+            {gps === "checking" && <Pill bg="#eee" color="#666">{t("mission.gpsChecking")}</Pill>}
+            {gps === "ok" && <Pill bg={PALGREEN}>{t("mission.gpsOk")}</Pill>}
+            {gps === "far" && <Pill bg="#FFD6D6">{t("mission.gpsFar", { n: gpsDistanceM ?? 0 })}</Pill>}
+            {gps === "unavailable" && <Pill bg="#eee" color="#666">{t("mission.gpsSkipped")}</Pill>}
           </div>
 
           <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 14 }}>
@@ -253,9 +256,11 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             </div>
             <div style={{ flex: 1 }}>
               <h3 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 18, marginBottom: 2 }}>
-                {quest?.titleKo ?? place.nameKo}
+                {quest ? questTitle(quest, locale) : placeName(place, locale)}
               </h3>
-              <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#666" }}>📍 {place.nameKo}</p>
+              <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#666" }}>
+                {t("mission.atPlace", { name: placeName(place, locale) })}
+              </p>
             </div>
             <button
               type="button"
@@ -278,7 +283,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
           </div>
 
           <p style={{ fontFamily: "Nunito", fontSize: 14, color: "#555", lineHeight: 1.6, marginBottom: 14 }}>
-            {quest?.descriptionKo}
+            {quest ? questDesc(quest, locale) : null}
           </p>
 
           {gps === "far" && (
@@ -296,7 +301,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
               }}
             >
               <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#c0392b", fontWeight: 700 }}>
-                장소에서 {gpsDistanceM}m 떨어져 있어요. 가까이 가서 다시 확인해주세요.
+                {t("mission.tooFar", { n: gpsDistanceM ?? 0 })}
               </p>
               <button
                 type="button"
@@ -304,7 +309,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
                 onClick={retryLocation}
                 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 12, color: "#c0392b", whiteSpace: "nowrap" }}
               >
-                다시 확인
+                {t("mission.recheck")}
               </button>
             </div>
           )}
@@ -332,8 +337,8 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             ) : (
               <>
                 <div style={{ fontSize: 36, marginBottom: 8 }}>📷</div>
-                <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>Upload Mission Photo</p>
-                <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#666" }}>Tap to take or upload a photo</p>
+                <p style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 14, marginBottom: 4 }}>{t("mission.uploadPhoto")}</p>
+                <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#666" }}>{t("mission.uploadPhotoHint")}</p>
               </>
             )}
             <input
@@ -352,7 +357,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             type="text"
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
-            placeholder="한마디 남기기 (선택)"
+            placeholder={t("mission.notePlaceholder")}
             maxLength={80}
             style={{
               width: "100%",
@@ -368,12 +373,12 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
 
           {status === "error" && (
             <p style={{ color: "#e11d48", fontSize: 12, fontWeight: 700, marginBottom: 10 }}>
-              제출에 실패했어요. 다시 시도해주세요.
+              {t("mission.submitFailed")}
             </p>
           )}
 
           <KButton bg={status === "uploading" ? "#eee" : LIME} color={status === "uploading" ? "#666" : "#111"} disabled={!canSubmit} onClick={handleSubmit}>
-            {status === "uploading" ? "제출 중…" : "Complete Mission"}
+            {status === "uploading" ? t("mission.submitting") : t("mission.complete")}
           </KButton>
         </div>
       </div>

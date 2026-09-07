@@ -3,15 +3,19 @@ import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { questPhotos, users } from "@/db/schema";
 import { getPlaceById } from "@/data/places";
+import { getDictionary, translate, placeName } from "@/i18n";
 
 export const runtime = "nodejs";
 
 /** 컬렉션북을 인스타 스토리 비율(9:16) 카드 이미지로 렌더링 */
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ username: string }> }
 ) {
   const { username } = await params;
+  const locale =
+    new URL(request.url).searchParams.get("locale") === "ko" ? "ko" : "en";
+  const d = getDictionary(locale);
 
   const db = getDb();
   const [user] = await db.select().from(users).where(eq(users.username, username)).limit(1);
@@ -42,9 +46,11 @@ export async function GET(
         }}
       >
         <div style={{ display: "flex", flexDirection: "column", marginBottom: "48px" }}>
-          <div style={{ fontSize: 32, color: "#e9d5ff" }}>STARA 컬렉션북</div>
+          <div style={{ fontSize: 32, color: "#e9d5ff" }}>
+            {translate(d, "collection.cardHeading")}
+          </div>
           <div style={{ display: "flex", fontSize: 56, color: "white", fontWeight: 700 }}>
-            {user.displayName}의 여행 기록
+            {translate(d, "collection.cardOwner", { name: user.displayName })}
           </div>
         </div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "24px" }}>
@@ -71,14 +77,14 @@ export async function GET(
                   style={{ objectFit: "cover" }}
                 />
                 <div style={{ display: "flex", padding: "16px", fontSize: 28, color: "white" }}>
-                  {place?.nameKo ?? p.placeId}
+                  {place ? placeName(place, locale) : p.placeId}
                 </div>
               </div>
             );
           })}
         </div>
         <div style={{ display: "flex", marginTop: "auto", fontSize: 28, color: "#e9d5ff" }}>
-          #STARA #스타따라 #{photos.length}개의_체크포인트
+          {translate(d, "collection.cardHashtags", { count: photos.length })}
         </div>
       </div>
     ),

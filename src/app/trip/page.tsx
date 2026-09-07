@@ -1,7 +1,9 @@
+import { cookies } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/db";
 import { questPhotos } from "@/db/schema";
+import { parseLocale, LOCALE_COOKIE, getDictionary, translate } from "@/i18n";
 import TripShellClient, { type DiaryPhoto, type TripGroup } from "@/components/trip/TripShellClient";
 
 interface Props {
@@ -14,6 +16,8 @@ export default async function TripPage({ searchParams }: Props) {
   const { tab } = await searchParams;
   const initialTab = VALID_TABS.find((t) => t === tab);
   const { userId } = await auth();
+  const dict = getDictionary(parseLocale((await cookies()).get(LOCALE_COOKIE)?.value));
+  const prevRecordLabel = translate(dict, "trip.prevRecord");
 
   let diaryGroups: TripGroup[] = [];
   if (userId) {
@@ -44,7 +48,7 @@ export default async function TripPage({ searchParams }: Props) {
       } else {
         byKey.set(key, {
           key,
-          name: photo.tripName ?? "이전 기록",
+          name: photo.tripName ?? prevRecordLabel,
           photos: [photo],
         });
       }

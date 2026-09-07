@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTripPlan } from "@/store/useTripPlan";
 import { useTripStore } from "@/store/tripStore";
+import { useT } from "@/i18n";
 
 export default function CompletePage() {
   const router = useRouter();
+  const t = useT();
   const [step, setStep] = useState<"complete" | "diary-prompt">("complete");
   const completedAt = useTripStore((s) => s.completedAt);
   const activeTripName = useTripStore((s) => s.activeTripName);
@@ -41,15 +43,22 @@ export default function CompletePage() {
       <div id="tv-complete" className="tl-view">
         <div className="complete-emoji">🏆</div>
         <div className="flow-h1" style={{ fontSize: "23px" }}>
-          Route Complete!
+          {t("complete.routeComplete")}
         </div>
-        <div className="flow-sub">{activeTripName ?? "이번 루트"}의 모든 체크포인트를 완료했어요.</div>
+        <div className="flow-sub">
+          {t("complete.allCheckpointsDone", {
+            name: activeTripName ?? t("complete.thisRoute"),
+          })}
+        </div>
         <div className="completion-stamp">🎬</div>
         <div className="flow-sub" style={{ marginBottom: "18px" }}>
-          획득 스탬프 {earnedStampIds.length}개 · 방문 장소 {orderedPlaces.length}곳
+          {t("complete.summary", {
+            stamps: earnedStampIds.length,
+            places: orderedPlaces.length,
+          })}
         </div>
         <button className="btn btn-coral" onClick={() => setStep("diary-prompt")}>
-          Receive Stamp →
+          {t("complete.receiveStamp")}
         </button>
       </div>
     );
@@ -57,23 +66,26 @@ export default function CompletePage() {
 
   return (
     <div id="tv-diary-prompt" className="tl-view">
-      <div className="flow-h1">Your trip diary is ready</div>
-      <div className="flow-sub">체크인한 인증샷으로 여행 다이어리를 만들었어요.</div>
+      <div className="flow-h1">{t("complete.diaryReady")}</div>
+      <div className="flow-sub">{t("complete.diaryBuilt")}</div>
       <div className="diary-preview-card">
-        <div className="new-badge">NEW!</div>
+        <div className="new-badge">{t("complete.newBadge")}</div>
         <div className="thumb">📔</div>
         <div>
-          <b style={{ fontSize: "13px" }}>{activeTripName ?? "STARA Trip"}</b>
+          <b style={{ fontSize: "13px" }}>{activeTripName ?? t("complete.defaultTripName")}</b>
           <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "9px", color: "var(--gray)", marginTop: "3px" }}>
-            {orderedPlaces.length} entries · {earnedStampIds.length} photos
+            {t("complete.diaryEntriesPhotos", {
+              entries: orderedPlaces.length,
+              photos: earnedStampIds.length,
+            })}
           </div>
         </div>
       </div>
       <button className="btn btn-navy" style={{ marginBottom: "10px" }} onClick={goToDiary}>
-        View Diary
+        {t("complete.viewDiary")}
       </button>
       <button className="btn btn-outline" onClick={skip}>
-        Skip for now
+        {t("complete.skipForNow")}
       </button>
     </div>
   );

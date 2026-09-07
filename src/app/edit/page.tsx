@@ -7,6 +7,8 @@ import { ARTIST_PLACES, getPlaceById } from "@/data/places";
 import { USER_FACING_CATEGORIES, type PlaceCategory } from "@/types";
 import type { Place } from "@/types";
 import { haversineKm } from "@/lib/distance";
+import { useLocale, useT, placeName } from "@/i18n";
+import type { Locale } from "@/lib/tour-api/types";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import TopBar from "@/components/layout/TopBar";
@@ -17,10 +19,16 @@ import ReelsPanel from "@/components/reels/ReelsPanel";
 import ScheduleFooter from "@/components/route/ScheduleFooter";
 
 /** 탭한 좌표 주변에서 가장 가까운 실제 TourAPI 장소를 찾는다. 좁은 반경에서 없으면 한 번 넓혀본다. */
-async function findNearestPlace(lat: number, lng: number): Promise<Place | null> {
+async function findNearestPlace(
+  lat: number,
+  lng: number,
+  locale: Locale
+): Promise<Place | null> {
   for (const radius of [300, 1200]) {
     try {
-      const res = await fetch(`/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${radius}`);
+      const res = await fetch(
+        `/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${radius}&locale=${locale}`
+      );
       if (!res.ok) continue;
       const json = (await res.json()) as { places?: Place[] };
       const places = json.places ?? [];
@@ -36,6 +44,8 @@ async function findNearestPlace(lat: number, lng: number): Promise<Place | null>
 
 export default function EditPage() {
   const router = useRouter();
+  const { locale } = useLocale();
+  const t = useT();
   const storeSelectedRegionId = useTripStore((s) => s.selectedRegionId);
   const storeSelectedArtistIds = useTripStore((s) => s.selectedArtistIds);
   const [selectedCategories, setSelectedCategories] =
@@ -75,10 +85,10 @@ export default function EditPage() {
   }
 
   async function handleMapClick(lat: number, lng: number) {
-    setMapNotice("근처 장소를 찾는 중…");
-    const candidate = await findNearestPlace(lat, lng);
+    setMapNotice(t("edit.findingNearby"));
+    const candidate = await findNearestPlace(lat, lng, locale);
     if (!candidate) {
-      setMapNotice("근처에서 실제 장소를 찾지 못했어요.");
+      setMapNotice(t("edit.noneNearby"));
       window.setTimeout(() => setMapNotice(null), 2000);
       return;
     }
@@ -91,7 +101,9 @@ export default function EditPage() {
     if (!keyword) return;
     setSearching(true);
     try {
-      const res = await fetch(`/api/tourism/search?keyword=${encodeURIComponent(keyword)}`);
+      const res = await fetch(
+        `/api/tourism/search?keyword=${encodeURIComponent(keyword)}&locale=${locale}`
+      );
       const json = (await res.json()) as { places?: Place[] };
       setSearchResults(json.places ?? []);
     } finally {
@@ -128,14 +140,14 @@ export default function EditPage() {
 
   return (
     <div id="tv-manual" className="tl-view" style={{ minHeight: "100vh" }}>
-      <TopBar title="코스 편집" backHref="/trip" rightSlot={<AuthNav />} />
+      <TopBar title={t("edit.title")} backHref="/trip" rightSlot={<AuthNav />} />
 
       <div className="ph-header" style={{ paddingBottom: 0 }}>
         <div>
           <div className="flow-h1" style={{ fontSize: "18px" }}>
-            Build Your Own Route
+            {t("edit.buildYourOwn")}
           </div>
-          <div className="flow-sub">지도를 탭하거나 검색해서 스탑을 추가하세요</div>
+          <div className="flow-sub">{t("edit.tapOrSearch")}</div>
         </div>
       </div>
 
@@ -145,15 +157,15 @@ export default function EditPage() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder="Search a location…"
+          placeholder={t("edit.searchPlaceholder")}
         />
       </div>
 
       {searchResults !== null && (
         <div style={{ margin: "0 20px 12px", background: "#fff", border: "1px solid #f2ede0", borderRadius: "14px", padding: "6px", maxHeight: "160px", overflowY: "auto" }}>
-          {searching && <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>검색 중…</p>}
+          {searching && <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>{t("edit.searching")}</p>}
           {!searching && searchResults.length === 0 && (
-            <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>검색 결과가 없어요.</p>
+            <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>{t("edit.noResults")}</p>
           )}
           {searchResults.map((place) => (
             <div
@@ -165,7 +177,7 @@ export default function EditPage() {
               }}
               style={{ padding: "8px 10px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 700, color: "var(--navy)" }}
             >
-              {place.nameKo}
+              {placeName(place, locale)}
               {place.address && (
                 <span style={{ display: "block", fontSize: "10.5px", fontWeight: 400, color: "var(--gray)" }}>
                   {place.address}
@@ -185,7 +197,7 @@ export default function EditPage() {
               lng: p.longitude,
               order: i + 1,
               color: "#243b53",
-              title: p.nameKo,
+              title: placeName(p, locale),
             }))}
             showPath
             onMapClick={handleMapClick}
@@ -204,7 +216,7 @@ export default function EditPage() {
         </div>
 
         <div className="kr-editReelsCol">
-          <div className="locations-title">Selected Stops ({userAddedStops.length})</div>
+          <div className="locations-title">{t("edit.selectedStops", { n: userAddedStops.length })}</div>
           <div className="locations-scroll">
             {userAddedStops.map((place) => (
               <div key={place.id} className="loc-card">
@@ -212,13 +224,13 @@ export default function EditPage() {
                   ✕
                 </div>
                 <div className="thumb">📍</div>
-                <div className="name">{place.nameKo}</div>
+                <div className="name">{placeName(place, locale)}</div>
               </div>
             ))}
           </div>
 
           <div style={{ padding: "16px 20px 0" }}>
-            <div className="locations-title" style={{ padding: 0 }}>추천 장소 둘러보기</div>
+            <div className="locations-title" style={{ padding: 0 }}>{t("edit.browseSuggested")}</div>
           </div>
           <FilterBar
             artists={ARTISTS}
@@ -251,20 +263,20 @@ export default function EditPage() {
       />
       <div className="manual-footer" style={{ marginTop: 0 }}>
         <button className="btn btn-coral" onClick={() => router.push("/trip?tab=route")}>
-          루트로 돌아가기
+          {t("edit.backToRoute")}
         </button>
       </div>
 
       <div className={`confirm-add-overlay${pendingPlace ? " open" : ""}`} onClick={() => setPendingPlace(null)}>
         <div className="confirm-add-card" onClick={(e) => e.stopPropagation()}>
-          <div className="q">{pendingPlace?.nameKo}을(를) 추가할까요?</div>
-          <div className="sub">이 장소를 루트에 스탑으로 추가해요.</div>
+          <div className="q">{t("edit.addConfirmTitle", { name: pendingPlace ? placeName(pendingPlace, locale) : "" })}</div>
+          <div className="sub">{t("edit.addConfirmBody")}</div>
           <div className="confirm-add-actions">
             <button className="btn btn-outline" onClick={() => setPendingPlace(null)}>
-              Cancel
+              {t("common.cancel")}
             </button>
             <button className="btn btn-coral" onClick={confirmAdd}>
-              Yes, add it
+              {t("edit.addConfirmCta")}
             </button>
           </div>
         </div>

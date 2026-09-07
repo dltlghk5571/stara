@@ -1,8 +1,11 @@
+import { cookies } from "next/headers";
 import { SignUp } from "@clerk/nextjs";
 import { Pill } from "@/components/ui/kroute";
+import { LocaleToggle, parseLocale, LOCALE_COOKIE, getDictionary, translate } from "@/i18n";
 import { BORDER, CREAM, PINK, SHADOW, WHITE } from "@/lib/kroute-tokens";
 
-export default function Page() {
+export default async function Page() {
+  const d = getDictionary(parseLocale((await cookies()).get(LOCALE_COOKIE)?.value));
   return (
     <div
       style={{
@@ -14,6 +17,9 @@ export default function Page() {
         padding: "52px 24px 32px",
       }}
     >
+      <div style={{ alignSelf: "flex-end", marginBottom: 8 }}>
+        <LocaleToggle />
+      </div>
       <div
         style={{
           width: 64,
@@ -32,18 +38,18 @@ export default function Page() {
         🎬
       </div>
       <h1 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, textAlign: "center" }}>
-        Join STARA
+        {translate(d, "signIn.joinTitle")}
       </h1>
       <div style={{ marginTop: 10 }}>
         <Pill bg="#E8FFF4" style={{ fontSize: 12, border: "2px solid #B2EDD4" }}>
-          몇 초면 가입 끝 ✨
+          {translate(d, "signIn.joinPill")}
         </Pill>
       </div>
       <div style={{ marginTop: 24, width: "100%", maxWidth: 400, display: "flex", justifyContent: "center" }}>
         <SignUp appearance={{ variables: { colorPrimary: PINK } }} />
       </div>
       <p style={{ marginTop: "auto", paddingTop: 20, textAlign: "center", fontSize: 12, color: "#666", fontWeight: 500 }}>
-        By continuing, you agree to STARA&apos;s Terms &amp; Privacy Policy.
+        {translate(d, "signIn.terms")}
       </p>
     </div>
   );

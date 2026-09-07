@@ -5,7 +5,7 @@ import { tourismDataProvider, type Locale } from "@/lib/tour-api/provider";
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const contentId = searchParams.get("contentId");
-  const locale: Locale = searchParams.get("locale") === "en" ? "en" : "ko";
+  const locale: Locale = searchParams.get("locale") === "ko" ? "ko" : "en";
 
   if (!contentId) {
     return NextResponse.json({ images: [] });

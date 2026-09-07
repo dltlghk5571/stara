@@ -21,6 +21,7 @@ export default async function OnboardingRegionDetailPage({ params, searchParams 
   const representativeArtist =
     artist && region.representativeArtistId
       ? {
+          name: artist.name,
           nameEn: artist.nameEn,
           initials: artist.nameEn.slice(0, 2).toUpperCase(),
           spotCount: ARTIST_PLACES.filter((p) =>

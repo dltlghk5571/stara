@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Download, Loader2, Share2 } from "lucide-react";
+import { useLocale, useT } from "@/i18n";
 
 interface Props {
   username: string;
@@ -9,7 +10,9 @@ interface Props {
 
 export default function CollectionShare({ username }: Props) {
   const [sharing, setSharing] = useState(false);
-  const cardUrl = `/api/collection-card/${username}`;
+  const { locale } = useLocale();
+  const t = useT();
+  const cardUrl = `/api/collection-card/${username}?locale=${locale}`;
 
   async function handleShare() {
     setSharing(true);
@@ -21,8 +24,8 @@ export default function CollectionShare({ username }: Props) {
       if (navigator.canShare?.({ files: [file] })) {
         await navigator.share({
           files: [file],
-          title: "STARA 컬렉션북",
-          text: "내 K-pop 여행 기록 확인해봐!",
+          title: t("collection.shareTitle"),
+          text: t("collection.shareText"),
         });
       } else {
         const a = document.createElement("a");
@@ -41,7 +44,7 @@ export default function CollectionShare({ username }: Props) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={cardUrl}
-        alt={`${username}의 컬렉션북`}
+        alt={t("collection.shareAlt", { name: username })}
         className="w-full rounded-2xl border border-slate-200"
       />
       <button
@@ -51,14 +54,14 @@ export default function CollectionShare({ username }: Props) {
         className="flex min-h-11 items-center justify-center gap-2 rounded-xl bg-fuchsia-600 text-sm font-bold text-white disabled:bg-slate-300"
       >
         {sharing ? <Loader2 size={18} className="animate-spin" /> : <Share2 size={18} />}
-        인스타로 공유하기
+        {t("collection.shareInstagram")}
       </button>
       <a
         href={cardUrl}
         download={`stara-${username}.png`}
         className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-900"
       >
-        <Download size={18} /> 이미지 다운로드
+        <Download size={18} /> {t("collection.downloadImage")}
       </a>
     </div>
   );

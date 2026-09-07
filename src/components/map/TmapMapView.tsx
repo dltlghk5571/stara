@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { LocateFixed } from "lucide-react";
 import type { MapPin, MapViewProps } from "./types";
+import { useT } from "@/i18n";
 
 const SEOUL_CENTER = { lat: 37.5665, lng: 126.978 };
 
@@ -21,7 +22,7 @@ function waitForTmap(): Promise<void> {
         resolve();
       } else if (Date.now() - start > 10000) {
         clearInterval(interval);
-        reject(new Error("TMap SDK 로드 실패"));
+        reject(new Error("Failed to load TMap SDK"));
       }
     }, 100);
   });
@@ -90,6 +91,7 @@ const MY_LOCATION_ICON = `data:image/svg+xml,${encodeURIComponent(
 )}`;
 
 export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick, onMapClick, className }: MapViewProps) {
+  const t = useT();
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<InstanceType<NonNullable<Window["Tmapv2"]>["Map"]> | null>(null);
   const markersRef = useRef<InstanceType<NonNullable<Window["Tmapv2"]>["Marker"]>[]>([]);
@@ -121,12 +123,14 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
         });
         setReady(true);
       })
-      .catch(() => setLocError("지도를 불러오지 못했어요"));
+      .catch(() => setLocError(t("map.loadFailed")));
     return () => {
       cancelled = true;
     };
     // ponytail: TMap SDK에 공식 destroy API가 없어 언마운트 시 map 인스턴스는 정리하지 않음
     // (컨테이너 DOM이 제거되면서 GC됨) — 페이지 이동이 잦아지면 재검토
+    // `t` is stable for the component's lifetime (locale change triggers a full reload).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // 지도 클릭(빈 곳 탭) — removeListener가 SDK에 없어 map 인스턴스당 한 번만 등록하고,
@@ -203,7 +207,7 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
 
   function handleLocate() {
     if (!navigator.geolocation) {
-      setLocError("이 브라우저는 위치 기능을 지원하지 않아요");
+      setLocError(t("map.geolocationUnsupported"));
       return;
     }
     setLocating(true);
@@ -214,7 +218,7 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
         setLocating(false);
       },
       () => {
-        setLocError("위치 권한을 허용해줘야 표시할 수 있어요");
+        setLocError(t("map.permissionDenied"));
         setLocating(false);
       },
       { enableHighAccuracy: true, timeout: 8000 }
@@ -226,7 +230,7 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
       <div ref={containerRef} className="h-full w-full" />
       {!ready && !locError && (
         <div className="absolute inset-0 flex items-center justify-center bg-slate-100 text-sm text-slate-900">
-          지도를 불러오는 중...
+          {t("map.loading")}
         </div>
       )}
 
@@ -234,7 +238,7 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
         type="button"
         onClick={handleLocate}
         disabled={locating}
-        aria-label="내 위치 표시"
+        aria-label={t("map.myLocationAria")}
         className="absolute bottom-3 right-3 z-[1000] flex h-11 w-11 items-center justify-center rounded-full bg-white text-black disabled:opacity-60"
         style={{ border: "2.5px solid #111111", boxShadow: "3px 3px 0 #111111" }}
       >

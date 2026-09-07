@@ -3,6 +3,7 @@
 import type { Place, PlaceCategory } from "@/types";
 import { KCard, Pill } from "@/components/ui/kroute";
 import { BLACK, LIME } from "@/lib/kroute-tokens";
+import { useT, useLocale, placeName } from "@/i18n";
 
 const CATEGORY_GLYPH: Record<PlaceCategory, string> = {
   photo: "📷",
@@ -30,6 +31,8 @@ interface Props {
 }
 
 export default function StampGrid({ orderedPlaces, earnedStampIds }: Props) {
+  const t = useT();
+  const { locale } = useLocale();
   return (
     <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, paddingBottom: 8 }}>
       {orderedPlaces.map((place) => {
@@ -64,15 +67,15 @@ export default function StampGrid({ orderedPlaces, earnedStampIds }: Props) {
             </div>
             <div style={{ padding: "10px 12px", textAlign: "center" }}>
               <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, marginBottom: 2, color: earned ? BLACK : "#666" }}>
-                {place.nameKo}
+                {placeName(place, locale)}
               </p>
               {earned ? (
                 <Pill bg={LIME} style={{ fontSize: 10, padding: "3px 12px" }}>
-                  STAMPED
+                  {t("stamps.stamped")}
                 </Pill>
               ) : (
                 <Pill bg="#e8e8e8" color="#666" style={{ fontSize: 10, padding: "3px 12px", border: "2px solid #ddd" }}>
-                  LOCKED
+                  {t("stamps.locked")}
                 </Pill>
               )}
             </div>

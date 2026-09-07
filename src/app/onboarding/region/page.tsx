@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { REGIONS } from "@/data/regions";
+import { regionName, useLocale, useT } from "@/i18n";
 import { BLACK, CREAM, CYAN, LIME, WHITE, YELLOW } from "@/lib/kroute-tokens";
 
 const REGION_PILL_BG: Record<string, string> = {
@@ -45,9 +46,12 @@ const KOREA_PATH =
 
 function RegionMapInner() {
   const router = useRouter();
+  const t = useT();
+  const { locale } = useLocale();
   const searchParams = useSearchParams();
   const artists = searchParams.get("artists") ?? "";
   const [notice, setNotice] = useState<string | null>(null);
+  const noticeRegion = notice ? REGIONS.find((r) => r.id === notice) : undefined;
 
   function handleTap(regionId: string, available: boolean) {
     if (!available) {
@@ -63,13 +67,13 @@ function RegionMapInner() {
     <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
         <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 12, letterSpacing: 1, color: "#666" }}>
-          CHOOSE REGION
+          {t("onboarding.region.kicker")}
         </span>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24, marginTop: 4 }}>
-          Where are we headed? 🗺️
+          {t("onboarding.region.title")}
         </h2>
         <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 4, lineHeight: 1.5 }}>
-          지역을 선택하면 대표 아티스트와 콘텐츠를 볼 수 있어요.
+          {t("onboarding.region.subtitle")}
         </p>
       </div>
 
@@ -95,16 +99,16 @@ function RegionMapInner() {
               }}
               onClick={() => handleTap(region.id, region.available)}
             >
-              {region.nameEn}
+              {regionName(region, locale)}
               {!region.available && (
-                <span style={{ display: "block", fontSize: 7, opacity: 0.7, fontWeight: 700 }}>SOON</span>
+                <span style={{ display: "block", fontSize: 7, opacity: 0.7, fontWeight: 700 }}>{t("common.soon")}</span>
               )}
             </div>
           );
         })}
       </div>
 
-      {notice && (
+      {noticeRegion && (
         <div
           style={{
             position: "fixed",
@@ -122,7 +126,9 @@ function RegionMapInner() {
             zIndex: 10,
           }}
         >
-          {REGIONS.find((r) => r.id === notice)?.nameEn} · coming soon
+          {t("onboarding.region.comingSoon", {
+            region: regionName(noticeRegion, locale),
+          })}
         </div>
       )}
     </div>

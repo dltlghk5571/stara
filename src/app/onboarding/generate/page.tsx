@@ -3,6 +3,7 @@
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getRegionById } from "@/data/regions";
+import { placeName, regionName, routeOptionLabel, useLocale, useT } from "@/i18n";
 import { useRouteOptions } from "@/lib/tour-api/useRouteOptions";
 import { useTripStore } from "@/store/tripStore";
 import { KButton, Pill } from "@/components/ui/kroute";
@@ -10,6 +11,8 @@ import { CREAM, LIME, YELLOW } from "@/lib/kroute-tokens";
 
 function GenerateInner() {
   const router = useRouter();
+  const t = useT();
+  const { locale } = useLocale();
   const searchParams = useSearchParams();
   const regionId = searchParams.get("region");
   const artistsParam = searchParams.get("artists") ?? "";
@@ -28,20 +31,25 @@ function GenerateInner() {
     return (
       <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, gap: 14 }}>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20, textAlign: "center" }}>
-          지역을 먼저 선택해주세요
+          {t("onboarding.generate.needRegionTitle")}
         </h2>
         <div style={{ width: "100%", maxWidth: 300 }}>
-          <KButton onClick={() => router.push("/onboarding/region")}>지역 선택으로 이동</KButton>
+          <KButton onClick={() => router.push("/onboarding/region")}>
+            {t("onboarding.generate.needRegionCta")}
+          </KButton>
         </div>
       </div>
     );
   }
 
+  const regionLabel = regionName(region, locale);
+
   function choose(optionIndex: number) {
     if (!region) return;
     const option = options[optionIndex];
     if (!option) return;
-    setMainRoute(option.places, region.id, artistIds, `${region.nameKo} · ${option.labelKo}`);
+    const optionLabel = routeOptionLabel(option, locale);
+    setMainRoute(option.places, region.id, artistIds, `${regionLabel} · ${optionLabel}`);
     router.push("/trip");
   }
 
@@ -90,13 +98,13 @@ function GenerateInner() {
           </div>
         </div>
         <Pill bg={YELLOW} style={{ fontSize: 13, padding: "6px 18px", marginBottom: 20 }}>
-          NATURAL COURSE · OPTIMAL PATH
+          {t("onboarding.generate.loadingBadge")}
         </Pill>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24, textAlign: "center", marginBottom: 4 }}>
-          Generating Route
+          {t("onboarding.generate.loadingTitle")}
         </h2>
         <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", textAlign: "center", fontStyle: "italic" }}>
-          {region.nameEn} 루트를 만드는 중…
+          {t("onboarding.generate.building", { region: regionLabel })}
         </p>
       </div>
     );
@@ -106,12 +114,14 @@ function GenerateInner() {
     return (
       <div style={{ minHeight: "100dvh", background: CREAM, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 28, gap: 14 }}>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20, textAlign: "center" }}>
-          지금은 {region.nameEn} 루트 후보를 찾지 못했어요
+          {t("onboarding.generate.noneTitle", { region: regionLabel })}
         </h2>
-        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666" }}>잠시 후 다시 시도해주세요.</p>
+        <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666" }}>
+          {t("onboarding.generate.noneBody")}
+        </p>
         <div style={{ width: "100%", maxWidth: 300 }}>
           <KButton outline onClick={() => router.push(`/onboarding/region/${region.id}`)}>
-            다시 시도
+            {t("common.retry")}
           </KButton>
         </div>
       </div>
@@ -121,9 +131,11 @@ function GenerateInner() {
   return (
     <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
-        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20 }}>Pick a route</h2>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20 }}>
+          {t("onboarding.generate.pickTitle")}
+        </h2>
         <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 4 }}>
-          {region.nameEn} 루트 {options.length}가지를 준비했어요. 하나를 골라주세요.
+          {t("onboarding.generate.ready", { region: regionLabel, count: options.length })}
         </p>
       </div>
 
@@ -131,9 +143,14 @@ function GenerateInner() {
         {options.map((option, i) => (
           <div key={option.id}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-              <b style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>{option.labelEn}</b>
+              <b style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>
+                {routeOptionLabel(option, locale)}
+              </b>
               <span style={{ fontFamily: "Nunito", fontSize: 11, color: "#666", fontWeight: 700 }}>
-                {option.stopCount} stops · {Math.round(option.totalMinutes / 60)}h
+                {t("onboarding.generate.routeStat", {
+                  stops: option.stopCount,
+                  hours: Math.round(option.totalMinutes / 60),
+                })}
               </span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
@@ -155,13 +172,13 @@ function GenerateInner() {
                   >
                     📍
                   </span>
-                  <b style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 13 }}>{p.nameKo}</b>
+                  <b style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 13 }}>{placeName(p, locale)}</b>
                 </div>
               ))}
             </div>
             <div style={{ marginTop: 10 }}>
               <KButton bg="#FF6600" color="#fff" onClick={() => choose(i)}>
-                Confirm this route
+                {t("onboarding.generate.confirmRoute")}
               </KButton>
             </div>
           </div>
