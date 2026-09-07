@@ -3,6 +3,7 @@
 import { Sparkles } from "lucide-react";
 import { LIME } from "@/lib/kroute-tokens";
 import type { Quest } from "@/types";
+import { useT, useLocale, questTitle, questDesc } from "@/i18n";
 
 interface Props {
   quest: Quest;
@@ -12,6 +13,8 @@ interface Props {
 
 /** 핀과 핀 사이 이동 구간의 보너스 서브 퀘스트 (필수 코스에는 포함되지 않음) */
 export default function SubQuestList({ quest, completedQuestIds, onToggle }: Props) {
+  const t = useT();
+  const { locale } = useLocale();
   const done = completedQuestIds.includes(quest.id);
   return (
     <div
@@ -35,7 +38,7 @@ export default function SubQuestList({ quest, completedQuestIds, onToggle }: Pro
           color: "#7a9900",
         }}
       >
-        <Sparkles size={14} /> BONUS · 이동 중 서브 퀘스트
+        <Sparkles size={14} /> {t("stamps.bonusSubQuest")}
       </p>
       <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", minHeight: 44 }}>
         <input
@@ -55,10 +58,10 @@ export default function SubQuestList({ quest, completedQuestIds, onToggle }: Pro
               textDecoration: done ? "line-through" : "none",
             }}
           >
-            {quest.titleKo}
+            {questTitle(quest, locale)}
           </span>
           <span style={{ display: "block", fontFamily: "Nunito", fontSize: 11, color: "#666" }}>
-            {quest.descriptionKo}
+            {questDesc(quest, locale)}
           </span>
         </span>
       </label>
