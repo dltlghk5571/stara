@@ -1,5 +1,6 @@
 import { SignIn } from "@clerk/nextjs";
 import { Pill } from "@/components/ui/kroute";
+import { LocaleToggle } from "@/i18n";
 import { BORDER, CREAM, PINK, SHADOW, WHITE } from "@/lib/kroute-tokens";
 
 export default function Page() {
@@ -14,6 +15,9 @@ export default function Page() {
         padding: "52px 24px 32px",
       }}
     >
+      <div style={{ alignSelf: "flex-end", marginBottom: 8 }}>
+        <LocaleToggle />
+      </div>
       <div
         style={{
           width: 64,

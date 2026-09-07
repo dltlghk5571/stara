@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { KButton, Pill } from "@/components/ui/kroute";
+import { LocaleToggle } from "@/i18n";
 import { BLACK, BORDER, CYAN, PINK, SHADOW, YELLOW } from "@/lib/kroute-tokens";
 
 export default function HomePage() {
@@ -17,6 +18,9 @@ export default function HomePage() {
         overflow: "hidden",
       }}
     >
+      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 5 }}>
+        <LocaleToggle />
+      </div>
       <div
         style={{
           position: "absolute",
