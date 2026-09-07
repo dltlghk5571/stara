@@ -178,7 +178,7 @@ function GenerateInner() {
             </div>
             <div style={{ marginTop: 10 }}>
               <KButton bg="#FF6600" color="#fff" onClick={() => choose(i)}>
-                Confirm this route
+                {t("onboarding.generate.confirmRoute")}
               </KButton>
             </div>
           </div>

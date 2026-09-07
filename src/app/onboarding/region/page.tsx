@@ -101,7 +101,7 @@ function RegionMapInner() {
             >
               {locale === "ko" ? region.nameKo : region.nameEn}
               {!region.available && (
-                <span style={{ display: "block", fontSize: 7, opacity: 0.7, fontWeight: 700 }}>SOON</span>
+                <span style={{ display: "block", fontSize: 7, opacity: 0.7, fontWeight: 700 }}>{t("common.soon")}</span>
               )}
             </div>
           );

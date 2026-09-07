@@ -7,6 +7,7 @@ export const en = {
     cancel: "Cancel",
     noInfo: "No info",
     minutes: "{n} min",
+    soon: "SOON",
   },
   onboarding: {
     artists: {
@@ -27,6 +28,9 @@ export const en = {
       previewCta: "Preview via popular TourAPI spots",
       generateHint: "We'll build a route based on the region you picked.",
       selectRegion: "Select {region}?",
+      repArtistLabel: "REPRESENTATIVE ARTIST",
+      curatingLabel: "NOW CURATING",
+      selectCta: "Select this region ✦",
     },
     generate: {
       needRegionTitle: "Please choose a region first",
@@ -35,6 +39,7 @@ export const en = {
       noneTitle: "We couldn't find a {region} route right now",
       noneBody: "Please try again in a moment.",
       ready: "We've prepared {count} {region} routes. Pick one.",
+      confirmRoute: "Confirm this route",
     },
   },
 };

@@ -57,7 +57,9 @@ export default function RegionDetailClient({ region, representativeArtist, artis
         </div>
         <div style={{ position: "absolute", bottom: 14, left: 16 }}>
           <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 11, letterSpacing: 1, color: "#FFE9F5", display: "block", marginBottom: 4 }}>
-            {representativeArtist ? "REPRESENTATIVE ARTIST" : "NOW CURATING"}
+            {representativeArtist
+              ? t("onboarding.regionDetail.repArtistLabel")
+              : t("onboarding.regionDetail.curatingLabel")}
           </span>
           <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, color: WHITE, textShadow: "2px 2px 0 rgba(0,0,0,.2)" }}>
             {locale === "ko" ? region.nameKo : region.nameEn}
@@ -117,7 +119,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
             ))}
         </div>
 
-        <KButton onClick={() => setSheetOpen(true)}>SELECT THIS REGION ✦</KButton>
+        <KButton onClick={() => setSheetOpen(true)}>{t("onboarding.regionDetail.selectCta")}</KButton>
       </div>
 
       {sheetOpen && (
