@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { KButton, Pill } from "@/components/ui/kroute";
-import { LocaleToggle } from "@/i18n";
+import { LocaleToggle, parseLocale, LOCALE_COOKIE, getDictionary, translate } from "@/i18n";
 import { BLACK, BORDER, CYAN, PINK, SHADOW, YELLOW } from "@/lib/kroute-tokens";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const d = getDictionary(parseLocale((await cookies()).get(LOCALE_COOKIE)?.value));
   return (
     <div
       style={{
@@ -46,7 +48,7 @@ export default function HomePage() {
 
       <div className="kr-aFadeUp" style={{ position: "absolute", top: 60, left: "50%", transform: "translateX(-50%)" }}>
         <Pill bg={YELLOW} style={{ fontSize: 12, padding: "5px 16px", letterSpacing: 0.5 }}>
-          K-TRAVEL PASSPORT
+          {translate(d, "splash.passportPill")}
         </Pill>
       </div>
 
@@ -79,7 +81,7 @@ export default function HomePage() {
           textAlign: "center",
         }}
       >
-        스타 따라, K-culture 여행 ✦
+        {translate(d, "splash.tagline")}
       </p>
 
       <div className="kr-aFadeUp kr-aD3 kr-hidden0" style={{ marginTop: 28, width: "100%", maxWidth: 270 }}>
@@ -100,10 +102,10 @@ export default function HomePage() {
             🎬
           </div>
           <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 15, marginTop: 8, color: BLACK }}>
-            KOREA ADVENTURE
+            {translate(d, "splash.cardHeading")}
           </p>
           <p style={{ fontFamily: "Caveat", fontSize: 15, color: "#666", fontStyle: "italic", marginTop: 2 }}>
-            스탬프를 모으고 · 루트를 완성하세요
+            {translate(d, "splash.cardSub")}
           </p>
         </div>
       </div>
@@ -111,7 +113,7 @@ export default function HomePage() {
       <div className="kr-aFadeUp kr-aD4 kr-hidden0" style={{ marginTop: 24, width: "100%", maxWidth: 280 }}>
         <Link href={`/sign-in?redirect_url=${encodeURIComponent("/onboarding/artists")}`}>
           <KButton bg={CYAN} color={BLACK}>
-            START EXPEDITION 🚀
+            {translate(d, "splash.cta")}
           </KButton>
         </Link>
       </div>
@@ -119,7 +121,7 @@ export default function HomePage() {
         className="kr-aFadeUp kr-aD5 kr-hidden0"
         style={{ marginTop: 14, fontFamily: "Nunito", fontSize: 12, color: "rgba(255,255,255,.7)", fontWeight: 600 }}
       >
-        v1.0.0 · Made with K-Love 💕
+        {translate(d, "splash.version")}
       </p>
     </div>
   );
