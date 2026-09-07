@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import type { Region } from "@/data/regions";
 import type { Place } from "@/types";
 import { BackButton, KButton, KCard, Pill } from "@/components/ui/kroute";
-import { placeName, regionDesc, useLocale, useT } from "@/i18n";
+import { artistName, placeName, regionDesc, regionName, useLocale, useT } from "@/i18n";
 import { BLACK, BORDER, CREAM, LBLUE, LIME, PALGREEN, WHITE } from "@/lib/kroute-tokens";
 
 interface RepresentativeArtist {
-  nameKo: string;
+  name: string;
   nameEn: string;
   initials: string;
   spotCount: number;
@@ -63,7 +63,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
               : t("onboarding.regionDetail.curatingLabel")}
           </span>
           <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, color: WHITE, textShadow: "2px 2px 0 rgba(0,0,0,.2)" }}>
-            {locale === "ko" ? region.nameKo : region.nameEn}
+            {regionName(region, locale)}
           </h2>
         </div>
       </div>
@@ -93,9 +93,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
           <div>
             <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13 }}>
               {representativeArtist
-                ? locale === "ko"
-                  ? representativeArtist.nameKo
-                  : representativeArtist.nameEn
+                ? artistName(representativeArtist, locale)
                 : t("onboarding.regionDetail.nowCurating")}
             </p>
             <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#555" }}>
@@ -143,7 +141,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
             <span style={{ fontSize: 48, display: "block", marginBottom: 16 }}>🗺️</span>
             <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 22, marginBottom: 8 }}>
               {t("onboarding.regionDetail.selectRegion", {
-                region: locale === "ko" ? region.nameKo : region.nameEn,
+                region: regionName(region, locale),
               })}
             </h2>
             <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginBottom: 24 }}>

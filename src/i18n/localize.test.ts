@@ -8,6 +8,8 @@ import {
   artistName,
   categoryLabel,
   routeName,
+  regionName,
+  routeOptionLabel,
 } from "./localize";
 
 describe("placeName", () => {
@@ -47,6 +49,20 @@ describe("routeName", () => {
     expect(routeName({ nameKo: "서울 코스", nameEn: "Seoul Course" }, "en")).toBe("Seoul Course"));
   it("falls back to Korean when English is whitespace-only", () =>
     expect(routeName({ nameKo: "서울 코스", nameEn: "  " }, "en")).toBe("서울 코스"));
+});
+
+describe("regionName", () => {
+  it("picks English for en", () =>
+    expect(regionName({ nameKo: "서울", nameEn: "Seoul" }, "en")).toBe("Seoul"));
+  it("falls back to Korean when English is empty", () =>
+    expect(regionName({ nameKo: "서울", nameEn: "" }, "en")).toBe("서울"));
+});
+
+describe("routeOptionLabel", () => {
+  it("picks English for en", () =>
+    expect(routeOptionLabel({ labelKo: "맛집 코스", labelEn: "Foodie Route" }, "en")).toBe("Foodie Route"));
+  it("falls back to Korean when English is empty", () =>
+    expect(routeOptionLabel({ labelKo: "맛집 코스", labelEn: "" }, "en")).toBe("맛집 코스"));
 });
 
 describe("regionDesc / artistName / categoryLabel", () => {

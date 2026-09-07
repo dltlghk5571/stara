@@ -3,7 +3,7 @@
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { REGIONS } from "@/data/regions";
-import { useLocale, useT } from "@/i18n";
+import { regionName, useLocale, useT } from "@/i18n";
 import { BLACK, CREAM, CYAN, LIME, WHITE, YELLOW } from "@/lib/kroute-tokens";
 
 const REGION_PILL_BG: Record<string, string> = {
@@ -99,7 +99,7 @@ function RegionMapInner() {
               }}
               onClick={() => handleTap(region.id, region.available)}
             >
-              {locale === "ko" ? region.nameKo : region.nameEn}
+              {regionName(region, locale)}
               {!region.available && (
                 <span style={{ display: "block", fontSize: 7, opacity: 0.7, fontWeight: 700 }}>{t("common.soon")}</span>
               )}
@@ -127,7 +127,7 @@ function RegionMapInner() {
           }}
         >
           {t("onboarding.region.comingSoon", {
-            region: locale === "ko" ? noticeRegion.nameKo : noticeRegion.nameEn,
+            region: regionName(noticeRegion, locale),
           })}
         </div>
       )}

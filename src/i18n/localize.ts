@@ -1,6 +1,7 @@
 import type { Locale } from "./types";
 import type { Artist, PlaceCategory, Place, Quest, StaraRoute } from "@/types";
 import type { Region } from "@/data/regions";
+import type { RouteOption } from "@/lib/tour-api/useRouteOptions";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
 
 const pick = (ko: string, en: string | undefined, locale: Locale): string => {
@@ -31,6 +32,14 @@ export const regionDesc = (
 
 export const routeName = (r: Pick<StaraRoute, "nameKo" | "nameEn">, l: Locale) =>
   pick(r.nameKo, r.nameEn, l);
+
+export const regionName = (r: Pick<Region, "nameKo" | "nameEn">, l: Locale) =>
+  pick(r.nameKo, r.nameEn, l);
+
+export const routeOptionLabel = (
+  o: Pick<RouteOption, "labelKo" | "labelEn">,
+  l: Locale,
+) => pick(o.labelKo, o.labelEn, l);
 
 export const artistName = (a: Pick<Artist, "name" | "nameEn">, l: Locale) =>
   pick(a.name, a.nameEn, l);

@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getRegionById } from "@/data/regions";
-import { placeName, useLocale, useT } from "@/i18n";
+import { placeName, regionName, routeOptionLabel, useLocale, useT } from "@/i18n";
 import { useRouteOptions } from "@/lib/tour-api/useRouteOptions";
 import { useTripStore } from "@/store/tripStore";
 import { KButton, Pill } from "@/components/ui/kroute";
@@ -42,13 +42,13 @@ function GenerateInner() {
     );
   }
 
-  const regionLabel = locale === "ko" ? region.nameKo : region.nameEn;
+  const regionLabel = regionName(region, locale);
 
   function choose(optionIndex: number) {
     if (!region) return;
     const option = options[optionIndex];
     if (!option) return;
-    const optionLabel = locale === "ko" ? option.labelKo : option.labelEn;
+    const optionLabel = routeOptionLabel(option, locale);
     setMainRoute(option.places, region.id, artistIds, `${regionLabel} · ${optionLabel}`);
     router.push("/trip");
   }
@@ -144,7 +144,7 @@ function GenerateInner() {
           <div key={option.id}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
               <b style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 14 }}>
-                {locale === "ko" ? option.labelKo : option.labelEn}
+                {routeOptionLabel(option, locale)}
               </b>
               <span style={{ fontFamily: "Nunito", fontSize: 11, color: "#666", fontWeight: 700 }}>
                 {t("onboarding.generate.routeStat", {
