@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Region } from "@/data/regions";
 import type { Place } from "@/types";
 import { BackButton, KButton, KCard, Pill } from "@/components/ui/kroute";
-import { useLocale } from "@/i18n";
+import { placeName, regionDesc, useLocale, useT } from "@/i18n";
 import { BLACK, BORDER, CREAM, LBLUE, LIME, PALGREEN, WHITE } from "@/lib/kroute-tokens";
 
 interface RepresentativeArtist {
@@ -22,6 +22,7 @@ interface Props {
 
 export default function RegionDetailClient({ region, representativeArtist, artistsParam }: Props) {
   const router = useRouter();
+  const t = useT();
   const { locale } = useLocale();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [highlights, setHighlights] = useState<Place[] | null>(null);
@@ -59,7 +60,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
             {representativeArtist ? "REPRESENTATIVE ARTIST" : "NOW CURATING"}
           </span>
           <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, color: WHITE, textShadow: "2px 2px 0 rgba(0,0,0,.2)" }}>
-            {region.nameEn}
+            {locale === "ko" ? region.nameKo : region.nameEn}
           </h2>
         </div>
       </div>
@@ -88,20 +89,22 @@ export default function RegionDetailClient({ region, representativeArtist, artis
           </div>
           <div>
             <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13 }}>
-              {representativeArtist ? representativeArtist.nameEn : "Now Curating"}
+              {representativeArtist
+                ? representativeArtist.nameEn
+                : t("onboarding.regionDetail.nowCurating")}
             </p>
             <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#555" }}>
               {representativeArtist
                 ? `${representativeArtist.spotCount} filming locations`
                 : highlights === null
-                  ? "불러오는 중…"
-                  : "TourAPI 인기 스팟으로 미리보기"}
+                  ? t("onboarding.regionDetail.previewLoading")
+                  : t("onboarding.regionDetail.previewCta")}
             </p>
           </div>
         </KCard>
 
         <p style={{ fontFamily: "Nunito", fontSize: 14, color: "#666", marginBottom: 14, lineHeight: 1.6 }}>
-          {region.descriptionKo}
+          {regionDesc(region, locale)}
         </p>
 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
@@ -109,7 +112,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
           {!representativeArtist &&
             highlights?.map((p) => (
               <Pill key={p.id} bg={WHITE}>
-                📍 {p.nameKo}
+                📍 {placeName(p, locale)}
               </Pill>
             ))}
         </div>
@@ -128,10 +131,12 @@ export default function RegionDetailClient({ region, representativeArtist, artis
           >
             <span style={{ fontSize: 48, display: "block", marginBottom: 16 }}>🗺️</span>
             <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 22, marginBottom: 8 }}>
-              Select {region.nameEn}?
+              {t("onboarding.regionDetail.selectRegion", {
+                region: locale === "ko" ? region.nameKo : region.nameEn,
+              })}
             </h2>
             <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginBottom: 24 }}>
-              선택한 지역을 기준으로 루트를 만들어드려요.
+              {t("onboarding.regionDetail.generateHint")}
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <KButton bg={LIME} color={BLACK} onClick={handleConfirm}>

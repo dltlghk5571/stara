@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ARTISTS } from "@/data/artists";
+import { artistName, useLocale, useT } from "@/i18n";
 import { KButton } from "@/components/ui/kroute";
 import { BLACK, BORDER, CREAM, LIME, PINK, SHADOW, WHITE } from "@/lib/kroute-tokens";
 
@@ -14,6 +15,8 @@ function initialsOf(name: string): string {
 
 export default function OnboardingArtistsPage() {
   const router = useRouter();
+  const t = useT();
+  const { locale } = useLocale();
   const [selected, setSelected] = useState<string[]>([]);
 
   function toggleArtist(id: string) {
@@ -29,13 +32,13 @@ export default function OnboardingArtistsPage() {
     <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
         <span style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, letterSpacing: 1, color: "#666" }}>
-          PICK YOUR BIAS
+          {t("onboarding.artists.kicker")}
         </span>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, lineHeight: 1.2, marginTop: 4 }}>
-          Select your travel mate!
+          {t("onboarding.artists.title")}
         </h2>
         <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 6, lineHeight: 1.5 }}>
-          좋아하는 아티스트를 골라주세요(여러 명 선택 가능) — 취향에 맞춰 루트를 만들어드려요.
+          {t("onboarding.artists.subtitle")}
         </p>
       </div>
 
@@ -84,7 +87,7 @@ export default function OnboardingArtistsPage() {
                   {initialsOf(artist.nameEn)}
                 </div>
                 <span style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 11, textAlign: "center", lineHeight: 1.2 }}>
-                  {artist.nameEn}
+                  {artistName(artist, locale)}
                 </span>
               </button>
             );
