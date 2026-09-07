@@ -5,6 +5,15 @@ import type { Place } from "@/types";
 import { getArtistById } from "@/data/artists";
 import { getQuestsForPlace } from "@/data/quests";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
+import {
+  useT,
+  useLocale,
+  placeName,
+  placeRelation,
+  questTitle,
+  categoryLabel,
+  artistName,
+} from "@/i18n";
 
 interface Props {
   place: Place;
@@ -21,10 +30,15 @@ export default function ReelCard({
   onToggle,
   onShowDetail,
 }: Props) {
+  const t = useT();
+  const { locale } = useLocale();
   const style = CATEGORY_STYLE[place.category];
   const Icon = style.icon;
   const artistNames = place.artistIds
-    .map((id) => getArtistById(id)?.name)
+    .map((id) => {
+      const a = getArtistById(id);
+      return a ? artistName(a, locale) : null;
+    })
     .filter(Boolean)
     .join(", ");
   const quests = getQuestsForPlace(place);
@@ -38,33 +52,35 @@ export default function ReelCard({
       <div className="body">
         <div className="row">
           <span className="cat-tag" style={{ background: style.color }}>
-            {style.labelKo}
+            {categoryLabel(place.category, locale)}
           </span>
           {artistNames && <span className="artists">{artistNames}</span>}
         </div>
 
         <div>
-          <h3>{place.nameKo}</h3>
-          <p>{place.relationTextKo}</p>
+          <h3>{placeName(place, locale)}</h3>
+          <p>{placeRelation(place, locale)}</p>
         </div>
 
         <dl>
           <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
             <Clock size={14} />
-            체류 {place.dwellMinutes}분
+            {t("reels.dwell", { n: place.dwellMinutes })}
           </div>
           <div>
-            운영 {place.openTime && place.closeTime ? `${place.openTime}~${place.closeTime}` : "정보 없음"}
+            {place.openTime && place.closeTime
+              ? t("reels.hours", { range: `${place.openTime}~${place.closeTime}` })
+              : t("common.noInfo")}
           </div>
-          <div className="added-min">루트에 추가 시 약 +{estimatedAddedMinutes}분 소요</div>
+          <div className="added-min">{t("reels.addedMinutes", { n: estimatedAddedMinutes })}</div>
         </dl>
 
         {quests.length > 0 && (
           <div className="quests">
-            <span style={{ fontWeight: 700 }}>연결된 퀘스트</span>
+            <span style={{ fontWeight: 700 }}>{t("reels.linkedQuests")}</span>
             <ul style={{ marginTop: "4px", paddingLeft: "16px", listStyle: "disc" }}>
               {quests.map((q) => (
-                <li key={q.id}>{q.titleKo}</li>
+                <li key={q.id}>{questTitle(q, locale)}</li>
               ))}
             </ul>
           </div>
@@ -86,18 +102,18 @@ export default function ReelCard({
         >
           {isSelected ? (
             <>
-              <Check size={16} /> 루트에서 제거
+              <Check size={16} /> {t("reels.removeFromRoute")}
             </>
           ) : (
             <>
-              <Plus size={16} /> 루트에 추가
+              <Plus size={16} /> {t("reels.addToRoute")}
             </>
           )}
         </button>
         <button
           type="button"
           onClick={onShowDetail}
-          aria-label="상세정보"
+          aria-label={t("reels.detailAria")}
           className="btn btn-outline"
           style={{ height: "44px", width: "44px", flex: "none" }}
         >

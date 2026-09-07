@@ -3,6 +3,7 @@
 import type { Artist } from "@/types";
 import { USER_FACING_CATEGORIES, type PlaceCategory } from "@/types";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
+import { useLocale, categoryLabel, artistName } from "@/i18n";
 
 interface Props {
   artists: Artist[];
@@ -19,21 +20,21 @@ export default function FilterBar({
   selectedCategories,
   onToggleCategory,
 }: Props) {
+  const { locale } = useLocale();
   return (
     <div className="filter-bar">
       <div className="filter-row">
         {USER_FACING_CATEGORIES.map((c) => {
           const active = selectedCategories.includes(c);
-          const style = CATEGORY_STYLE[c];
           return (
             <button
               key={c}
               type="button"
               onClick={() => onToggleCategory(c)}
               className={`filter-chip${active ? " active" : ""}`}
-              style={active ? { background: style.color } : undefined}
+              style={active ? { background: CATEGORY_STYLE[c].color } : undefined}
             >
-              {style.labelKo}
+              {categoryLabel(c, locale)}
             </button>
           );
         })}
@@ -49,7 +50,7 @@ export default function FilterBar({
               className={`filter-chip${active ? " active" : ""}`}
               style={active ? { background: "var(--coral)" } : undefined}
             >
-              {a.name}
+              {artistName(a, locale)}
             </button>
           );
         })}

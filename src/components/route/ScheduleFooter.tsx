@@ -3,6 +3,7 @@
 import { AlertTriangle, Clock } from "lucide-react";
 import type { ScheduleResult } from "@/types";
 import type { RemovalSuggestion } from "@/store/useTripPlan";
+import { useT, useLocale, placeName } from "@/i18n";
 
 interface Props {
   schedule: ScheduleResult;
@@ -24,6 +25,8 @@ export default function ScheduleFooter({
   endTime,
   onEndTimeChange,
 }: Props) {
+  const t = useT();
+  const { locale } = useLocale();
   const editable = Boolean(startTime && onStartTimeChange);
   return (
     <div className="schedule-footer">
@@ -32,12 +35,12 @@ export default function ScheduleFooter({
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
             <label className="time-field">
               <Clock size={16} />
-              시작
+              {t("schedule.start")}
               <input type="time" value={startTime} onChange={(e) => onStartTimeChange!(e.target.value)} />
             </label>
             {endTime && onEndTimeChange && (
               <label className="time-field">
-                종료
+                {t("schedule.end")}
                 <input type="time" value={endTime} onChange={(e) => onEndTimeChange(e.target.value)} />
               </label>
             )}
@@ -45,15 +48,20 @@ export default function ScheduleFooter({
         ) : (
           <div className="time-field">
             <Clock size={16} />
-            종료 예상 {schedule.endTime}
+            {t("schedule.endEstimate", { time: schedule.endTime })}
           </div>
         )}
         <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "11px", color: "var(--gray)" }}>
-          이동 {schedule.totalTravelMinutes}분 · 체류 {schedule.totalDwellMinutes}분
+          {t("schedule.travelDwell", {
+            travel: schedule.totalTravelMinutes,
+            dwell: schedule.totalDwellMinutes,
+          })}
         </span>
       </div>
       {editable && (
-        <p style={{ marginTop: "4px", fontSize: "11px", color: "var(--gray)" }}>종료 예상 {schedule.endTime}</p>
+        <p style={{ marginTop: "4px", fontSize: "11px", color: "var(--gray)" }}>
+          {t("schedule.endEstimate", { time: schedule.endTime })}
+        </p>
       )}
 
       {schedule.isOverLimit && (
@@ -61,20 +69,26 @@ export default function ScheduleFooter({
           <AlertTriangle size={16} />
           <div style={{ flex: 1 }}>
             <p style={{ fontWeight: 700 }}>
-              {endTime ? `종료 시각(${endTime})` : "종료 예정 시각"}을{" "}
-              {schedule.overLimitMinutes}분 초과할 예정이에요.
+              {t("schedule.overByTitle", {
+                n: schedule.overLimitMinutes,
+                label: endTime
+                  ? t("schedule.endTimeLabel", { time: endTime })
+                  : t("schedule.endTimePlanned"),
+              })}
             </p>
             {removalSuggestion && (
               <p style={{ marginTop: "4px" }}>
-                &apos;{removalSuggestion.place.nameKo}&apos; 를 제거하면 약{" "}
-                {Math.round(removalSuggestion.detourMinutes)}분을 절약할 수 있어요.
+                {t("schedule.removeSuggestion", {
+                  name: placeName(removalSuggestion.place, locale),
+                  n: Math.round(removalSuggestion.detourMinutes),
+                })}
                 {onRemoveSuggestion && (
                   <button
                     type="button"
                     onClick={onRemoveSuggestion}
                     style={{ marginLeft: "8px", borderRadius: "100px", background: "#e11d48", padding: "2px 10px", fontWeight: 700, color: "#fff", border: "none" }}
                   >
-                    이 장소 제거
+                    {t("schedule.removeThisPlace")}
                   </button>
                 )}
               </p>
