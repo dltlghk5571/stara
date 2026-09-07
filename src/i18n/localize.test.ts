@@ -38,6 +38,8 @@ describe("questDesc", () => {
     expect(questDesc({ descriptionKo: "설명", descriptionEn: "Desc" }, "ko")).toBe("설명"));
   it("picks English for en", () =>
     expect(questDesc({ descriptionKo: "설명", descriptionEn: "Desc" }, "en")).toBe("Desc"));
+  it("falls back to Korean when English is whitespace-only", () =>
+    expect(questDesc({ descriptionKo: "설명", descriptionEn: "   " }, "en")).toBe("설명"));
 });
 
 describe("routeName", () => {
