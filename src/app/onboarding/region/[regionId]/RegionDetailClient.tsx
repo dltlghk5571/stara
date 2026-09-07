@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Region } from "@/data/regions";
 import type { Place } from "@/types";
 import { BackButton, KButton, KCard, Pill } from "@/components/ui/kroute";
+import { useLocale } from "@/i18n";
 import { BLACK, BORDER, CREAM, LBLUE, LIME, PALGREEN, WHITE } from "@/lib/kroute-tokens";
 
 interface RepresentativeArtist {
@@ -21,6 +22,7 @@ interface Props {
 
 export default function RegionDetailClient({ region, representativeArtist, artistsParam }: Props) {
   const router = useRouter();
+  const { locale } = useLocale();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [highlights, setHighlights] = useState<Place[] | null>(null);
 
@@ -28,7 +30,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
   useEffect(() => {
     if (representativeArtist) return;
     let cancelled = false;
-    fetch(`/api/tourism/nearby?lat=${region.centerLat}&lng=${region.centerLng}&radius=8000&contentTypeId=12`)
+    fetch(`/api/tourism/nearby?lat=${region.centerLat}&lng=${region.centerLng}&radius=8000&contentTypeId=12&locale=${locale}`)
       .then((res) => (res.ok ? res.json() : { places: [] }))
       .then((json: { places?: Place[] }) => {
         if (!cancelled) setHighlights((json.places ?? []).slice(0, 4));
@@ -39,7 +41,7 @@ export default function RegionDetailClient({ region, representativeArtist, artis
     return () => {
       cancelled = true;
     };
-  }, [region.centerLat, region.centerLng, representativeArtist]);
+  }, [region.centerLat, region.centerLng, representativeArtist, locale]);
 
   function handleConfirm() {
     const artistsQuery = artistsParam ? `&artists=${artistsParam}` : "";

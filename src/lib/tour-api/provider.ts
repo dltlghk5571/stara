@@ -54,7 +54,7 @@ async function withEnglishFallback<T>(
 }
 
 export const tourismDataProvider: TourismDataProvider = {
-  async getNearby(params, locale = "ko") {
+  async getNearby(params, locale = "en") {
     const items = await withEnglishFallback(locale, (baseUrl) =>
       fetchLocationBasedList(
         {
@@ -69,7 +69,7 @@ export const tourismDataProvider: TourismDataProvider = {
     return mapTourItemsToPlaces(items, locale);
   },
 
-  async getDetail(contentId, contentTypeId, locale = "ko") {
+  async getDetail(contentId, contentTypeId, locale = "en") {
     const common = await withEnglishFallback(locale, (baseUrl) =>
       fetchDetailCommon(contentId, baseUrl)
     );
@@ -87,7 +87,7 @@ export const tourismDataProvider: TourismDataProvider = {
     };
   },
 
-  async getImages(contentId, locale = "ko") {
+  async getImages(contentId, locale = "en") {
     const images = await withEnglishFallback(locale, (baseUrl) =>
       fetchDetailImages(contentId, baseUrl)
     );
@@ -95,7 +95,13 @@ export const tourismDataProvider: TourismDataProvider = {
   },
 };
 
-/** 키워드 검색은 국문 전용(현재 UI가 국문 키워드만 다룸) — locale 확장은 필요해지면 위와 동일한 패턴으로 추가. */
-export function searchTourismKeyword(keyword: string, contentTypeId?: string) {
-  return fetchSearchKeyword({ keyword, contentTypeId }).then(mapTourItemsToPlaces);
+/** 키워드 검색. getNearby와 동일하게 locale별 엔드포인트 + 영문 빈 결과 시 국문 폴백. */
+export function searchTourismKeyword(
+  keyword: string,
+  contentTypeId?: string,
+  locale: Locale = "en"
+) {
+  return withEnglishFallback(locale, (baseUrl) =>
+    fetchSearchKeyword({ keyword, contentTypeId }, baseUrl)
+  ).then((items) => mapTourItemsToPlaces(items, locale));
 }

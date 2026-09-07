@@ -7,6 +7,7 @@
 // (예: 경복궁의 KorService2 areacode="1"/sigungucode="23" vs 여기선 areaCd="11"/signguCd="11110").
 
 import { cacheGet, cacheSet } from "@/lib/cache";
+import type { Locale } from "./types";
 
 const RELATED_TOURISM_BASE_URL =
   process.env.TOUR_API_RELATED_BASE_URL ?? "https://apis.data.go.kr/B551011/TarRlteTarService1";
@@ -122,8 +123,12 @@ export interface RelatedTourismAnchor {
  * "장소명 -> 0~1 연관도 점수(여러 anchor 중 가장 좋은 순위 기준)" 맵으로 합친다.
  */
 export async function getRelatedTourismScores(
-  anchors: RelatedTourismAnchor[]
+  anchors: RelatedTourismAnchor[],
+  // ponytail: TarRlteTarService1은 영문 엔드포인트가 없어(시군구코드+국문 키워드 기반)
+  // 현재 locale은 무시된다. 호출부 시그니처 일관성 + 향후 영문 연관관광 서비스 대비용.
+  _locale: Locale = "en"
 ): Promise<Map<string, number>> {
+  void _locale;
   const scores = new Map<string, number>();
 
   await Promise.all(

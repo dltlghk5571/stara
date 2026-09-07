@@ -3,6 +3,8 @@ import type { Place } from "@/types";
 import { buildSchedule } from "@/lib/scheduleCalculator";
 import { TOUR_SEARCH_RADIUS_METERS } from "@/config";
 import { ARTIST_PLACES } from "@/data/places";
+import { useLocale } from "@/i18n";
+import type { Locale } from "@/lib/tour-api/types";
 
 export interface RouteOption {
   id: string;
@@ -26,11 +28,12 @@ const THEMES: { id: string; labelKo: string; labelEn: string; contentTypeId: str
 async function fetchThemePlaces(
   lat: number,
   lng: number,
-  contentTypeId: string
+  contentTypeId: string,
+  locale: Locale
 ): Promise<Place[]> {
   try {
     const res = await fetch(
-      `/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${REGION_RADIUS_METERS}&contentTypeId=${contentTypeId}`
+      `/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${REGION_RADIUS_METERS}&contentTypeId=${contentTypeId}&locale=${locale}`
     );
     if (!res.ok) return [];
     const json = (await res.json()) as { places?: Place[] };
@@ -80,9 +83,13 @@ export function useRouteOptions(
   centerLng: number | null,
   selectedArtistIds: string[] = []
 ): State {
+  const { locale } = useLocale();
   const [loaded, setLoaded] = useState<{ key: string; options: RouteOption[] } | null>(null);
   const artistKey = [...selectedArtistIds].sort().join(",");
-  const key = regionId && centerLat != null && centerLng != null ? `${regionId}|${artistKey}` : null;
+  const key =
+    regionId && centerLat != null && centerLng != null
+      ? `${locale}|${regionId}|${artistKey}`
+      : null;
 
   useEffect(() => {
     if (!key || centerLat == null || centerLng == null) return;
@@ -95,7 +102,7 @@ export function useRouteOptions(
 
     let cancelled = false;
     Promise.all(
-      THEMES.map((theme) => fetchThemePlaces(centerLat, centerLng, theme.contentTypeId))
+      THEMES.map((theme) => fetchThemePlaces(centerLat, centerLng, theme.contentTypeId, locale))
     ).then((results) => {
       if (cancelled) return;
       const options = THEMES.map((theme, i) => {

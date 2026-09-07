@@ -7,6 +7,8 @@ import { ARTIST_PLACES, getPlaceById } from "@/data/places";
 import { USER_FACING_CATEGORIES, type PlaceCategory } from "@/types";
 import type { Place } from "@/types";
 import { haversineKm } from "@/lib/distance";
+import { useLocale } from "@/i18n";
+import type { Locale } from "@/lib/tour-api/types";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import TopBar from "@/components/layout/TopBar";
@@ -17,10 +19,16 @@ import ReelsPanel from "@/components/reels/ReelsPanel";
 import ScheduleFooter from "@/components/route/ScheduleFooter";
 
 /** 탭한 좌표 주변에서 가장 가까운 실제 TourAPI 장소를 찾는다. 좁은 반경에서 없으면 한 번 넓혀본다. */
-async function findNearestPlace(lat: number, lng: number): Promise<Place | null> {
+async function findNearestPlace(
+  lat: number,
+  lng: number,
+  locale: Locale
+): Promise<Place | null> {
   for (const radius of [300, 1200]) {
     try {
-      const res = await fetch(`/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${radius}`);
+      const res = await fetch(
+        `/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${radius}&locale=${locale}`
+      );
       if (!res.ok) continue;
       const json = (await res.json()) as { places?: Place[] };
       const places = json.places ?? [];
@@ -36,6 +44,7 @@ async function findNearestPlace(lat: number, lng: number): Promise<Place | null>
 
 export default function EditPage() {
   const router = useRouter();
+  const { locale } = useLocale();
   const storeSelectedRegionId = useTripStore((s) => s.selectedRegionId);
   const storeSelectedArtistIds = useTripStore((s) => s.selectedArtistIds);
   const [selectedCategories, setSelectedCategories] =
@@ -76,7 +85,7 @@ export default function EditPage() {
 
   async function handleMapClick(lat: number, lng: number) {
     setMapNotice("근처 장소를 찾는 중…");
-    const candidate = await findNearestPlace(lat, lng);
+    const candidate = await findNearestPlace(lat, lng, locale);
     if (!candidate) {
       setMapNotice("근처에서 실제 장소를 찾지 못했어요.");
       window.setTimeout(() => setMapNotice(null), 2000);
@@ -91,7 +100,9 @@ export default function EditPage() {
     if (!keyword) return;
     setSearching(true);
     try {
-      const res = await fetch(`/api/tourism/search?keyword=${encodeURIComponent(keyword)}`);
+      const res = await fetch(
+        `/api/tourism/search?keyword=${encodeURIComponent(keyword)}&locale=${locale}`
+      );
       const json = (await res.json()) as { places?: Place[] };
       setSearchResults(json.places ?? []);
     } finally {

@@ -6,6 +6,7 @@ import type { Place } from "@/types";
 import { getArtistById } from "@/data/artists";
 import { getQuestsForPlace } from "@/data/quests";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
+import { useLocale } from "@/i18n";
 
 interface Props {
   place: Place;
@@ -27,6 +28,7 @@ interface TourismInfo {
 }
 
 function useTourismInfo(contentId: string | undefined, category: Place["category"]) {
+  const { locale } = useLocale();
   const [info, setInfo] = useState<TourismInfo | null>(null);
   const [images, setImages] = useState<string[]>([]);
 
@@ -36,13 +38,13 @@ function useTourismInfo(contentId: string | undefined, category: Place["category
     if (!contentId) return;
     let cancelled = false;
     const contentTypeId = guessContentTypeId(category);
-    fetch(`/api/tourism/detail?contentId=${contentId}&contentTypeId=${contentTypeId}`)
+    fetch(`/api/tourism/detail?contentId=${contentId}&contentTypeId=${contentTypeId}&locale=${locale}`)
       .then((res) => res.json())
       .then((json: { detail: TourismInfo | null }) => {
         if (!cancelled) setInfo(json.detail);
       })
       .catch(() => {});
-    fetch(`/api/tourism/images?contentId=${contentId}`)
+    fetch(`/api/tourism/images?contentId=${contentId}&locale=${locale}`)
       .then((res) => res.json())
       .then((json: { images?: string[] }) => {
         if (!cancelled) setImages(json.images ?? []);
@@ -51,7 +53,7 @@ function useTourismInfo(contentId: string | undefined, category: Place["category
     return () => {
       cancelled = true;
     };
-  }, [contentId, category]);
+  }, [contentId, category, locale]);
 
   return { info, images };
 }

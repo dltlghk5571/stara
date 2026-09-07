@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
   const lng = Number(searchParams.get("lng"));
   const contentTypeId = searchParams.get("contentTypeId") ?? undefined;
   const radius = Number(searchParams.get("radius") ?? TOUR_SEARCH_RADIUS_METERS);
-  const locale: Locale = searchParams.get("locale") === "en" ? "en" : "ko";
+  const locale: Locale = searchParams.get("locale") === "ko" ? "ko" : "en";
 
   if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
     return NextResponse.json({ places: [] });

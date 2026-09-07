@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { tourismDataProvider } from "./provider";
+import { tourismDataProvider, searchTourismKeyword } from "./provider";
 
 function tourApiResponse(items: unknown[]) {
   return {
@@ -75,14 +75,52 @@ describe("tourismDataProvider.getNearby locale fallback", () => {
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 
-  it("locale이 ko(기본값)이면 영문 엔드포인트를 아예 호출하지 않는다", async () => {
+  it("locale 미지정이면 영문 엔드포인트(EngService2)를 기본으로 호출한다", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      expect(url).toContain("EngService2");
+      return new Response(
+        JSON.stringify(
+          tourApiResponse([
+            { contentid: "9", contenttypeid: "12", title: "Bukchon", mapx: "126.3", mapy: "37.3" },
+          ])
+        ),
+        { status: 200 }
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await tourismDataProvider.getNearby({ lat: 37.3, lng: 126.3, radius: 2000 });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("locale이 ko면 국문 엔드포인트(KorService2)만 호출한다", async () => {
     const fetchMock = vi.fn(async (url: string) => {
       expect(url).toContain("KorService2");
       return new Response(JSON.stringify(tourApiResponse([])), { status: 200 });
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    await tourismDataProvider.getNearby({ lat: 37.3, lng: 126.3, radius: 2000 });
+    await tourismDataProvider.getNearby({ lat: 37.4, lng: 126.4, radius: 2000 }, "ko");
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it("searchTourismKeyword: locale 미지정이면 영문 엔드포인트(EngService2)로 검색한다", async () => {
+    const fetchMock = vi.fn(async (url: string) => {
+      expect(url).toContain("EngService2");
+      expect(url).toContain("searchKeyword2");
+      return new Response(
+        JSON.stringify(
+          tourApiResponse([
+            { contentid: "3", contenttypeid: "12", title: "Seoul Tower", mapx: "126.9", mapy: "37.5" },
+          ])
+        ),
+        { status: 200 }
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    const places = await searchTourismKeyword("seoul");
+    expect(places).toHaveLength(1);
     expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 });

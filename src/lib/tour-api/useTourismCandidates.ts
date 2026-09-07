@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import type { Place } from "@/types";
 import { TOUR_SEARCH_RADIUS_METERS } from "@/config";
+import { useLocale } from "@/i18n";
+import type { Locale } from "@/lib/tour-api/types";
 
 export interface TourismCandidates {
   localTourism: Place[];
@@ -30,11 +32,12 @@ function centroidOf(places: Place[]): { lat: number; lng: number } | null {
 async function fetchNearbyPlaces(
   lat: number,
   lng: number,
-  contentTypeId: string
+  contentTypeId: string,
+  locale: Locale
 ): Promise<Place[]> {
   try {
     const res = await fetch(
-      `/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${TOUR_SEARCH_RADIUS_METERS}&contentTypeId=${contentTypeId}`
+      `/api/tourism/nearby?lat=${lat}&lng=${lng}&radius=${TOUR_SEARCH_RADIUS_METERS}&contentTypeId=${contentTypeId}&locale=${locale}`
     );
     if (!res.ok) return [];
     const json = (await res.json()) as { places?: Place[] };
@@ -44,11 +47,11 @@ async function fetchNearbyPlaces(
   }
 }
 
-function fetchCandidates(lat: number, lng: number) {
+function fetchCandidates(lat: number, lng: number, locale: Locale) {
   return Promise.all([
-    fetchNearbyPlaces(lat, lng, "12"), // 관광지
-    fetchNearbyPlaces(lat, lng, "14"), // 문화시설
-    fetchNearbyPlaces(lat, lng, "39"), // 음식점
+    fetchNearbyPlaces(lat, lng, "12", locale), // 관광지
+    fetchNearbyPlaces(lat, lng, "14", locale), // 문화시설
+    fetchNearbyPlaces(lat, lng, "39", locale), // 음식점
   ]).then(([spots, culture, restaurants]) => ({
     localTourism: [...spots, ...culture],
     restaurants,
@@ -66,9 +69,10 @@ interface Loaded {
 }
 
 export function useTourismCandidates(anchorPlaces: Place[]): TourismCandidates {
+  const { locale } = useLocale();
   const centroid = centroidOf(anchorPlaces);
   const anchorKey = centroid
-    ? `${centroid.lat.toFixed(3)},${centroid.lng.toFixed(3)}`
+    ? `${locale}:${centroid.lat.toFixed(3)},${centroid.lng.toFixed(3)}`
     : null;
 
   const [loaded, setLoaded] = useState<Loaded | null>(null);
@@ -79,7 +83,7 @@ export function useTourismCandidates(anchorPlaces: Place[]): TourismCandidates {
     let cancelled = false;
     let request = sessionCache.get(anchorKey);
     if (!request) {
-      request = fetchCandidates(centroid.lat, centroid.lng);
+      request = fetchCandidates(centroid.lat, centroid.lng, locale);
       sessionCache.set(anchorKey, request);
     }
 
