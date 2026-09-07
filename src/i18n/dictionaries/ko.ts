@@ -192,7 +192,7 @@ export const ko: Dict = {
     diaryEntriesPhotos: "기록 {entries}개 · 사진 {photos}장",
     viewDiary: "다이어리 보기",
     skipForNow: "나중에 하기",
-    newBadge: "NEW!",
+    newBadge: "새 기록",
   },
   map: {
     loading: "지도를 불러오는 중...",
