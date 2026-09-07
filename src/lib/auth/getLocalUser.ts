@@ -31,7 +31,7 @@ export async function getOrCreateLocalUser(clerkUserId: string) {
 
   const db = getDb();
   const clerkUser = await currentUser();
-  const displayName = clerkUser?.fullName || clerkUser?.username || "STARA 여행자";
+  const displayName = clerkUser?.fullName || clerkUser?.username || "STARA Traveler";
   const idSuffix = clerkUserId.replace(/[^a-zA-Z0-9]/g, "").slice(-8).toLowerCase();
   const candidate = deriveUsernameCandidate(clerkUser, idSuffix);
 
