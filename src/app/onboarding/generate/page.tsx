@@ -103,10 +103,10 @@ function GenerateInner() {
           </div>
         </div>
         <Pill bg={YELLOW} style={{ fontSize: 13, padding: "6px 18px", marginBottom: 20 }}>
-          NATURAL COURSE · OPTIMAL PATH
+          {t("onboarding.generate.loadingBadge")}
         </Pill>
         <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24, textAlign: "center", marginBottom: 4 }}>
-          Generating Route
+          {t("onboarding.generate.loadingTitle")}
         </h2>
         <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", textAlign: "center", fontStyle: "italic" }}>
           {t("onboarding.generate.building", { region: regionLabel })}
@@ -136,7 +136,9 @@ function GenerateInner() {
   return (
     <div style={{ height: "100dvh", background: CREAM, display: "flex", flexDirection: "column" }}>
       <div style={{ padding: "48px 24px 12px" }}>
-        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20 }}>Pick a route</h2>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 20 }}>
+          {t("onboarding.generate.pickTitle")}
+        </h2>
         <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 4 }}>
           {t("onboarding.generate.ready", { region: regionLabel, count: options.length })}
         </p>
@@ -150,7 +152,10 @@ function GenerateInner() {
                 {locale === "ko" ? option.labelKo : option.labelEn}
               </b>
               <span style={{ fontFamily: "Nunito", fontSize: 11, color: "#666", fontWeight: 700 }}>
-                {option.stopCount} stops · {Math.round(option.totalMinutes / 60)}h
+                {t("onboarding.generate.routeStat", {
+                  stops: option.stopCount,
+                  hours: Math.round(option.totalMinutes / 60),
+                })}
               </span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>

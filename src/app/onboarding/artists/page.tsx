@@ -97,7 +97,7 @@ export default function OnboardingArtistsPage() {
 
       <div style={{ padding: "20px 24px 32px" }}>
         <KButton bg={LIME} color={BLACK} disabled={selected.length === 0} onClick={handleContinue}>
-          CONTINUE TO REGION MAP →
+          {t("onboarding.artists.continueCta")}
         </KButton>
       </div>
     </div>

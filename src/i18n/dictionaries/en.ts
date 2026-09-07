@@ -8,6 +8,7 @@ export const en = {
     noInfo: "No info",
     minutes: "{n} min",
     soon: "SOON",
+    done: "Complete",
   },
   onboarding: {
     artists: {
@@ -15,6 +16,7 @@ export const en = {
       title: "Select your travel mate!",
       subtitle:
         "Choose the artists you love — pick as many as you like and we'll build a route around your taste.",
+      continueCta: "CONTINUE TO REGION MAP →",
     },
     region: {
       kicker: "CHOOSE REGION",
@@ -31,6 +33,8 @@ export const en = {
       repArtistLabel: "REPRESENTATIVE ARTIST",
       curatingLabel: "NOW CURATING",
       selectCta: "Select this region ✦",
+      filmingLocations: "{count} filming locations",
+      spots: "{count} spots",
     },
     generate: {
       needRegionTitle: "Please choose a region first",
@@ -40,6 +44,10 @@ export const en = {
       noneBody: "Please try again in a moment.",
       ready: "We've prepared {count} {region} routes. Pick one.",
       confirmRoute: "Confirm this route",
+      loadingBadge: "NATURAL COURSE · OPTIMAL PATH",
+      loadingTitle: "Generating Route",
+      pickTitle: "Pick a route",
+      routeStat: "{stops} stops · {hours}h",
     },
   },
 };

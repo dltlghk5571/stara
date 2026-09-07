@@ -9,6 +9,7 @@ export const ko: Dict = {
     noInfo: "정보 없음",
     minutes: "{n}분",
     soon: "준비중",
+    done: "완료",
   },
   onboarding: {
     artists: {
@@ -16,6 +17,7 @@ export const ko: Dict = {
       title: "여행 메이트를 골라주세요!",
       subtitle:
         "좋아하는 아티스트를 골라주세요(여러 명 선택 가능) — 취향에 맞춰 루트를 만들어드려요.",
+      continueCta: "지역 지도로 →",
     },
     region: {
       kicker: "지역 선택",
@@ -32,6 +34,8 @@ export const ko: Dict = {
       repArtistLabel: "대표 아티스트",
       curatingLabel: "큐레이션 중",
       selectCta: "이 지역 선택 ✦",
+      filmingLocations: "촬영지 {count}곳",
+      spots: "{count}곳",
     },
     generate: {
       needRegionTitle: "지역을 먼저 선택해주세요",
@@ -41,6 +45,10 @@ export const ko: Dict = {
       noneBody: "잠시 후 다시 시도해주세요.",
       ready: "{region} 루트 {count}가지를 준비했어요. 하나를 골라주세요.",
       confirmRoute: "이 루트로 확정",
+      loadingBadge: "자연스러운 동선 · 최적 경로",
+      loadingTitle: "루트 생성 중",
+      pickTitle: "루트를 골라주세요",
+      routeStat: "{stops}곳 · {hours}시간",
     },
   },
 };

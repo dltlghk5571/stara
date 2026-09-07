@@ -9,6 +9,7 @@ import { placeName, regionDesc, useLocale, useT } from "@/i18n";
 import { BLACK, BORDER, CREAM, LBLUE, LIME, PALGREEN, WHITE } from "@/lib/kroute-tokens";
 
 interface RepresentativeArtist {
+  nameKo: string;
   nameEn: string;
   initials: string;
   spotCount: number;
@@ -92,12 +93,16 @@ export default function RegionDetailClient({ region, representativeArtist, artis
           <div>
             <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13 }}>
               {representativeArtist
-                ? representativeArtist.nameEn
+                ? locale === "ko"
+                  ? representativeArtist.nameKo
+                  : representativeArtist.nameEn
                 : t("onboarding.regionDetail.nowCurating")}
             </p>
             <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#555" }}>
               {representativeArtist
-                ? `${representativeArtist.spotCount} filming locations`
+                ? t("onboarding.regionDetail.filmingLocations", {
+                    count: representativeArtist.spotCount,
+                  })
                 : highlights === null
                   ? t("onboarding.regionDetail.previewLoading")
                   : t("onboarding.regionDetail.previewCta")}
@@ -110,7 +115,11 @@ export default function RegionDetailClient({ region, representativeArtist, artis
         </p>
 
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
-          {representativeArtist && <Pill bg={PALGREEN}>🎬 {representativeArtist.spotCount} spots</Pill>}
+          {representativeArtist && (
+            <Pill bg={PALGREEN}>
+              🎬 {t("onboarding.regionDetail.spots", { count: representativeArtist.spotCount })}
+            </Pill>
+          )}
           {!representativeArtist &&
             highlights?.map((p) => (
               <Pill key={p.id} bg={WHITE}>
@@ -142,10 +151,10 @@ export default function RegionDetailClient({ region, representativeArtist, artis
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
               <KButton bg={LIME} color={BLACK} onClick={handleConfirm}>
-                Complete
+                {t("common.done")}
               </KButton>
               <KButton outline onClick={() => setSheetOpen(false)}>
-                Cancel
+                {t("common.cancel")}
               </KButton>
             </div>
           </KCard>
