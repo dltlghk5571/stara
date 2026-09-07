@@ -50,7 +50,7 @@ export default function RootLayout({
           실제 폰처럼 가운데 정렬된 좁은 프레임으로 보이게 하고, 폰 화면(<=430px)에서는
           그대로 꽉 채운다. kroute.html 프로토타입의 Shell 컴포넌트와 동일한 값. */}
       <body
-        className="mx-auto flex min-h-full max-w-[430px] flex-col overflow-x-hidden bg-slate-50 text-slate-900 shadow-[0_0_60px_rgba(0,0,0,0.6)] dark:bg-slate-950 dark:text-slate-50"
+        className="mx-auto flex min-h-full max-w-[430px] flex-col overflow-x-hidden bg-slate-50 text-slate-900 shadow-[0_0_60px_rgba(0,0,0,0.6)]"
         style={{ transform: "translateZ(0)" }} /* position:fixed 오버레이가 뷰포트 전체가 아니라 이 프레임 안에만 뜨도록 containing block 지정 */
       >
         <ClerkProvider>{children}</ClerkProvider>

@@ -227,10 +227,10 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
         <div className="kr-scrollY" style={{ maxHeight: 580, padding: "0 24px 32px" }}>
           <div style={{ marginBottom: 14, display: "flex", gap: 8, flexWrap: "wrap" }}>
             <Pill bg={YELLOW}>ACTIVE MISSION 🎯</Pill>
-            {gps === "checking" && <Pill bg="#eee" color="#777">📍 위치 확인 중…</Pill>}
+            {gps === "checking" && <Pill bg="#eee" color="#666">📍 위치 확인 중…</Pill>}
             {gps === "ok" && <Pill bg={PALGREEN}>📍 위치 확인됨</Pill>}
             {gps === "far" && <Pill bg="#FFD6D6">📍 {gpsDistanceM}m 떨어짐</Pill>}
-            {gps === "unavailable" && <Pill bg="#eee" color="#777">📍 위치 확인 생략</Pill>}
+            {gps === "unavailable" && <Pill bg="#eee" color="#666">📍 위치 확인 생략</Pill>}
           </div>
 
           <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 14 }}>

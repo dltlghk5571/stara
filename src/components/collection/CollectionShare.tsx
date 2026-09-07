@@ -42,7 +42,7 @@ export default function CollectionShare({ username }: Props) {
       <img
         src={cardUrl}
         alt={`${username}의 컬렉션북`}
-        className="w-full rounded-2xl border border-slate-200 dark:border-slate-700"
+        className="w-full rounded-2xl border border-slate-200"
       />
       <button
         type="button"
@@ -56,7 +56,7 @@ export default function CollectionShare({ username }: Props) {
       <a
         href={cardUrl}
         download={`stara-${username}.png`}
-        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-600 dark:border-slate-600 dark:text-slate-600"
+        className="flex min-h-11 items-center justify-center gap-2 rounded-xl border border-slate-300 text-sm font-semibold text-slate-900"
       >
         <Download size={18} /> 이미지 다운로드
       </a>
