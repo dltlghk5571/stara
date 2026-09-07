@@ -49,12 +49,7 @@ function GenerateInner() {
     const option = options[optionIndex];
     if (!option) return;
     const optionLabel = locale === "ko" ? option.labelKo : option.labelEn;
-    setMainRoute(
-      option.places,
-      region.id,
-      artistIds,
-      `${locale === "ko" ? region.nameKo : region.nameEn} · ${optionLabel}`,
-    );
+    setMainRoute(option.places, region.id, artistIds, `${regionLabel} · ${optionLabel}`);
     router.push("/trip");
   }
 
