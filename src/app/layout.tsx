@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
 import { ClerkProvider } from "@clerk/nextjs";
+import { LocaleProvider, LOCALE_COOKIE, parseLocale } from "@/i18n";
 import "./globals.css";
 import "@/styles/prototype.css";
 // kroute.html(새 와이어프레임) 리스킨용 전역 스타일 — 이관이 끝나면 위 prototype.css를 뺀다.
@@ -22,18 +24,21 @@ const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "STARA - 스타 따라 STARA",
-  description: "K-pop 아티스트의 발자취를 따라가는 게임형 서울 여행 코스, STARA",
+  title: "STARA — Follow Your Star",
+  description:
+    "A game-style K-culture travel course that follows in your favorite K-pop artists' footsteps.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = parseLocale((await cookies()).get(LOCALE_COOKIE)?.value);
+
   return (
     <html
-      lang="ko"
+      lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased bg-neutral-900`}
     >
       <head>
@@ -53,7 +58,9 @@ export default function RootLayout({
         className="mx-auto flex min-h-full max-w-[430px] flex-col overflow-x-hidden bg-slate-50 text-slate-900 shadow-[0_0_60px_rgba(0,0,0,0.6)]"
         style={{ transform: "translateZ(0)" }} /* position:fixed 오버레이가 뷰포트 전체가 아니라 이 프레임 안에만 뜨도록 containing block 지정 */
       >
-        <ClerkProvider>{children}</ClerkProvider>
+        <LocaleProvider initialLocale={locale}>
+          <ClerkProvider>{children}</ClerkProvider>
+        </LocaleProvider>
         {/*
           일반 <script> 태그(next/script 아님) — TMap SDK가 내부적으로 document.write()로
           자기 하위 모듈을 불러오는 구식 방식이라, 브라우저 HTML 파서가 직접 만난 <script>여야
