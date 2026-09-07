@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { levelFromStamps, nextRewardLabel, stampsUntilNextLevel } from "./gamification";
+import { levelFromStamps, nextRewardKey, stampsUntilNextLevel } from "./gamification";
 
 describe("levelFromStamps", () => {
   it("0개면 레벨 1부터 시작한다", () => {
@@ -23,9 +23,9 @@ describe("stampsUntilNextLevel", () => {
   });
 });
 
-describe("nextRewardLabel", () => {
-  it("항상 문자열 보상 문구를 반환한다", () => {
-    expect(typeof nextRewardLabel(0)).toBe("string");
-    expect(nextRewardLabel(0).length).toBeGreaterThan(0);
+describe("nextRewardKey", () => {
+  it("항상 trip.rewards.rewardN 형태의 사전 키를 반환한다", () => {
+    expect(nextRewardKey(0)).toMatch(/^trip\.rewards\.reward[1-5]$/);
+    expect(nextRewardKey(15)).toMatch(/^trip\.rewards\.reward[1-5]$/);
   });
 });

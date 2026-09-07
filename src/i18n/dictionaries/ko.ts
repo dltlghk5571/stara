@@ -88,6 +88,13 @@ export const ko: Dict = {
     missionComplete: "미션 완료 ✓",
     goNow: "지금 가세요!",
     goBadge: "고! 🎯",
+    rewards: {
+      reward1: "AR 스티커 팩",
+      reward2: "한정판 포토카드 프레임",
+      reward3: "K-ROUTE 다이어리 커버",
+      reward4: "여행자 배지",
+      reward5: "비밀 성지 지도",
+    },
   },
   mission: {
     activeBadge: "미션 진행 중 🎯",
@@ -205,5 +212,20 @@ export const ko: Dict = {
   nav: {
     signIn: "로그인",
     myCollection: "내 컬렉션북",
+  },
+  splash: {
+    passportPill: "K-트래블 패스포트",
+    tagline: "스타 따라, K-culture 여행 ✦",
+    cardHeading: "코리아 어드벤처",
+    cardSub: "스탬프를 모으고 · 루트를 완성하세요",
+    cta: "탐험 시작 🚀",
+    version: "v1.0.0 · K-러브로 만들었어요 💕",
+  },
+  signIn: {
+    welcome: "STARA에 오신 걸 환영해요",
+    passportPill: "나의 K-트래블 패스포트 ✨",
+    terms: "계속하면 STARA의 약관 및 개인정보 처리방침에 동의하게 됩니다.",
+    joinTitle: "STARA 가입",
+    joinPill: "몇 초면 가입 끝 ✨",
   },
 };

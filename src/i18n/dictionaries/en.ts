@@ -87,6 +87,13 @@ export const en = {
     missionComplete: "Mission Complete ✓",
     goNow: "GO NOW!",
     goBadge: "GO! 🎯",
+    rewards: {
+      reward1: "AR sticker pack",
+      reward2: "Limited-edition photocard frame",
+      reward3: "K-ROUTE diary cover",
+      reward4: "Traveler badge",
+      reward5: "Secret pilgrimage map",
+    },
   },
   mission: {
     activeBadge: "ACTIVE MISSION 🎯",
@@ -205,6 +212,21 @@ export const en = {
   nav: {
     signIn: "Sign in",
     myCollection: "My collection book",
+  },
+  splash: {
+    passportPill: "K-TRAVEL PASSPORT",
+    tagline: "Follow your star, travel K-culture ✦",
+    cardHeading: "KOREA ADVENTURE",
+    cardSub: "Collect stamps · complete your route",
+    cta: "START EXPEDITION 🚀",
+    version: "v1.0.0 · Made with K-Love 💕",
+  },
+  signIn: {
+    welcome: "Welcome to STARA",
+    passportPill: "YOUR K-TRAVEL PASSPORT ✨",
+    terms: "By continuing, you agree to STARA's Terms & Privacy Policy.",
+    joinTitle: "Join STARA",
+    joinPill: "Sign up in seconds ✨",
   },
 };
 

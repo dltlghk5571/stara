@@ -6,7 +6,7 @@ import { useUser } from "@clerk/nextjs";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import { getPlaceById } from "@/data/places";
-import { levelFromStamps, nextRewardLabel } from "@/lib/gamification";
+import { levelFromStamps, nextRewardKey } from "@/lib/gamification";
 import MapView from "@/components/map/MapView";
 import StampGrid from "@/components/stamp/StampGrid";
 import MissionSheet from "@/components/trip/MissionSheet";
@@ -309,7 +309,7 @@ function CoverTab({
 function StampsTab({ orderedPlaces, earnedStampIds }: { orderedPlaces: Place[]; earnedStampIds: string[] }) {
   const t = useT();
   const level = levelFromStamps(earnedStampIds.length);
-  const reward = nextRewardLabel(earnedStampIds.length);
+  const reward = t(nextRewardKey(earnedStampIds.length));
   return (
     <div className="kr-scrollY" style={{ height: "100%", padding: "48px 24px 24px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
