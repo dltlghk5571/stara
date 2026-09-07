@@ -8,6 +8,6 @@ export const en = {
     noInfo: "No info",
     minutes: "{n} min",
   },
-} as const;
+};
 
 export type Dict = typeof en;
