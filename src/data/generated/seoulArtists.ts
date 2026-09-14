@@ -4,34 +4,9 @@ import type { Artist } from "@/types";
 
 export const SEOUL_ARTISTS: Artist[] = [
   {
-    id: "ateez",
-    name: "에이티즈",
-    nameEn: "ATEEZ",
-  },
-  {
-    id: "bigbang-g-dragon",
-    name: "지드래곤",
-    nameEn: "G-Dragon",
-  },
-  {
-    id: "bigbang-taeyang",
-    name: "태양",
-    nameEn: "Taeyang",
-  },
-  {
-    id: "blackpink",
-    name: "블랙핑크",
-    nameEn: "BLACKPINK",
-  },
-  {
-    id: "bts",
-    name: "방탄소년단",
-    nameEn: "BTS",
-  },
-  {
-    id: "bts-rm",
-    name: "알엠",
-    nameEn: "RM",
+    id: "newjeans",
+    name: "뉴진스",
+    nameEn: "NewJeans",
   },
   {
     id: "enhypen",
@@ -39,44 +14,9 @@ export const SEOUL_ARTISTS: Artist[] = [
     nameEn: "ENHYPEN",
   },
   {
-    id: "enhypen-jungwon",
-    name: "정원",
-    nameEn: "Jungwon",
-  },
-  {
-    id: "enhypen-sunghoon",
-    name: "성훈",
-    nameEn: "Sunghoon",
-  },
-  {
-    id: "exo",
-    name: "엑소",
-    nameEn: "EXO",
-  },
-  {
-    id: "exo-baekhyun",
-    name: "백현",
-    nameEn: "Baekhyun",
-  },
-  {
-    id: "exo-chanyeol",
-    name: "찬열",
-    nameEn: "Chanyeol",
-  },
-  {
-    id: "exo-chen",
-    name: "첸",
-    nameEn: "Chen",
-  },
-  {
-    id: "exo-kai",
-    name: "카이",
-    nameEn: "Kai",
-  },
-  {
-    id: "exo-xiumin",
-    name: "시우민",
-    nameEn: "Xiumin",
+    id: "bts",
+    name: "방탄소년단",
+    nameEn: "BTS",
   },
   {
     id: "illit",
@@ -84,29 +24,14 @@ export const SEOUL_ARTISTS: Artist[] = [
     nameEn: "ILLIT",
   },
   {
-    id: "ive",
-    name: "아이브",
-    nameEn: "IVE",
+    id: "ateez",
+    name: "에이티즈",
+    nameEn: "ATEEZ",
   },
   {
-    id: "le-sserafim",
-    name: "르세라핌",
-    nameEn: "LE SSERAFIM",
-  },
-  {
-    id: "nct",
-    name: "엔시티",
-    nameEn: "NCT",
-  },
-  {
-    id: "nct-taeyong",
-    name: "태용",
-    nameEn: "Taeyong",
-  },
-  {
-    id: "red-velvet",
-    name: "레드벨벳",
-    nameEn: "Red Velvet",
+    id: "blackpink",
+    name: "블랙핑크",
+    nameEn: "BLACKPINK",
   },
   {
     id: "seventeen",
@@ -114,14 +39,9 @@ export const SEOUL_ARTISTS: Artist[] = [
     nameEn: "SEVENTEEN",
   },
   {
-    id: "stray-kids",
-    name: "스트레이 키즈",
-    nameEn: "Stray Kids",
-  },
-  {
-    id: "stray-kids-i-n",
-    name: "아이엔",
-    nameEn: "I.N",
+    id: "txt",
+    name: "투모로우바이투게더",
+    nameEn: "TXT",
   },
   {
     id: "twice",
@@ -129,23 +49,33 @@ export const SEOUL_ARTISTS: Artist[] = [
     nameEn: "TWICE",
   },
   {
-    id: "txt",
-    name: "투모로우바이투게더",
-    nameEn: "TXT",
+    id: "stray-kids",
+    name: "스트레이 키즈",
+    nameEn: "Stray Kids",
   },
   {
-    id: "txt-beomgyu",
-    name: "범규",
-    nameEn: "Beomgyu",
+    id: "aespa",
+    name: "에스파",
+    nameEn: "aespa",
   },
   {
-    id: "txt-soobin",
-    name: "수빈",
-    nameEn: "Soobin",
+    id: "nct",
+    name: "엔시티",
+    nameEn: "NCT",
   },
   {
-    id: "txt-yeonjun",
-    name: "연준",
-    nameEn: "Yeonjun",
+    id: "exo",
+    name: "엑소",
+    nameEn: "EXO",
+  },
+  {
+    id: "red-velvet",
+    name: "레드벨벳",
+    nameEn: "Red Velvet",
+  },
+  {
+    id: "bigbang",
+    name: "빅뱅",
+    nameEn: "BIGBANG",
   }
 ];
