@@ -4,6 +4,7 @@ import { AlertTriangle, Clock } from "lucide-react";
 import type { ScheduleResult } from "@/types";
 import type { RemovalSuggestion } from "@/store/useTripPlan";
 import { useT, useLocale, placeName } from "@/i18n";
+import { formatTime } from "@/lib/time";
 
 interface Props {
   schedule: ScheduleResult;
@@ -48,7 +49,7 @@ export default function ScheduleFooter({
         ) : (
           <div className="time-field">
             <Clock size={16} />
-            {t("schedule.endEstimate", { time: schedule.endTime })}
+            {t("schedule.endEstimate", { time: formatTime(schedule.endTime, locale) })}
           </div>
         )}
         <span style={{ fontFamily: "'Space Mono', monospace", fontSize: "11px", color: "var(--gray)" }}>
@@ -60,7 +61,7 @@ export default function ScheduleFooter({
       </div>
       {editable && (
         <p style={{ marginTop: "4px", fontSize: "11px", color: "var(--gray)" }}>
-          {t("schedule.endEstimate", { time: schedule.endTime })}
+          {t("schedule.endEstimate", { time: formatTime(schedule.endTime, locale) })}
         </p>
       )}
 
@@ -72,7 +73,7 @@ export default function ScheduleFooter({
               {t("schedule.overByTitle", {
                 n: schedule.overLimitMinutes,
                 label: endTime
-                  ? t("schedule.endTimeLabel", { time: endTime })
+                  ? t("schedule.endTimeLabel", { time: formatTime(endTime, locale) })
                   : t("schedule.endTimePlanned"),
               })}
             </p>
