@@ -70,6 +70,7 @@ export const en = {
     diaryEmpty: "Finish your first mission and your diary starts filling up.",
     diarySubtitle: "Your trip, moment by moment ✨",
     diaryTitle: "My K-ROUTE Diary",
+    diaryPhotoCount: "{n} photos",
     prevPhoto: "Previous photo",
     nextPhoto: "Next photo",
     welcomeBack: "WELCOME BACK!",

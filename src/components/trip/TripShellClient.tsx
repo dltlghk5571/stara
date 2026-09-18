@@ -473,12 +473,14 @@ function RouteTab({
   );
 }
 
+/** 다이어리(여행 회차) 목록 — 위아래로 스크롤되는 세로 카드 리스트. 카드를 탭하면 그
+ *  다이어리의 추억들을 처음부터 좌우로 넘겨보는 DiaryViewer가 바로 열린다(목록 안에서
+ *  개별 사진을 먼저 고르는 중간 단계 없음). */
 function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicPlacesById: Map<string, Place> }) {
   const t = useT();
-  const { locale } = useLocale();
-  const [activeKey, setActiveKey] = useState(groups[0]?.key ?? null);
-  const active = groups.find((g) => g.key === activeKey) ?? groups[0];
+  const [openGroupKey, setOpenGroupKey] = useState<string | null>(null);
   const [viewerIndex, setViewerIndex] = useState<number | null>(null);
+  const openGroup = groups.find((g) => g.key === openGroupKey) ?? null;
 
   if (groups.length === 0) {
     return (
@@ -489,7 +491,15 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
     );
   }
 
-  const days = groupByDay(active.photos, locale);
+  function openDiary(key: string) {
+    setOpenGroupKey(key);
+    setViewerIndex(0);
+  }
+
+  function closeViewer() {
+    setViewerIndex(null);
+    setOpenGroupKey(null);
+  }
 
   return (
     <div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
@@ -498,69 +508,40 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
         <p style={{ fontFamily: "Caveat", fontSize: 17, color: MUTED_PINK, fontStyle: "italic", marginTop: 2 }}>{t("trip.diarySubtitle")}</p>
       </div>
 
-      {groups.length > 1 && (
-        <div style={{ display: "flex", gap: 8, padding: "0 24px 12px", flexShrink: 0, overflowX: "auto" }}>
-          {groups.map((g) => (
-            <button
+      <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
+        {groups.map((g) => {
+          const cover = g.photos[0];
+          return (
+            <KCard
               key={g.key}
-              type="button"
-              className="kr-reset"
-              onClick={() => setActiveKey(g.key)}
-              style={{
-                padding: "6px 14px",
-                borderRadius: 50,
-                border: "2.5px solid #111111",
-                background: g.key === active.key ? PINK : WHITE,
-                color: g.key === active.key ? WHITE : "#111",
-                fontFamily: "Outfit",
-                fontWeight: 700,
-                fontSize: 12,
-                whiteSpace: "nowrap",
-              }}
+              onClick={() => openDiary(g.key)}
+              style={{ padding: 0, overflow: "hidden", cursor: "pointer", display: "flex", alignItems: "stretch" }}
             >
-              {g.name}
-            </button>
-          ))}
-        </div>
-      )}
-
-      <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 8px" }}>
-        {days.map(([day, photos]) => (
-          <div key={day} style={{ marginBottom: 8 }}>
-            <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 13, color: "#666", marginBottom: 8 }}>{day}</p>
-            {photos.map((photo) => (
-              <KCard
-                key={photo.id}
-                onClick={() => setViewerIndex(active.photos.findIndex((p) => p.id === photo.id))}
-                style={{ marginBottom: 16, padding: 0, overflow: "hidden", cursor: "pointer" }}
-              >
-                <div style={{ height: 160, position: "relative" }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={photo.photoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                  <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom,transparent,rgba(0,0,0,.35))" }} />
-                  <div style={{ position: "absolute", bottom: 8, left: 12 }}>
-                    <Pill bg={WHITE}>📍 {resolvePlaceName(photo, dynamicPlacesById, locale, t("trip.noPlaceInfo"))}</Pill>
-                  </div>
-                </div>
-                {photo.note && (
-                  <div style={{ padding: "12px 16px" }}>
-                    <p style={{ fontFamily: "Caveat", fontSize: 16, fontStyle: "italic", color: MUTED_PINK, lineHeight: 1.4 }}>
-                      &quot;{photo.note}&quot;
-                    </p>
-                  </div>
+              <div style={{ width: 96, height: 96, flexShrink: 0, position: "relative", background: "#eee" }}>
+                {cover && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={cover.photoUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 )}
-              </KCard>
-            ))}
-          </div>
-        ))}
+              </div>
+              <div style={{ padding: 12, flex: 1, minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 15, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {g.name}
+                </p>
+                <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#666", marginTop: 4 }}>
+                  {t("trip.diaryPhotoCount", { n: g.photos.length })}
+                </p>
+              </div>
+            </KCard>
+          );
+        })}
       </div>
 
-      {viewerIndex !== null && (
+      {openGroup && viewerIndex !== null && (
         <DiaryViewer
-          photos={active.photos}
+          photos={openGroup.photos}
           index={viewerIndex}
           onIndexChange={setViewerIndex}
-          onClose={() => setViewerIndex(null)}
+          onClose={closeViewer}
           dynamicPlacesById={dynamicPlacesById}
         />
       )}
@@ -670,7 +651,7 @@ function DiaryViewer({
           {resolvePlaceName(photo, dynamicPlacesById, locale, t("trip.noPlaceInfo"))}
         </p>
         <p style={{ fontFamily: "Nunito", fontSize: 12, color: "rgba(255,255,255,.6)", marginTop: 4 }}>
-          {index + 1} / {photos.length}
+          {formatPhotoDate(photo.completedAt, locale)} · {index + 1} / {photos.length}
         </p>
         {photo.note && (
           <p style={{ fontFamily: "Caveat", fontSize: 16, fontStyle: "italic", color: "#fff", marginTop: 8 }}>
@@ -682,16 +663,9 @@ function DiaryViewer({
   );
 }
 
-function groupByDay(photos: DiaryPhoto[], locale: Locale): [string, DiaryPhoto[]][] {
-  const map = new Map<string, DiaryPhoto[]>();
-  for (const photo of photos) {
-    const day = new Date(photo.completedAt).toLocaleDateString(locale === "ko" ? "ko-KR" : "en-US", {
-      month: "long",
-      day: "numeric",
-    });
-    const list = map.get(day) ?? [];
-    list.push(photo);
-    map.set(day, list);
-  }
-  return Array.from(map.entries());
+function formatPhotoDate(isoDate: string, locale: Locale): string {
+  return new Date(isoDate).toLocaleDateString(locale === "ko" ? "ko-KR" : "en-US", {
+    month: "long",
+    day: "numeric",
+  });
 }

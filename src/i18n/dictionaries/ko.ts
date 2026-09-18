@@ -71,6 +71,7 @@ export const ko: Dict = {
     diaryEmpty: "첫 미션을 완료하면 다이어리가 채워져요.",
     diarySubtitle: "여행 기록 & 순간들 ✨",
     diaryTitle: "나의 K-ROUTE 다이어리",
+    diaryPhotoCount: "사진 {n}장",
     prevPhoto: "이전 사진",
     nextPhoto: "다음 사진",
     welcomeBack: "다시 오셨네요!",
