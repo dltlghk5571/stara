@@ -34,8 +34,72 @@ Vercel 프로젝트 설정 → Environment Variables 에 아래 값을 등록하
 | `TOUR_API_RELATED_BASE_URL` | 선택 | 기본값 `apis.data.go.kr/B551011/TarRlteTarService1` |
 | `TMAP_API_BASE_URL` | 선택 | 기본값 `apis.openapi.sk.com/tmap` |
 | `TOUR_SEARCH_RADIUS_METERS` | 선택 | 기본값 2000(m) |
+| `ANTHROPIC_API_KEY` | 선택(없으면 T-money 인증 퀘스트만 500 에러, 나머지 기능엔 영향 없음) | T-money 카드 인증 세그먼트 퀘스트의 사진 판별(Claude Vision)에 사용. 서버 전용, `NEXT_PUBLIC_`로 노출 안 함 |
+| `ANTHROPIC_MODEL` | 선택 | 기본값 `claude-sonnet-5` |
 
 `DATABASE_URL`(Neon Postgres 연결 문자열)도 Vercel에 등록되어 있어야 합니다.
+
+### T-money 카드 인증 퀘스트
+
+이동 구간(핀과 핀 사이)에 배치되는 보너스 서브 퀘스트 중 하나("T-money 카드
+인증하기")는 실제 물리 카드 사진을 AI(Claude Vision)로 판별해 통과시키는
+사진/사물 인증 퀘스트다. 여행당 정확히 1개, 결정론적 "중간" 구간에만 배정된다
+(`src/lib/scheduleCalculator.ts`의 `pickTmoneySegmentIndex`).
+
+- **GPS 미사용**: 이 퀘스트는 `navigator.geolocation`을 전혀 호출하지 않는다. 장소
+  좌표나 `GPS_MISSION_RADIUS_METERS`와 무관한, 순수 사진 분류 퀘스트다.
+- **사진 미저장**: 제출한 사진은 판별 목적으로만 서버 → Anthropic API로 전송되고
+  즉시 폐기된다. Vercel Blob 업로드도, `quest_photos` DB 기록도, 다이어리 저장도
+  하지 않는다 — 저장되는 건 퀘스트 완료 여부(`completedQuestIds`)뿐이다.
+- **판별 로직**: `src/lib/tmoney/classifyTmoneyCard.ts` (서버 전용) + API 라우트
+  `src/app/api/quests/verify-tmoney/route.ts`(Clerk 인증 필요). T-money 브랜드만
+  통과시키며, 캐시비/레일플러스/이즐 등 다른 교통카드나 일반 카드, 화면에 띄운
+  이미지는 실패 처리한다. 신뢰도가 낮으면(`confidence: "low"`) 통과시키지 않고
+  재촬영을 유도한다.
+
+### 테스트(tester) 계정 — 검증 우회 모드
+
+개발/데모용으로, GPS 체크포인트 미션과 T-money 카드 인증을 실제로 수행하지 않고도
+퀘스트를 완료할 수 있는 "테스터" 계정을 만들 수 있다. **일반 유저의 동작은 절대
+바뀌지 않는다** — 아래 설정을 한 Clerk 계정에만 적용된다.
+
+**설정 방법(Clerk Dashboard)**
+
+1. Clerk Dashboard → Users → 테스트용으로 쓸 유저를 만들거나 선택
+2. 해당 유저의 Metadata 탭 → **Public metadata**에 아래 JSON을 저장:
+   ```json
+   { "role": "tester" }
+   ```
+3. 별도 세션 토큰 커스터마이즈는 필요 없다 — 서버 라우트(`getServerVerificationCapabilities`)가
+   `currentUser()`로 Public metadata를 직접 조회하므로 Dashboard의 세션 토큰 설정을
+   건드리지 않아도 바로 동작한다. (이미 세션 토큰 claim을 커스텀하고 있다면
+   `src/lib/auth/getServerVerificationCapabilities.ts`를 그 claim을 읽도록 바꿔도 된다 —
+   API 호출 없이 더 빠르게 판정할 수 있다.)
+
+테스트 계정의 로그인 정보(이메일/비밀번호)는 이 저장소에 커밋하지 말 것 — 별도
+채널(팀 비밀번호 관리 도구 등)로 공유한다.
+
+**우회되는 것**
+
+| 영역 | 일반 유저 | 테스터 |
+|---|---|---|
+| 장소 체크포인트 GPS | `navigator.geolocation` 호출, 반경 200m 검증 | GPS 요청 자체를 안 함 — `"테스트 계정 · GPS 인증 생략"` 배지만 표시. 사진 첨부 등 나머지 미션 흐름은 동일 |
+| T-money 카드 인증 | 사진 촬영 → 리사이즈 → `/api/quests/verify-tmoney` → Claude Vision 판별 | 사진 없이 "테스트 인증 완료" 버튼만 누르면 완료. Anthropic 호출 없음 |
+
+퀘스트 완료 처리는 두 경우 모두 같은 `completeQuest()`(멱등)를 거치고, 서버
+(`/api/quests/verify-tmoney`)가 요청 시점에 Clerk 세션에서 다시 tester 여부를 확인한
+뒤에만 우회를 승인한다 — 일반 유저가 요청 바디에 `testBypass: true`를 직접 보내도
+통과하지 않는다. capability 판정 로직은
+`src/lib/auth/verificationCapabilities.ts` 한 곳에 모여 있다
+(`useVerificationCapabilities`가 클라이언트용, `getServerVerificationCapabilities`가
+서버용).
+
+**같은 브라우저에서 계정을 바꿀 때**: 여행 진행 상태(`completedQuestIds`,
+`earnedStampIds` 등)는 브라우저 로컬(zustand persist)에 저장되므로, `tripStore`가
+`ownerUserId`로 소유자를 구분한다(`TripOwnershipGuard`가 전역에서 Clerk userId 변화를
+감지해 자동으로 바인딩). 같은 유저가 로그아웃 후 다시 로그인하면 로컬 여행이
+그대로 남고, 테스터 → 일반 계정처럼 **다른** 유저로 전환되면 이전 진행 상황이 전부
+초기화된다 — 테스터의 완료 기록이 일반 계정에 보이는 일은 없다.
 
 ### DB 스키마 변경 적용 (새 환경/Vercel)
 

@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { LocaleProvider, LOCALE_COOKIE, parseLocale } from "@/i18n";
+import TripOwnershipGuard from "@/components/auth/TripOwnershipGuard";
+import TestModeBadge from "@/components/auth/TestModeBadge";
 import "./globals.css";
 import "@/styles/prototype.css";
 // kroute.html(새 와이어프레임) 리스킨용 전역 스타일 — 이관이 끝나면 위 prototype.css를 뺀다.
@@ -59,7 +61,11 @@ export default async function RootLayout({
         style={{ transform: "translateZ(0)" }} /* position:fixed 오버레이가 뷰포트 전체가 아니라 이 프레임 안에만 뜨도록 containing block 지정 */
       >
         <LocaleProvider initialLocale={locale}>
-          <ClerkProvider>{children}</ClerkProvider>
+          <ClerkProvider>
+            <TripOwnershipGuard />
+            <TestModeBadge />
+            {children}
+          </ClerkProvider>
         </LocaleProvider>
         {/*
           일반 <script> 태그(next/script 아님) — TMap SDK가 내부적으로 document.write()로

@@ -100,6 +100,23 @@ export function getQuestsForPlace(place: Place): Quest[] {
   ];
 }
 
+/**
+ * AI 사진 인증 세그먼트 퀘스트 — 여행당 정확히 한 번, 결정론적 "중간" 구간에만 배정된다
+ * (scheduleCalculator.ts 참고). 나머지 구간처럼 SUB_QUEST_TEMPLATES를 순환 배정하지
+ * 않는다 — 그래서 이 풀에는 포함하지 않고 별도 상수로 둔다. GPS 검증 없음(사진/사물
+ * 인증 퀘스트).
+ */
+export const TMONEY_SEGMENT_QUEST_TEMPLATE: Omit<Quest, "id" | "segmentId" | "stampId"> = {
+  type: "experience",
+  titleKo: "T-money 카드 인증하기",
+  titleEn: "Show your T-money card",
+  descriptionKo: "사용 중인 T-money 카드 전체가 보이도록 사진을 찍어 인증해보세요.",
+  descriptionEn: "Take a clear photo of your T-money card to complete this challenge.",
+  required: false,
+  rewardType: "bonus_point",
+  verification: { type: "tmoney_photo" },
+};
+
 /** 이동 구간(핀 사이)에 배치되는 보너스 서브 퀘스트 템플릿 풀 */
 export const SUB_QUEST_TEMPLATES: Omit<
   Quest,
@@ -122,15 +139,6 @@ export const SUB_QUEST_TEMPLATES: Omit<
     descriptionEn: "Learn a practical Korean phrase while moving: 'I don't need a receipt'",
     required: false,
     rewardType: "bonus_stamp",
-  },
-  {
-    type: "experience",
-    titleKo: "교통카드로 이동하기",
-    titleEn: "Ride using a transit card",
-    descriptionKo: "다음 장소까지 교통카드를 이용해 이동해보세요.",
-    descriptionEn: "Use a transit card to get to the next location.",
-    required: false,
-    rewardType: "bonus_point",
   },
   {
     type: "experience",

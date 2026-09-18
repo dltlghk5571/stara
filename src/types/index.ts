@@ -66,6 +66,13 @@ export type QuestType =
 
 export type RewardType = "stamp" | "bonus_stamp" | "bonus_point";
 
+/**
+ * 퀘스트를 "어떻게 완료 처리하는가". 없으면(undefined) manual(체크박스로 직접 완료)로
+ * 취급한다 — 기존 퀘스트는 전부 이 필드가 없어도 그대로 동작한다. Quest.type(무엇에 대한
+ * 퀘스트인가)과는 별개 축이라 섞지 않는다.
+ */
+export type QuestVerification = { type: "manual" } | { type: "tmoney_photo" };
+
 export interface Quest {
   id: string;
   placeId?: string;
@@ -78,6 +85,8 @@ export interface Quest {
   required: boolean;
   rewardType: RewardType;
   stampId?: string;
+  /** 생략 시 manual(체크박스)로 취급. */
+  verification?: QuestVerification;
 }
 
 export interface StaraRoute {

@@ -73,6 +73,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
   const earnedStampIds = useTripStore((s) => s.earnedStampIds);
   const completedQuestIds = useTripStore((s) => s.completedQuestIds);
   const toggleQuest = useTripStore((s) => s.toggleQuest);
+  const completeQuest = useTripStore((s) => s.completeQuest);
   const startedAt = useTripStore((s) => s.startedAt);
   const mainRoutePlaces = useTripStore((s) => s.mainRoutePlaces);
   const customPlaces = useTripStore((s) => s.customPlaces);
@@ -170,6 +171,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
             }
             completedQuestIds={completedQuestIds}
             onToggleSubQuest={toggleQuest}
+            onVerifiedCompleteSubQuest={completeQuest}
             onOpenMission={openMission}
             onFinish={() => {
               completeTrip();
@@ -348,6 +350,7 @@ function RouteTab({
   segmentQuest,
   completedQuestIds,
   onToggleSubQuest,
+  onVerifiedCompleteSubQuest,
   onOpenMission,
   onFinish,
 }: {
@@ -357,6 +360,7 @@ function RouteTab({
   segmentQuest?: Quest;
   completedQuestIds: string[];
   onToggleSubQuest: (questId: string) => void;
+  onVerifiedCompleteSubQuest: (questId: string) => void;
   onOpenMission: (i: number) => void;
   onFinish: () => void;
 }) {
@@ -393,7 +397,12 @@ function RouteTab({
 
       {segmentQuest && (
         <div style={{ padding: "0 24px", marginBottom: 10, flexShrink: 0 }}>
-          <SubQuestList quest={segmentQuest} completedQuestIds={completedQuestIds} onToggle={onToggleSubQuest} />
+          <SubQuestList
+            quest={segmentQuest}
+            completedQuestIds={completedQuestIds}
+            onToggle={onToggleSubQuest}
+            onVerifiedComplete={onVerifiedCompleteSubQuest}
+          />
         </div>
       )}
 

@@ -9,6 +9,7 @@ import { GPS_MISSION_CHECK_ENABLED, GPS_MISSION_RADIUS_METERS } from "@/config";
 import { KButton, KCard, Pill } from "@/components/ui/kroute";
 import { useT, useLocale, placeName, questTitle, questDesc } from "@/i18n";
 import { LIME, PALGREEN, PINK, YELLOW } from "@/lib/kroute-tokens";
+import { useVerificationCapabilities } from "@/lib/auth/useVerificationCapabilities";
 import type { DiaryPhoto } from "@/components/trip/TripShellClient";
 import type { Place } from "@/types";
 
@@ -19,7 +20,11 @@ interface Props {
   onComplete: (photo: DiaryPhoto) => void;
 }
 
-type GpsStatus = "checking" | "ok" | "far" | "unavailable";
+/**
+ * "test_bypass"는 좌표를 흉내 내지 않는다 — 테스터에게는 GPS 요청 자체가 일어나지 않았다는
+ * 것을 명시적으로 드러내는 별도 상태다(gps === "ok"로 위장하지 않음).
+ */
+type GpsStatus = "checking" | "ok" | "far" | "unavailable" | "test_bypass";
 
 /**
  * 미션 시트 — 사진 첨부 + 위치 확인이 필수다. 제출하면 업로드 → quest_photos 저장 →
@@ -28,6 +33,10 @@ type GpsStatus = "checking" | "ok" | "far" | "unavailable";
  * 사진 자체(내용)는 아직 검증하지 않고 항상 통과시킨다 — 대신 GPS로 "이 장소 근처에
  * 실제로 있었는지"만 확인한다. 위치를 못 가져오면(권한거부/미지원/타임아웃) 사용자가
  * 영구히 막히지 않도록 검증을 건너뛰고 통과시킨다.
+ *
+ * 테스터 계정(capabilities.bypassGpsMission)은 navigator.geolocation을 아예 호출하지
+ * 않는다 — 좌표를 조작하는 게 아니라 GPS 검증 단계 자체를 건너뛴다. 그 외 사진 선택/업로드/
+ * 퀘스트 완료/스탬프 발급 흐름은 일반 유저와 동일하게 그대로 거친다.
  */
 export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const t = useT();
@@ -37,6 +46,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const toggleQuest = useTripStore((s) => s.toggleQuest);
   const completedQuestIds = useTripStore((s) => s.completedQuestIds);
   const claimStamp = useTripStore((s) => s.claimStamp);
+  const { bypassGpsMission } = useVerificationCapabilities();
 
   const [file, setFile] = useState<File | Blob | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -45,9 +55,11 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const [savedPhoto, setSavedPhoto] = useState<DiaryPhoto | null>(null);
 
   const [gps, setGps] = useState<GpsStatus>(() =>
-    GPS_MISSION_CHECK_ENABLED && typeof navigator !== "undefined" && navigator.geolocation
-      ? "checking"
-      : "unavailable"
+    bypassGpsMission
+      ? "test_bypass"
+      : GPS_MISSION_CHECK_ENABLED && typeof navigator !== "undefined" && navigator.geolocation
+        ? "checking"
+        : "unavailable"
   );
   const [gpsDistanceM, setGpsDistanceM] = useState<number | null>(null);
 
@@ -71,14 +83,18 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
   }
 
   function retryLocation() {
+    if (bypassGpsMission) return; // 우회 상태에는 재확인 버튼 자체가 안 보이므로 방어적으로만 둔다
     setGps("checking");
     fetchLocation();
   }
 
   useEffect(() => {
+    // 우회 상태는 초기 useState 값에서 이미 "test_bypass"로 세팅됐다 — 여기서 또
+    // navigator.geolocation을 호출하거나 setState할 필요가 없다(절대 호출 금지).
+    if (bypassGpsMission) return;
     fetchLocation();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [place.id]);
+  }, [place.id, bypassGpsMission]);
 
   async function handleFile(rawFile: File) {
     const isHeic =
@@ -234,6 +250,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             {gps === "ok" && <Pill bg={PALGREEN}>{t("mission.gpsOk")}</Pill>}
             {gps === "far" && <Pill bg="#FFD6D6">{t("mission.gpsFar", { n: gpsDistanceM ?? 0 })}</Pill>}
             {gps === "unavailable" && <Pill bg="#eee" color="#666">{t("mission.gpsSkipped")}</Pill>}
+            {gps === "test_bypass" && <Pill bg={YELLOW}>{t("mission.gpsTestBypass")}</Pill>}
           </div>
 
           <div style={{ display: "flex", gap: 12, alignItems: "flex-start", marginBottom: 14 }}>
