@@ -1,0 +1,94 @@
+{
+  "bigbang-culture-leeum-museum-of-art": [
+    {
+      "placeId": "bigbang-culture-leeum-museum-of-art",
+      "artistId": "seventeen",
+      "action": "needs_evidence_recovery",
+      "reason": "Narrowed relationText only supports G-Dragon (BIGBANG). Source fetch explicitly found no mention of Hoshi/S.Coups (SEVENTEEN) — no other citation evidence exists anywhere in current research.",
+      "status": "proposed",
+      "proposedAt": "2026-09-18T11:13:38.318Z",
+      "originalAction": "remove_artist_relation",
+      "disposition": "provenance_missing",
+      "supersededAt": "2026-09-18T13:26:23.604Z",
+      "supersededReason": "정책 수정 2026-09-18: previewdata는 이 항목들이 저장되기 전에 이미 사람이 여러 근거로 검토한 human-reviewed baseline이다. 현재 보존된 citation/relationText가 이 artistId를 재구성하지 못한다는 것은 traceability 문제일 뿐, 관계가 거짓이라는 증거가 아니다. 이 artistId에 대한 실제 모순 증거(다른 아티스트로 특정됨, 사실관계 충돌 등)는 발견되지 않았으므로 remove_artist_relation에서 needs_evidence_recovery로 재분류한다. artistIds는 변경하지 않는다."
+    },
+    {
+      "placeId": "bigbang-culture-leeum-museum-of-art",
+      "artistId": "enhypen",
+      "action": "needs_evidence_recovery",
+      "reason": "Narrowed relationText only supports G-Dragon (BIGBANG). Source fetch explicitly found no mention of Jungwon (ENHYPEN) — no other citation evidence exists anywhere in current research.",
+      "status": "proposed",
+      "proposedAt": "2026-09-18T11:13:38.319Z",
+      "originalAction": "remove_artist_relation",
+      "disposition": "provenance_missing",
+      "supersededAt": "2026-09-18T13:26:23.606Z",
+      "supersededReason": "정책 수정 2026-09-18: previewdata는 이 항목들이 저장되기 전에 이미 사람이 여러 근거로 검토한 human-reviewed baseline이다. 현재 보존된 citation/relationText가 이 artistId를 재구성하지 못한다는 것은 traceability 문제일 뿐, 관계가 거짓이라는 증거가 아니다. 이 artistId에 대한 실제 모순 증거(다른 아티스트로 특정됨, 사실관계 충돌 등)는 발견되지 않았으므로 remove_artist_relation에서 needs_evidence_recovery로 재분류한다. artistIds는 변경하지 않는다."
+    }
+  ],
+  "bts-activity-seoul-forest": [
+    {
+      "placeId": "bts-activity-seoul-forest",
+      "artistId": "nct",
+      "action": "needs_evidence_recovery",
+      "reason": "Narrowed relationText supports BTS/ATEEZ/ENHYPEN/NewJeans only. Source fetch explicitly found no mention of Taeyong/Johnny/Yuta (NCT) KICHWORK ad claim — no other citation evidence exists.",
+      "status": "proposed",
+      "proposedAt": "2026-09-18T11:13:38.319Z",
+      "originalAction": "remove_artist_relation",
+      "disposition": "provenance_missing",
+      "supersededAt": "2026-09-18T13:26:23.606Z",
+      "supersededReason": "정책 수정 2026-09-18: previewdata는 이 항목들이 저장되기 전에 이미 사람이 여러 근거로 검토한 human-reviewed baseline이다. 현재 보존된 citation/relationText가 이 artistId를 재구성하지 못한다는 것은 traceability 문제일 뿐, 관계가 거짓이라는 증거가 아니다. 이 artistId에 대한 실제 모순 증거(다른 아티스트로 특정됨, 사실관계 충돌 등)는 발견되지 않았으므로 remove_artist_relation에서 needs_evidence_recovery로 재분류한다. artistIds는 변경하지 않는다."
+    },
+    {
+      "placeId": "bts-activity-seoul-forest",
+      "artistId": "seventeen",
+      "action": "needs_evidence_recovery",
+      "reason": "Narrowed relationText does not support SEVENTEEN at Seoul Forest. SEVENTEEN's confirmed Sev Sev Tour connection is to a DIFFERENT place already in the dataset (seventeen-activity-ttukseom-hangang-park, separately cited) — likely a data-entry conflation between two different Han River-area green spaces, not evidence for this place.",
+      "status": "proposed",
+      "proposedAt": "2026-09-18T11:13:38.319Z",
+      "originalAction": "remove_artist_relation",
+      "disposition": "provenance_missing",
+      "supersededAt": "2026-09-18T13:26:23.606Z",
+      "supersededReason": "정책 수정 2026-09-18: previewdata는 이 항목들이 저장되기 전에 이미 사람이 여러 근거로 검토한 human-reviewed baseline이다. 현재 보존된 citation/relationText가 이 artistId를 재구성하지 못한다는 것은 traceability 문제일 뿐, 관계가 거짓이라는 증거가 아니다. 이 artistId에 대한 실제 모순 증거(다른 아티스트로 특정됨, 사실관계 충돌 등)는 발견되지 않았으므로 remove_artist_relation에서 needs_evidence_recovery로 재분류한다. artistIds는 변경하지 않는다."
+    }
+  ],
+  "enhypen-landmark_observatory-bukchon-hanok-village": [
+    {
+      "placeId": "enhypen-landmark_observatory-bukchon-hanok-village",
+      "artistId": "bts",
+      "action": "needs_evidence_recovery",
+      "reason": "Narrowed relationText only supports ENHYPEN (own recommended course). Source fetch explicitly found no mention of BTS Suga \"Daechwita\" — no other citation evidence exists.",
+      "status": "proposed",
+      "proposedAt": "2026-09-18T11:13:38.319Z",
+      "originalAction": "remove_artist_relation",
+      "disposition": "provenance_missing",
+      "supersededAt": "2026-09-18T13:26:23.607Z",
+      "supersededReason": "정책 수정 2026-09-18: previewdata는 이 항목들이 저장되기 전에 이미 사람이 여러 근거로 검토한 human-reviewed baseline이다. 현재 보존된 citation/relationText가 이 artistId를 재구성하지 못한다는 것은 traceability 문제일 뿐, 관계가 거짓이라는 증거가 아니다. 이 artistId에 대한 실제 모순 증거(다른 아티스트로 특정됨, 사실관계 충돌 등)는 발견되지 않았으므로 remove_artist_relation에서 needs_evidence_recovery로 재분류한다. artistIds는 변경하지 않는다."
+    }
+  ],
+  "enhypen-culture-gyeongbokgung-palace": [
+    {
+      "placeId": "enhypen-culture-gyeongbokgung-palace",
+      "artistId": "bts",
+      "action": "needs_evidence_recovery",
+      "reason": "Narrowed relationText only supports ENHYPEN (own recommended course). Source fetch explicitly found no mention of BTS \"Idol\"/Suga — no other citation evidence exists.",
+      "status": "proposed",
+      "proposedAt": "2026-09-18T11:13:38.319Z",
+      "originalAction": "remove_artist_relation",
+      "disposition": "provenance_missing",
+      "supersededAt": "2026-09-18T13:26:23.607Z",
+      "supersededReason": "정책 수정 2026-09-18: previewdata는 이 항목들이 저장되기 전에 이미 사람이 여러 근거로 검토한 human-reviewed baseline이다. 현재 보존된 citation/relationText가 이 artistId를 재구성하지 못한다는 것은 traceability 문제일 뿐, 관계가 거짓이라는 증거가 아니다. 이 artistId에 대한 실제 모순 증거(다른 아티스트로 특정됨, 사실관계 충돌 등)는 발견되지 않았으므로 remove_artist_relation에서 needs_evidence_recovery로 재분류한다. artistIds는 변경하지 않는다."
+    },
+    {
+      "placeId": "enhypen-culture-gyeongbokgung-palace",
+      "artistId": "blackpink",
+      "action": "needs_evidence_recovery",
+      "reason": "Narrowed relationText only supports ENHYPEN (own recommended course). Source fetch explicitly found no mention of BLACKPINK \"How You Like That\" — no other citation evidence exists.",
+      "status": "proposed",
+      "proposedAt": "2026-09-18T11:13:38.319Z",
+      "originalAction": "remove_artist_relation",
+      "disposition": "provenance_missing",
+      "supersededAt": "2026-09-18T13:26:23.607Z",
+      "supersededReason": "정책 수정 2026-09-18: previewdata는 이 항목들이 저장되기 전에 이미 사람이 여러 근거로 검토한 human-reviewed baseline이다. 현재 보존된 citation/relationText가 이 artistId를 재구성하지 못한다는 것은 traceability 문제일 뿐, 관계가 거짓이라는 증거가 아니다. 이 artistId에 대한 실제 모순 증거(다른 아티스트로 특정됨, 사실관계 충돌 등)는 발견되지 않았으므로 remove_artist_relation에서 needs_evidence_recovery로 재분류한다. artistIds는 변경하지 않는다."
+    }
+  ]
+}

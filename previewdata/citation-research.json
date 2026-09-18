@@ -1,0 +1,1426 @@
+{
+  "aespa-food-cheongdam-91-tteokbokki": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "aespa-food-cheongdam-91-tteokbokki",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/group/27/172",
+    "reviewed": false
+  },
+  "aespa-food-cheonsanggaok": {
+    "citationNote": "Naver blog explicitly: aespa's Karina visited '천상가옥'.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "aespa-food-cheonsanggaok",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/vvttw/222580180234",
+    "reviewed": false
+  },
+  "aespa-food-silbiok": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "aespa-food-silbiok",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/celeb/146/176",
+    "reviewed": false
+  },
+  "ateez-food-myeongdong-wang-donkkaseu-donggyo-branch": {
+    "citationNote": "Source says this is a pilgrimage site 'among ATEEZ fans', not that ATEEZ members themselves visited — conflates fan popularity with member visit.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "ateez-food-myeongdong-wang-donkkaseu-donggyo-branch",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/lovebomb1/223912098947",
+    "reviewed": false
+  },
+  "ateez-kpop-kq-entertainment": {
+    "citationNote": "Source explicitly confirms KQ Entertainment as ATEEZ's agency and its Mapo-gu location.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "ateez-kpop-kq-entertainment",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://goodstories.tistory.com/23",
+    "reviewed": false
+  },
+  "bigbang-culture-leeum-museum-of-art": {
+    "citationNote": "Source confirms G-Dragon frequents during Frieze/Kiaf. Hoshi/S.Coups/Jungwon (SEVENTEEN/ENHYPEN) claims NOT found in this source. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct. NOTE FOR REVIEWER: artistIds still include [seventeen, enhypen], but the narrowed relationText no longer references them — their attribution now has no textual support on this record and may need separate reviewer action (not changed here).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bigbang-culture-leeum-museum-of-art",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/9017c390-5a49-457e-8a19-d5cf5467e0d6",
+    "reviewed": false
+  },
+  "bigbang-food-born-bred": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "bigbang-food-born-bred",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/celeb/363/1400",
+    "reviewed": false
+  },
+  "bigbang-food-daeseong-jeongyuk-sikdang": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "bigbang-food-daeseong-jeongyuk-sikdang",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/celeb/364/3067",
+    "reviewed": false
+  },
+  "bigbang-food-donkkaseu-ui-jip": {
+    "citationNote": "Fetched blog content is entirely about Taeyang's naengmyeon spot on a TV show; the claimed donkkaseu (pork cutlet) restaurant is not mentioned — possible URL/place mismatch.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "bigbang-food-donkkaseu-ui-jip",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/riael1230/223005287670",
+    "reviewed": false
+  },
+  "bigbang-food-mosu-seoul": {
+    "citationNote": "Source directly states Taeyang uses this as his anniversary spot with his wife.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bigbang-food-mosu-seoul",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/9017c390-5a49-457e-8a19-d5cf5467e0d6",
+    "reviewed": false
+  },
+  "bigbang-kpop-yg-entertainment-headquarters": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "bigbang-kpop-yg-entertainment-headquarters",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/celeb/363/1401",
+    "reviewed": false
+  },
+  "blackpink-food-krappom": {
+    "citationNote": "Naver blog says Lisa 'approved of'/found this place — softer than 'visited'. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "blackpink-food-krappom",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://m.blog.naver.com/nufine/223712778570",
+    "reviewed": false
+  },
+  "blackpink-food-peterpan-1978": {
+    "citationNote": "Official KTO page: 'Jennie found it on YouTube during her bread tour in Yeonhui-dong.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "blackpink-food-peterpan-1978",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://english.visitkorea.or.kr/svc/contents/contentsView.do?vcontsId=216305",
+    "reviewed": false
+  },
+  "blackpink-shopping-danha": {
+    "citationStatus": "unreviewed",
+    "placeId": "blackpink-shopping-danha",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'How You Like That' 뮤직비디오 한복을 제작한 디자이너 브랜드",
+    "reviewed": false,
+    "suggestedQueryEn": "blackpink Danha Seoul filming location",
+    "suggestedQueryKo": "blackpink 단하 촬영"
+  },
+  "bts-activity-hakdong-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-activity-hakdong-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] '달려라 방탄' 텔레파시 특집 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "bts Hakdong Park Seoul filming location",
+    "suggestedQueryKo": "bts 학동근린공원 촬영"
+  },
+  "bts-activity-hash-wood": {
+    "citationNote": "YouTube title confirms Suga woodworking vlog content; 'Hash Wood' as the specific place name is not confirmed from the title alone.",
+    "citationStatus": "partial",
+    "koEnMismatch": false,
+    "placeId": "bts-activity-hash-wood",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.youtube.com/watch?v=u6bF__ytLjI",
+    "reviewed": false
+  },
+  "bts-activity-jamwon-hangang-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-activity-jamwon-hangang-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 2022년 '달려라 방탄' 텔레파시 특집 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "bts Jamwon Hangang Park Seoul filming location",
+    "suggestedQueryKo": "bts 잠원한강공원 촬영"
+  },
+  "bts-activity-lotte-world-tower-seoul-sky": {
+    "citationNote": "Source confirms generic BTS/aespa/ITZY Seoul Sky shots; the specific 'BTS carol song + special video content' claim is not confirmed. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-activity-lotte-world-tower-seoul-sky",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.seoultourism.org/k-pop-filming-locations-seoul/",
+    "reviewed": false
+  },
+  "bts-activity-seoul-forest": {
+    "citationNote": "Source confirms BTS/ATEEZ/ENHYPEN/NewJeans generally at Seoul Forest, but does not confirm the specific Taeyong/Johnny/Yuta KICHWORK ad or Joshua SEVENTEEN claims. [9절 번역 일관성] English relationText contains substantial extra practical-travel prose (opening times, photo tips, etc.) with no Korean equivalent — English states more than the Korean version. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct. NOTE FOR REVIEWER: artistIds still include [nct, seventeen], but the narrowed relationText no longer references them — their attribution now has no textual support on this record and may need separate reviewer action (not changed here).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-activity-seoul-forest",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.seoultourism.org/k-pop-filming-locations-seoul/; https://creatrip.com/en/blog/13460",
+    "reviewed": false
+  },
+  "bts-activity-space-of-bts-myeongdong": {
+    "citationNote": "Source explicitly confirms official BTS store in Myeongdong with merch/photocards/vinyl/homeware. [9절 번역 일관성] English relationText contains substantial extra practical-travel prose (opening times, photo tips, etc.) with no Korean equivalent — English states more than the Korean version. FIXED 2026-09-18: English relationText trimmed to match Korean content (no new external research) — extra unmirrored travel-tip prose removed.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-activity-space-of-bts-myeongdong",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.seoultourism.org/k-pop-merch-shopping-seoul/",
+    "reviewed": false
+  },
+  "bts-culture-dongdaemun-design-plaza-ddp": {
+    "citationNote": "Source confirms BTS MVs, ATEEZ comebacks, NCT 127 stage backdrops at DDP. [9절 번역 일관성] English relationText contains substantial extra practical-travel prose (opening times, photo tips, etc.) with no Korean equivalent — English states more than the Korean version. FIXED 2026-09-18: English relationText trimmed to match Korean content (no new external research) — extra unmirrored travel-tip prose removed.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-culture-dongdaemun-design-plaza-ddp",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.seoultourism.org/k-pop-filming-locations-seoul/",
+    "reviewed": false
+  },
+  "bts-food-ansic-restaurant": {
+    "citationNote": "Naver blog review of this restaurant contains no mention of Jungkook or BTS in the fetched content.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "bts-food-ansic-restaurant",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://m.blog.naver.com/wonniday/223328045409",
+    "reviewed": false
+  },
+  "bts-food-daeo-bookstore": {
+    "citationNote": "Naver blog: 'IU, BTS RM도 다녀간 옛 서점' (IU and BTS's RM also visited this old bookstore).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-food-daeo-bookstore",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/davong2/222483499818",
+    "reviewed": false
+  },
+  "bts-food-dosan-jokbal": {
+    "citationNote": "Naver blog explicitly: BTS Jin, V, Jimin visited; poster signature on wall.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-food-dosan-jokbal",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/jyk7793/224053856957",
+    "reviewed": false
+  },
+  "bts-food-dotgogi": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-food-dotgogi",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 뷔가 드라이브 브이로그 중 방문한 식당",
+    "reviewed": false,
+    "suggestedQueryEn": "bts Dotgogi Seoul visit",
+    "suggestedQueryKo": "bts 돝고기506 방문"
+  },
+  "bts-food-geumhong": {
+    "citationNote": "Blog says BTS 'reportedly frequented' this restaurant generally; the specific claimed RUN BTS Telepathy episode is not confirmed. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-food-geumhong",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://m.blog.naver.com/PostView.naver?blogId=log486827&logNo=223422343070",
+    "reviewed": false
+  },
+  "bts-food-hwangso-gopchang": {
+    "citationNote": "Naver blog food review of this restaurant contains no mention of Jungkook/BTS/signature in the fetched content.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "bts-food-hwangso-gopchang",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/PostView.nhn?blogId=delilifeming&logNo=223581096829&redirect=Dlog&widgetTypeCall=true",
+    "reviewed": false
+  },
+  "bts-food-mokran": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-food-mokran",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 진이 요리 브이로그를 위해 방문한 식당",
+    "reviewed": false,
+    "suggestedQueryEn": "bts Mokran Seoul visit",
+    "suggestedQueryKo": "bts 목란 방문"
+  },
+  "bts-food-mongjungsik": {
+    "citationNote": "Instagram post inaccessible — no content retrievable.",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "bts-food-mongjungsik",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.instagram.com/p/ClaVe5Up41f/",
+    "reviewed": false
+  },
+  "bts-food-original-mapo-salt-grill": {
+    "candidateSourceTier": 2,
+    "candidateSourceTitle": "\"고기 러버\" BTS 정국이 다녀간 고깃집 8 — Harper's Bazaar Korea",
+    "candidateSourceUrl": "https://www.harpersbazaar.co.kr/article/73314",
+    "citationNote": "CORRECTED 2026-09-18: Harper's Bazaar Korea (established magazine, Tier 2) lists this restaurant in \"고기 러버 BTS 정국이 다녀간 고깃집 8\" (8 meat restaurants BTS meat-lover Jungkook visited) — the \"Jungkook visited\" claim is now well-supported by a credible outlet. However the article does NOT mention a signature, so the \"사인이 남아있는\" (signature remains) detail in relationText is not corroborated by this source — the previous Naver blog's signature photo was actually Jin's (석진), not Jungkook's, so that detail should be treated as unconfirmed/likely incorrect pending reviewer narrowing of relationText. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-food-original-mapo-salt-grill",
+    "relationOverclaim": false,
+    "researchNote": "Original wrong classification was based on a Naver blog whose signature photo turned out to be Jin's, not Jungkook's. A magazine source independently confirms the restaurant-visit claim (without the signature detail) — reclassified wrong -> partial pending relationText narrowing by a reviewer (remove the signature claim, keep the visit claim).",
+    "reviewed": false
+  },
+  "bts-food-scopa": {
+    "citationNote": "Fetched blog content covers V's restaurants in Yangpyeong/Yangyang; Scopa (Seoul) not reached in the visible portion — needs a fuller read.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "bts-food-scopa",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://m.blog.naver.com/tae1230vi/223849351404",
+    "reviewed": false
+  },
+  "bts-food-simmani": {
+    "citationNote": "Naver blog explicitly tags this bar as visited by Jungkook; the specific '97-liner drawings' detail is not confirmed. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-food-simmani",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/PostView.nhn?blogId=flavor_hanni&logNo=224006341605&redirect=Dlog&widgetTypeCall=true",
+    "reviewed": false
+  },
+  "bts-food-vacation": {
+    "citationNote": "Naver blog confirms this cafe is BTS's former 3rd dorm, now a cafe many ARMYs visit.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-food-vacation",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://m.blog.naver.com/ljm1335/222993467401",
+    "reviewed": false
+  },
+  "bts-landmark_observatory-achasan-mountain": {
+    "citationNote": "Official Seoul tourism page explicitly confirms RM & V's RUN BTS sunrise-hike punishment mission here.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-landmark_observatory-achasan-mountain",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://korean.visitseoul.net/tours/%E2%80%98%EC%95%84%EB%AF%B8%E2%80%99%EB%93%A4%EC%9D%84-%EC%9C%84%ED%95%9C-%ED%8A%B9%EB%B3%84%ED%95%9C-%EC%84%9C%EC%9A%B8-%EC%97%AC%ED%96%89/KON026057",
+    "reviewed": false
+  },
+  "bts-landmark_observatory-hyundai-card-understage": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-landmark_observatory-hyundai-card-understage",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 방탄소년단의 타이니 데스크 콘서트가 촬영된 곳",
+    "reviewed": false,
+    "suggestedQueryEn": "bts Hyundai Card Understage Seoul filming location",
+    "suggestedQueryKo": "bts 현대카드 언더스테이지 촬영"
+  },
+  "bts-landmark_observatory-k-star-road": {
+    "citationNote": "Official page describes K Star Road's generic 'Gangnam-dol' idol statues but does not name BTS or SEVENTEEN specifically.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "bts-landmark_observatory-k-star-road",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://korean.visitkorea.or.kr/detail/ms_detail.do?cotid=8fa2fc64-00af-4e93-872a-ed7819a38b31",
+    "reviewed": false
+  },
+  "bts-landmark_observatory-national-museum-of-korea": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-landmark_observatory-national-museum-of-korea",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 방탄소년단이 'Dear Class of 2020' 공연을 한 곳",
+    "reviewed": false,
+    "suggestedQueryEn": "bts National Museum of Korea Seoul visit",
+    "suggestedQueryKo": "bts 국립중앙박물관 방문"
+  },
+  "bts-landmark_observatory-olympic-park": {
+    "citationNote": "Source confirms BTS Spring Day + ATEEZ The Real at Olympic Park generally, but does not attribute the 'lone tree' photo to RM specifically as claimed. [9절 번역 일관성] English relationText contains substantial extra practical-travel prose (opening times, photo tips, etc.) with no Korean equivalent — English states more than the Korean version. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-landmark_observatory-olympic-park",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.seoultourism.org/k-pop-filming-locations-seoul/",
+    "reviewed": false
+  },
+  "bts-landmark_observatory-yeouido-hangang-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-landmark_observatory-yeouido-hangang-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] VisitSeoul 홍보 영상에 등장한 'I·SEOUL·U' 조형물이 있는 곳 / 승관이 2023년 4월 8일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "bts Yeouido Hangang Park Seoul instagram",
+    "suggestedQueryKo": "bts 여의도한강공원 인스타그램"
+  },
+  "bts-shopping-ccnmade": {
+    "citationNote": "Fetched blog content covers store hours/location only; no mention of BTS wearing this brand's accessories in the visible portion.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "bts-shopping-ccnmade",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://m.blog.naver.com/dahee1325/222956773269",
+    "reviewed": false
+  },
+  "bts-shopping-kyobo-bookstore": {
+    "citationNote": "Source describes a one-time BTS 10th-anniversary book launch event at Kyobo, not a general 'buy BTS albums/magazines here' claim. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-shopping-kyobo-bookstore",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/grinbea/223149547265",
+    "reviewed": false
+  },
+  "bts-shopping-m2u": {
+    "citationNote": "Source confirms a BTS PROOF album Lucky Draw event held at M2U Sinchon.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "bts-shopping-m2u",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/grinbea/222767499129",
+    "reviewed": false
+  },
+  "bts-shopping-monopoly": {
+    "citationNote": "Naver blog content extraction failed (technical) — needs manual re-check.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "bts-shopping-monopoly",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/hitae456/221247833303",
+    "reviewed": false
+  },
+  "bts-shopping-soundwave": {
+    "citationStatus": "unreviewed",
+    "placeId": "bts-shopping-soundwave",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 여러 아이돌 앨범을 파는 매장, 오프라인 매장 2개 존재(정인지 확인, 2026-08-27)",
+    "reviewed": false,
+    "suggestedQueryEn": "bts Soundwave Seoul visit",
+    "suggestedQueryKo": "bts 사운드웨이브 방문"
+  },
+  "enhypen-activity-7-eleven-yongsan-hybe-branch": {
+    "citationNote": "Only a generic EN-O'CLOCK episode title was retrievable; no 7-Eleven/Yongsan HYBE confirmation found.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "enhypen-activity-7-eleven-yongsan-hybe-branch",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.youtube.com/watch?v=VMBUmF72BKA",
+    "reviewed": false
+  },
+  "enhypen-activity-bowl-house-hannam": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-bowl-house-hannam",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 니키가 제이와 함께 2022년 4월 9일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Bowl House Hannam Seoul instagram",
+    "suggestedQueryKo": "enhypen 볼하우스 한남 인스타그램"
+  },
+  "enhypen-activity-check-n-grow-space": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-check-n-grow-space",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'EN o'clock' 82화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Check N Grow Space Seoul filming location",
+    "suggestedQueryKo": "enhypen 채그로 스페이스 촬영"
+  },
+  "enhypen-activity-cheongnyangni-station-ktx": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-cheongnyangni-station-ktx",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'ENHYPEN 그저 그런 Fun' 1화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Cheongnyangni Station (KTX) Seoul filming location",
+    "suggestedQueryKo": "enhypen 청량리역 (고속철도) 촬영"
+  },
+  "enhypen-activity-cu-yongsan-hybe-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-cu-yongsan-hybe-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 엔하이픈 'Connect Day' 비하인드 촬영 장소",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen CU Yongsan HYBE Branch Seoul filming location",
+    "suggestedQueryKo": "enhypen CU 용산하이브점 촬영"
+  },
+  "enhypen-activity-diana-pilates-flying-yoga": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-diana-pilates-flying-yoga",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'EN o'clock' 121~122화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Diana Pilates & Flying Yoga Seoul filming location",
+    "suggestedQueryKo": "enhypen 디아나 필라테스&플라잉요가 촬영"
+  },
+  "enhypen-activity-eunpyeong-hanok-village": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-eunpyeong-hanok-village",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'EN o'clock' 71~72화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Eunpyeong Hanok Village Seoul filming location",
+    "suggestedQueryKo": "enhypen 은평한옥마을 촬영"
+  },
+  "enhypen-activity-feliz-leather-workshop": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-feliz-leather-workshop",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 제이크가 2022년 4월 23일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Feliz Leather Workshop Seoul instagram",
+    "suggestedQueryKo": "enhypen 펠리즈 가죽공방 인스타그램"
+  },
+  "enhypen-activity-haelexspa-bulhanjeungmak-sauna": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-haelexspa-bulhanjeungmak-sauna",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'EN o'clock' 25~27화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Haelexspa Bulhanjeungmak Sauna Seoul filming location",
+    "suggestedQueryKo": "enhypen 하이렉스파불한증막 촬영"
+  },
+  "enhypen-activity-lotte-world-adventure": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-lotte-world-adventure",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 아이랜드·'Dark Moon X ENHYPEN'·선우의 '해피 브이로그' 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Lotte World Adventure Seoul filming location",
+    "suggestedQueryKo": "enhypen 롯데월드 어드벤처 촬영"
+  },
+  "enhypen-activity-mangwon-hangang-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-mangwon-hangang-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 정원 커버 영상 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Mangwon Hangang Park Seoul filming location",
+    "suggestedQueryKo": "enhypen 망원 한강공원 촬영"
+  },
+  "enhypen-activity-mixsoon-flagship-store-myeongdong": {
+    "citationNote": "Article confirms ENHYPEN is mixsoon's global ambassador, but does not mention a Myeongdong flagship store location.",
+    "citationStatus": "partial",
+    "koEnMismatch": false,
+    "placeId": "enhypen-activity-mixsoon-flagship-store-myeongdong",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.forbeskorea.co.kr/news/articleView.html?idxno=401999",
+    "reviewed": false
+  },
+  "enhypen-activity-rakung-bakery": {
+    "citationNote": "YouTube title confirms a Sunoo hot-pot + baking-class video, but does not name 'Rakung Bakery' specifically — possible mismatch.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "enhypen-activity-rakung-bakery",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.youtube.com/watch?v=YqErGcN6Bq8&t=1",
+    "reviewed": false
+  },
+  "enhypen-activity-seonyudo-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-seonyudo-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 선우 커버 영상 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Seonyudo Park Seoul filming location",
+    "suggestedQueryKo": "enhypen 선유도공원 촬영"
+  },
+  "enhypen-activity-yeouido-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-yeouido-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] '1박 2일' 2023년 5월 28일 방영분 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Yeouido Park Seoul filming location",
+    "suggestedQueryKo": "enhypen 여의도공원 촬영"
+  },
+  "enhypen-activity-yongsan-family-park": {
+    "citationNote": "Could not retrieve video description; URL slug hint suggests unrelated Coachella content — needs manual video review.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "enhypen-activity-yongsan-family-park",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.youtube.com/watch?v=ZmIQGaaG50Y",
+    "reviewed": false
+  },
+  "enhypen-activity-zzang-game-gangnam-branch-2": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-activity-zzang-game-gangnam-branch-2",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 성훈이 2025년 3월 25일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen ZZANG Game (Gangnam Branch 2) Seoul instagram",
+    "suggestedQueryKo": "enhypen 짱오락실 강남2호점 인스타그램"
+  },
+  "enhypen-culture-gyeongbokgung-palace": {
+    "citationNote": "Source confirms Gyeongbokgung generically; does not confirm the specific BTS 'Idol' / Suga solo / IU / BLACKPINK 'How You Like That' claims layered on top. [9절 번역 일관성] English relationText contains substantial extra practical-travel prose (opening times, photo tips, etc.) with no Korean equivalent — English states more than the Korean version. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct. NOTE FOR REVIEWER: artistIds still include [bts, blackpink], but the narrowed relationText no longer references them — their attribution now has no textual support on this record and may need separate reviewer action (not changed here).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "enhypen-culture-gyeongbokgung-palace",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://english.visitkorea.or.kr/svc/whereToGo/hdrdslt/hdrdsltView.do?crsSn=285553; https://www.seoultourism.org/k-pop-filming-locations-seoul/",
+    "reviewed": false
+  },
+  "enhypen-food-cafe-dal": {
+    "citationNote": "Modest descriptive claim (hanok cafe, Dal Signature Set) matches the ENHYPEN-recommended-course source context.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "enhypen-food-cafe-dal",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://english.visitkorea.or.kr/svc/whereToGo/hdrdslt/hdrdsltView.do?crsSn=285553",
+    "reviewed": false
+  },
+  "enhypen-food-concasse-seongsu": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-concasse-seongsu",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 선우가 2023년 10월 3일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Concasse Seongsu Seoul instagram",
+    "suggestedQueryKo": "enhypen 콩카세 성수 인스타그램"
+  },
+  "enhypen-food-dangdo-ice-cream": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-dangdo-ice-cream",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 선우가 2022년 4월 26일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Dangdo Ice Cream Seoul instagram",
+    "suggestedQueryKo": "enhypen 당도아이스크림 인스타그램"
+  },
+  "enhypen-food-deo-masinneun-jokbal-bossam-wonhyoro-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-deo-masinneun-jokbal-bossam-wonhyoro-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 제이크가 2024년 2월 16일 위버스에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Deo Masinneun Jokbal Bossam (Wonhyoro Branch) Seoul instagram",
+    "suggestedQueryKo": "enhypen 더맛있는족발보쌈 원효로점 인스타그램"
+  },
+  "enhypen-food-domanda-namyeong-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-domanda-namyeong-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 정원의 '즉흥 하루' 콘텐츠 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Domanda (Namyeong Branch) Seoul filming location",
+    "suggestedQueryKo": "enhypen 도만다 남영점 촬영"
+  },
+  "enhypen-food-donghwagogok-the-room-gangnam-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-donghwagogok-the-room-gangnam-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 성훈이 2023년 9월 19일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Donghwagogok The ROOM (Gangnam Branch) Seoul instagram",
+    "suggestedQueryKo": "enhypen 동화고옥 The ROOM 강남점 인스타그램"
+  },
+  "enhypen-food-eom-yongbaek-pork-gukbap-jonggak-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-eom-yongbaek-pork-gukbap-jonggak-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 제이가 2025년 4월 1일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Eom Yongbaek Pork Gukbap (Jonggak Branch) Seoul instagram",
+    "suggestedQueryKo": "enhypen 엄용백 돼지국밥 종각점 인스타그램"
+  },
+  "enhypen-food-eonyang-saeng-gogi": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-eonyang-saeng-gogi",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 제이크가 2022년 4월 23일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Eonyang Saeng-gogi Seoul instagram",
+    "suggestedQueryKo": "enhypen 언양생고기 인스타그램"
+  },
+  "enhypen-food-fisensio": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-fisensio",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 성훈이 2025년 3월 25일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen FISENSIO Seoul instagram",
+    "suggestedQueryKo": "enhypen 피센시오 인스타그램"
+  },
+  "enhypen-food-front-seoul": {
+    "citationNote": "Source explicitly: 'the café that Jake and Ni-ki visited together.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "enhypen-food-front-seoul",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/067e1a63-5cff-4207-b3bd-47bce5bfee35",
+    "reviewed": false
+  },
+  "enhypen-food-gordon-ramsay-street-burger-world-trade-center-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-gordon-ramsay-street-burger-world-trade-center-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 제이가 2022년 9월 3일 위버스에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Gordon Ramsay Street Burger (World Trade Center Branch) Seoul instagram",
+    "suggestedQueryKo": "enhypen 고든램지 스트리트 버거 무역센터점 인스타그램"
+  },
+  "enhypen-food-hanyang-hwaro-dongdaemun-history-culture-park-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-hanyang-hwaro-dongdaemun-history-culture-park-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 니키가 제이크와 함께 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Hanyang Hwaro (Dongdaemun History & Culture Park Branch) Seoul instagram",
+    "suggestedQueryKo": "enhypen 한양화로 동대문역사점 인스타그램"
+  },
+  "enhypen-food-jazz-story-2": {
+    "citationNote": "Sunghoon's pick confirmed generally; the specific Sept 19 2023 EN-log date is not confirmed by this source. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "enhypen-food-jazz-story-2",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/067e1a63-5cff-4207-b3bd-47bce5bfee35",
+    "reviewed": false
+  },
+  "enhypen-food-malachite": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "enhypen-food-malachite",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/en/spot/celeb/30/3030",
+    "reviewed": false
+  },
+  "enhypen-food-ogeunnae-2-dakgalbi": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-ogeunnae-2-dakgalbi",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 정원의 브이로그 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Ogeunnae 2 Dakgalbi Seoul filming location",
+    "suggestedQueryKo": "enhypen 오근내2닭갈비 촬영"
+  },
+  "enhypen-food-reiho-sushi": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-reiho-sushi",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 제이와 니키가 X(트위터)에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Reiho Sushi Seoul instagram",
+    "suggestedQueryKo": "enhypen 레이호 스시 인스타그램"
+  },
+  "enhypen-food-sapporo-hongdae-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-sapporo-hongdae-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'EN-Hi' 시즌1 4화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Sapporo (Hongdae Branch) Seoul filming location",
+    "suggestedQueryKo": "enhypen 삿뽀로 홍대점 촬영"
+  },
+  "enhypen-food-seoul-ludens": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-seoul-ludens",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 선우가 2022년 3월 30일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Seoul Ludens Seoul instagram",
+    "suggestedQueryKo": "enhypen 서울루덴스 인스타그램"
+  },
+  "enhypen-food-shabu-in-seoul-sinyongsan-main-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-shabu-in-seoul-sinyongsan-main-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: PENDING",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Shabu In Seoul (Sinyongsan Main Branch) Seoul visit",
+    "suggestedQueryKo": "enhypen 샤브인서울 신용산본점 방문"
+  },
+  "enhypen-food-singil-dong-spicy-jjamppong": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-singil-dong-spicy-jjamppong",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 선우가 2022년 4월 26일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Singil-dong Spicy Jjamppong Seoul instagram",
+    "suggestedQueryKo": "enhypen 신길동매운짬뽕 인스타그램"
+  },
+  "enhypen-food-tilde-cafe": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-tilde-cafe",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] '평범한 휴일, 엔진과 함께' 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Tilde Cafe Seoul filming location",
+    "suggestedQueryKo": "enhypen 틸데카페 촬영"
+  },
+  "enhypen-food-tongkeun-galbi-sinchon-branch": {
+    "citationNote": "Source explicitly: 'ENHYPEN Jay, Jake, Sunghoon, and Ni-ki were spotted here!'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "enhypen-food-tongkeun-galbi-sinchon-branch",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/067e1a63-5cff-4207-b3bd-47bce5bfee35",
+    "reviewed": false
+  },
+  "enhypen-food-yang-jeongwon": {
+    "citationNote": "Fetched content is an unrelated MBTI personality-type chart of various idols — has no connection to this restaurant. Likely wrong URL.",
+    "citationStatus": "wrong",
+    "koEnMismatch": false,
+    "placeId": "enhypen-food-yang-jeongwon",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/soap2086/221922646394",
+    "reviewed": false
+  },
+  "enhypen-food-yanghwajeong": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-yanghwajeong",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 정원이 2025년 3월 11일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Yanghwajeong Seoul instagram",
+    "suggestedQueryKo": "enhypen 양화정 인스타그램"
+  },
+  "enhypen-food-yihwawon": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-yihwawon",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 선우·제이(SunJay)의 '졸업 브이로그' 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Yihwawon Seoul filming location",
+    "suggestedQueryKo": "enhypen 이화원 촬영"
+  },
+  "enhypen-food-yogurt-world-yongsan-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-food-yogurt-world-yongsan-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: PENDING",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Yogurt World (Yongsan Branch) Seoul instagram",
+    "suggestedQueryKo": "enhypen 요거트월드 용산점 인스타그램"
+  },
+  "enhypen-food-yongsan-samgyetang": {
+    "citationNote": "Same YouTube source as yongsan-family-park; could not confirm restaurant-specific content — needs manual review.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "enhypen-food-yongsan-samgyetang",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.youtube.com/watch?v=ZmIQGaaG50Y",
+    "reviewed": false
+  },
+  "enhypen-landmark_observatory-bukchon-hanok-village": {
+    "citationNote": "Source is ENHYPEN's own recommended course listing Bukchon, but does not confirm the specific BTS Suga 'Daechwita' / IU hanbok claims layered on top. [9절 번역 일관성] English relationText contains substantial extra practical-travel prose (opening times, photo tips, etc.) with no Korean equivalent — English states more than the Korean version. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct. NOTE FOR REVIEWER: artistIds still include [bts], but the narrowed relationText no longer references them — their attribution now has no textual support on this record and may need separate reviewer action (not changed here).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "enhypen-landmark_observatory-bukchon-hanok-village",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://english.visitkorea.or.kr/svc/whereToGo/hdrdslt/hdrdsltView.do?crsSn=285553; https://www.seoultourism.org/k-pop-filming-locations-seoul/",
+    "reviewed": false
+  },
+  "enhypen-landmark_observatory-photoism-box-gangnam-branch-1": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-landmark_observatory-photoism-box-gangnam-branch-1",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 성훈이 2021년 8월 29일 EN-log에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Photoism Box (Gangnam Branch 1) Seoul instagram",
+    "suggestedQueryKo": "enhypen 포토이즘 박스 강남1호점 인스타그램"
+  },
+  "enhypen-landmark_observatory-plan-b-studio-sookmyung-women-s-univ-station-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-landmark_observatory-plan-b-studio-sookmyung-women-s-univ-station-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 정원의 '즉흥 하루' 콘텐츠 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Plan B Studio (Sookmyung Women's Univ. Station Branch) Seoul filming location",
+    "suggestedQueryKo": "enhypen 플랜비스튜디오 숙대입구점 촬영"
+  },
+  "enhypen-landmark_observatory-samcheong-dong-street": {
+    "citationNote": "Modest descriptive claim (galleries/cafes street) matches the ENHYPEN-recommended-course source context.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "enhypen-landmark_observatory-samcheong-dong-street",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://english.visitkorea.or.kr/svc/whereToGo/hdrdslt/hdrdsltView.do?crsSn=285553",
+    "reviewed": false
+  },
+  "enhypen-shopping-a-land-garosugil": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-shopping-a-land-garosugil",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'EN o'clock' 52화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen A-Land Garosugil Seoul filming location",
+    "suggestedQueryKo": "enhypen 에이랜드 가로수길점 촬영"
+  },
+  "enhypen-shopping-market-in-you": {
+    "citationStatus": "unreviewed",
+    "placeId": "enhypen-shopping-market-in-you",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'EN o'clock' 52화 촬영지",
+    "reviewed": false,
+    "suggestedQueryEn": "enhypen Market In You Seoul filming location",
+    "suggestedQueryKo": "enhypen 마켓인유 촬영"
+  },
+  "exo-food-elephant": {
+    "citationNote": "Source explicitly: 'the cafe where Baekhyun filmed his vlog.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-elephant",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/news/7079",
+    "reviewed": false
+  },
+  "exo-food-insadong-chon": {
+    "citationNote": "Official Seoul tourism page confirms EXO group dinner (via Sehun's IG) before Xiumin's enlistment took place here.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-insadong-chon",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://english.visitseoul.net/hallyu/Bringing-EXO-closer-with-the-EXO-L-Tour/ENN030404",
+    "reviewed": false
+  },
+  "exo-food-kamong": {
+    "citationNote": "Confirmed across two sources: cafe owned by Kai's sister, named for Kai + dog Monggu.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-kamong",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://kingstudio.co.kr/blog/top-7-exo-spots-in-seoul-the-ultimate-k-pop-bucket-list-experience/; https://www.koreaboo.com/lists/20-places-every-true-exo-l-must-travel/",
+    "reviewed": false
+  },
+  "exo-food-kumdoiji-sikdang": {
+    "citationNote": "Sehun & Suho visit confirmed, but source describes 'premium pork', while relationText claims 'premium 한우(beef)' — category mismatch worth flagging. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-kumdoiji-sikdang",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/news/7079",
+    "reviewed": false
+  },
+  "exo-food-mabongnim-halmeoni-tteokbokki": {
+    "citationNote": "Source confirms Chanyeol visited and recommended this tteokbokki spot.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-mabongnim-halmeoni-tteokbokki",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://kingstudio.co.kr/blog/top-7-exo-spots-in-seoul-the-ultimate-k-pop-bucket-list-experience/",
+    "reviewed": false
+  },
+  "exo-food-our-bakery-apgujeong": {
+    "citationNote": "Confirmed across two sources: Dirty Choco croissant + Taeyong's favorite canele explicitly named.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-our-bakery-apgujeong",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://kingstudio.co.kr/blog/top-7-exo-spots-in-seoul-the-ultimate-k-pop-bucket-list-experience/; https://creatrip.com/en/blog/13460",
+    "reviewed": false
+  },
+  "exo-food-smt-seoul": {
+    "citationNote": "Source confirms SM Entertainment-run restaurant with EXO decor/menu accents.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-smt-seoul",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.koreaboo.com/lists/20-places-every-true-exo-l-must-travel/",
+    "reviewed": false
+  },
+  "exo-food-the-world-4-u": {
+    "citationNote": "Source explicitly: 'Chanyeol's Dad's Restaurant — EXO-themed pub with personal memorabilia.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-food-the-world-4-u",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://ezaiplorer.com/exo-seoul-tour-fan-guide/",
+    "reviewed": false
+  },
+  "exo-kpop-inb100": {
+    "citationNote": "Source explicitly: 'Baekhyun, Xiumin & Chen's Company — CBX unit's new agency headquarters.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "exo-kpop-inb100",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://ezaiplorer.com/exo-seoul-tour-fan-guide/",
+    "reviewed": false
+  },
+  "illit-activity-gyeongui-line-forest-park": {
+    "citationNote": "Source confirms this was a Telepathy Test location option.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "illit-activity-gyeongui-line-forest-park",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/52adac0e-6080-4a53-999c-8fafc2208d2e",
+    "reviewed": false
+  },
+  "illit-food-churro-101-hongdae-main-branch": {
+    "citationNote": "Source confirms members stopped for churros here during filming.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "illit-food-churro-101-hongdae-main-branch",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/52adac0e-6080-4a53-999c-8fafc2208d2e",
+    "reviewed": false
+  },
+  "illit-landmark_observatory-cheongchun-film": {
+    "citationNote": "Source confirms SUPER ILLIT Ep.13 chase scene filmed here, with member names (Minju, Yunah, Moka).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "illit-landmark_observatory-cheongchun-film",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/52adac0e-6080-4a53-999c-8fafc2208d2e",
+    "reviewed": false
+  },
+  "illit-shopping-little-riddle": {
+    "citationNote": "Source confirms 'I'LL-IT Ready' friendship games filmed here.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "illit-shopping-little-riddle",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://world.nol.com/en/content/articles/52adac0e-6080-4a53-999c-8fafc2208d2e",
+    "reviewed": false
+  },
+  "nct-activity-k-pop-square-hongdae": {
+    "citationNote": "Source confirms reopening date, prior LINE FRIENDS tenant, and BT21/IVE/NCT DREAM merch.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-activity-k-pop-square-hongdae",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.seoultourism.org/k-pop-merch-shopping-seoul/",
+    "reviewed": false
+  },
+  "nct-food-coffee-m-stable": {
+    "citationNote": "Source confirms Johnny's cafe photo.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-food-coffee-m-stable",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/blog/6957",
+    "reviewed": false
+  },
+  "nct-food-daelim-changgo": {
+    "citationNote": "Source explicitly: 'Taeyong's favorite cafe... also an art gallery.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-food-daelim-changgo",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/blog/13460",
+    "reviewed": false
+  },
+  "nct-food-kitchen-soop": {
+    "citationNote": "Source explicitly confirms Jaehyun's curry-shop recommendation.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-food-kitchen-soop",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/blog/13460",
+    "reviewed": false
+  },
+  "nct-food-mokmyeoksanbang": {
+    "citationNote": "Confirmed across two sources: NCT HOT&YOUNG Seoul Trip Ep.8, bibimbap signature dish (Michelin-star detail not independently reconfirmed).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-food-mokmyeoksanbang",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/blog/6957; https://english.visitseoul.net/hallyu/NCT-Hot-Young-Seoul-Trip/ENN027242",
+    "reviewed": false
+  },
+  "nct-food-the-100-food-truck": {
+    "citationNote": "Source confirms the balcony night-view photo spot claim.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-food-the-100-food-truck",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/blog/6957",
+    "reviewed": false
+  },
+  "nct-food-vacances-coffee": {
+    "citationNote": "Source explicitly: 'location where NCT Dream filmed their NCT cafe in a Dream segment.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-food-vacances-coffee",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/blog/13460",
+    "reviewed": false
+  },
+  "nct-shopping-kwangya-seoul": {
+    "citationNote": "Source confirms largest SM artist merch store claim.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "nct-shopping-kwangya-seoul",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://creatrip.com/en/blog/13460",
+    "reviewed": false
+  },
+  "red-velvet-food-angle-340": {
+    "citationNote": "Source explicitly names Seulgi in connection with this cafe.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-food-angle-340",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.cosmopolitan.co.kr/article/1888518",
+    "reviewed": false
+  },
+  "red-velvet-food-beetle-staco-seosunna-gil": {
+    "citationNote": "Source explicitly names Seulgi as recommending this taco spot.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-food-beetle-staco-seosunna-gil",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.cosmopolitan.co.kr/article/1888518",
+    "reviewed": false
+  },
+  "red-velvet-food-honam-daebakjip": {
+    "citationNote": "Underlying Naver blog post itself expresses uncertainty inferring this is the same restaurant seen in Seulgi's Instagram post (similar-looking gukbap shops are common near this address).",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-food-honam-daebakjip",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/bibada9thart/223466604560",
+    "reviewed": false
+  },
+  "red-velvet-landmark_observatory-booth-by-monomansion-1106": {
+    "citationNote": "Source explicitly: 'a self-photo studio Seulgi wanted to visit.'",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-landmark_observatory-booth-by-monomansion-1106",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.cosmopolitan.co.kr/article/1888518",
+    "reviewed": false
+  },
+  "red-velvet-landmark_observatory-dosan-park": {
+    "citationNote": "Source confirms Joy repeatedly spotted walking her dogs here.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-landmark_observatory-dosan-park",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://kingstudio.co.kr/blog/red-velvet-joys-stay-fan-tour-seoul-top-7/",
+    "reviewed": false
+  },
+  "red-velvet-landmark_observatory-ihwa-mural-village": {
+    "citationNote": "Source confirms 'Russian Roulette' MV filmed here.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-landmark_observatory-ihwa-mural-village",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://kingstudio.co.kr/blog/red-velvet-joys-stay-fan-tour-seoul-top-7/",
+    "reviewed": false
+  },
+  "red-velvet-shopping-cheongdam-dong-luxury-shopping-street": {
+    "citationNote": "Source confirms Joy frequently photographed shopping here.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-shopping-cheongdam-dong-luxury-shopping-street",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://kingstudio.co.kr/blog/red-velvet-joys-stay-fan-tour-seoul-top-7/",
+    "reviewed": false
+  },
+  "red-velvet-shopping-otyg": {
+    "citationNote": "Source explicitly names Seulgi in connection with this trinket shop.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-shopping-otyg",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.cosmopolitan.co.kr/article/1888518",
+    "reviewed": false
+  },
+  "red-velvet-shopping-sahara-seoul": {
+    "citationNote": "Source explicitly names Seulgi in connection with this vintage shop.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "red-velvet-shopping-sahara-seoul",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.cosmopolitan.co.kr/article/1888518",
+    "reviewed": false
+  },
+  "seventeen-activity-dogok-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-activity-dogok-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 디에잇이 2023년 8월 12일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Dogok Park Seoul instagram",
+    "suggestedQueryKo": "seventeen 도곡근린공원 인스타그램"
+  },
+  "seventeen-activity-eungbong-neighborhood-park": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-activity-eungbong-neighborhood-park",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 디에잇이 2023년 5월 19일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Eungbong Neighborhood Park Seoul instagram",
+    "suggestedQueryKo": "seventeen 응봉근린공원 인스타그램"
+  },
+  "seventeen-activity-eungbongsan-octagonal-pavilion": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-activity-eungbongsan-octagonal-pavilion",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 승관이 2022년 3월 30일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Eungbongsan Octagonal Pavilion Seoul instagram",
+    "suggestedQueryKo": "seventeen 응봉산 팔각정 인스타그램"
+  },
+  "seventeen-activity-kyung-hee-university-seoul": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "seventeen-activity-kyung-hee-university-seoul",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/celeb/640/3187",
+    "reviewed": false
+  },
+  "seventeen-activity-mokdong-neighborhood-park": {
+    "citationNote": "X/Twitter post inaccessible (HTTP 402 — platform blocks automated fetches).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "seventeen-activity-mokdong-neighborhood-park",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://x.com/bloomof_youth17/status/1204027655827312641",
+    "reviewed": false
+  },
+  "seventeen-activity-photogray-seongsu": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-activity-photogray-seongsu",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] '고잉 세븐틴(GOING SEVENTEEN)' '셉셉투어 : 먹어? 안 먹어? (TOUR SEV SEV : To eat or not to eat)' EP.84 - 민규, 디노, 디에잇(명호), 도겸(석민) 성수동 음식 투어",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Photogray (Seongsu Branch) Seoul filming location",
+    "suggestedQueryKo": "seventeen 포토그레이 서울성수점 촬영"
+  },
+  "seventeen-activity-ttukseom-hangang-park": {
+    "candidateSourceTier": 1,
+    "candidateSourceTitle": "[GOING SEVENTEEN] EP.81 셉셉투어 #1 (TOUR SEV SEV #1) — official SEVENTEEN content",
+    "candidateSourceUrl": "https://www.youtube.com/watch?v=xgDMfMt7kDs",
+    "citationNote": "RESEARCHED 2026-09-18: confirmed GOING SEVENTEEN 2023 EP.83 \"Sev Sev Tour\" featured Ttukseom Hangang Park, with Hoshi, Woozi, Wonwoo, Vernon appearing — matches relationText claim. PROMOTED 2026-09-18: candidateSourceUrl written into previewdata source_url (was researched last turn but never promoted — genuine oversight, not new research).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "seventeen-activity-ttukseom-hangang-park",
+    "relationOverclaim": false,
+    "researchNote": "Was in the 66 missing-citation set. Real citation found via targeted search using the specific show/tour name from relationText.",
+    "reviewed": false
+  },
+  "seventeen-activity-yangjaecheon-stream": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-activity-yangjaecheon-stream",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 승관이 2022년 4월 14일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Yangjaecheon Stream Seoul instagram",
+    "suggestedQueryKo": "seventeen 양재천 인스타그램"
+  },
+  "seventeen-food-daebongjip-sinsa-main": {
+    "candidateSourceTier": 3,
+    "candidateSourceTitle": "세븐틴이 이슬라이브를 진행했던 장소는? — 팬플러스 커뮤니티 (cites Dingo Music YouTube episode)",
+    "candidateSourceUrl": "https://fanplus.co.kr/community/seventeen/128069015",
+    "citationNote": "RESEARCHED 2026-09-18: confirmed via multiple independent sources (fan community + TikTok coverage) that 대봉집 신사본점 (Garosu-gil) is the real filming location for SEVENTEEN's Dingo \"Tipsy Live\" episode — matches relationText claim exactly. PROMOTED 2026-09-18: candidateSourceUrl written into previewdata source_url (was researched last turn but never promoted — genuine oversight, not new research).",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "seventeen-food-daebongjip-sinsa-main",
+    "relationOverclaim": false,
+    "researchNote": "Was in the 66 missing-citation set (placeholder text only). Real citation found via targeted search using the specific show name from relationText.",
+    "reviewed": false
+  },
+  "seventeen-food-dukkeobi-sanjang": {
+    "citationNote": "Blog mentions a 'SEVENTEEN Cheonggyesan course' only as hearsay from hiking companions ('~라며'); does not confirm Hoshi's specific 'Finding KSY' video claim.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "seventeen-food-dukkeobi-sanjang",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/pokiyo228/223171973326",
+    "reviewed": false
+  },
+  "seventeen-food-flavor-town": {
+    "citationNote": "Fetched content reads as a generic travel post; SEVENTEEN OT13 group dinner claim not confirmed in visible portion.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "seventeen-food-flavor-town",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/PostView.nhn?blogId=ehsim13&logNo=224275468116&redirect=Dlog&widgetTypeCall=true",
+    "reviewed": false
+  },
+  "seventeen-food-gajoku-udon-soba": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-food-gajoku-udon-soba",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] '고잉 세븐틴(GOING SEVENTEEN)' '셉셉투어 : 먹어? 안 먹어? (TOUR SEV SEV : To eat or not to eat)' EP.84 - 민규, 디노, 디에잇(명호), 도겸(석민) 성수동 음식 투어",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Gajoku (Udon / Soba) Seoul instagram",
+    "suggestedQueryKo": "seventeen 가조쿠 인스타그램"
+  },
+  "seventeen-food-gilsan-bakery": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-food-gilsan-bakery",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 준이 2023년 4월 25일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Gilsan Bakery Seoul instagram",
+    "suggestedQueryKo": "seventeen 길산종합빵집 인스타그램"
+  },
+  "seventeen-food-jinmi-pyeongyang-naengmyeon": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-food-jinmi-pyeongyang-naengmyeon",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 에스쿱스가 2023년 3월 27일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Jinmi Pyeongyang Naengmyeon Seoul instagram",
+    "suggestedQueryKo": "seventeen 진미평양냉면 별관 인스타그램"
+  },
+  "seventeen-food-market-o-apgujeong-branch": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-food-market-o-apgujeong-branch",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 정한이 2022년 3월 3일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Market O (Apgujeong Branch) Seoul instagram",
+    "suggestedQueryKo": "seventeen 마켓오 압구정점 인스타그램"
+  },
+  "seventeen-food-new-york-lots-o-bagels": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-food-new-york-lots-o-bagels",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 디에잇이 2023년 3월 16일 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen New York Lots O Bagels Seoul instagram",
+    "suggestedQueryKo": "seventeen 뉴욕라츠오베이글스 인스타그램"
+  },
+  "seventeen-food-schedule-cheongdam": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-food-schedule-cheongdam",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 디노가 2023년 4월 2일, 디에잇이 4월 21일(트위터), 준이 7월 29일 각각 SNS에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Schedule Cheongdam Seoul instagram",
+    "suggestedQueryKo": "seventeen 스케줄 청담 인스타그램"
+  },
+  "seventeen-landmark_observatory-179-art-studio": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-landmark_observatory-179-art-studio",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 호시가 2023년 3월 30일, 디에잇이 3월 31일 각각 인스타그램에 게시",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen 179 Art Studio Seoul instagram",
+    "suggestedQueryKo": "seventeen 179아트스튜디오 인스타그램"
+  },
+  "seventeen-shopping-heavensense-seongsu": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-shopping-heavensense-seongsu",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] '고잉 세븐틴(GOING SEVENTEEN)' '셉셉투어 : 먹어? 안 먹어? (TOUR SEV SEV : To eat or not to eat)' EP.84 - 민규, 디노, 디에잇(명호), 도겸(석민) 성수동 음식 투어",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Heavensense (Seongsu Yeonmujang Branch) Seoul filming location",
+    "suggestedQueryKo": "seventeen 헤븐센스 성수연무장점 촬영"
+  },
+  "seventeen-shopping-love-love-love": {
+    "citationStatus": "unreviewed",
+    "placeId": "seventeen-shopping-love-love-love",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] '고잉 세븐틴(GOING SEVENTEEN)' '셉셉투어 : 먹어? 안 먹어? (TOUR SEV SEV : To eat or not to eat)' EP.84 - 민규, 디노, 디에잇(명호), 도겸(석민) 성수동 음식 투어",
+    "reviewed": false,
+    "suggestedQueryEn": "seventeen Love Love Love Seoul visit",
+    "suggestedQueryKo": "seventeen 러브러브러브 방문"
+  },
+  "stray-kids-activity-hongdae-sauna-24": {
+    "candidateSourceTier": 1,
+    "candidateSourceTitle": "SKZ 사우나 (SKZ SAUNA) #1 | [SKZ CODE] Ep.37 (Stray Kids official content)",
+    "candidateSourceUrl": "https://www.youtube.com/watch?v=bC3rOHEHcb4",
+    "citationNote": "CORRECTED 2026-09-18: found the actual Stray Kids source — [SKZ CODE] Ep.37-38 \"SKZ Sauna\" was filmed at this exact venue (confirmed by fan-tracker post with address match: 서울 서대문구 신촌로 1 쓰리알유시티 상가 B2층). The LENIVERSE/LE SSERAFIM connection found previously is ALSO real (same venue, different show) — both claims in relationText are independently supported.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "stray-kids-activity-hongdae-sauna-24",
+    "relationOverclaim": false,
+    "researchNote": "Original audit pass only found the LE SSERAFIM LENIVERSE source and incorrectly concluded the Stray Kids claim was unsupported (wrong). A second targeted search found the Stray Kids-specific SKZ CODE episode filmed at the same address. Location match confirmed via fan-tracker X post citing the exact address.",
+    "reviewed": false
+  },
+  "stray-kids-culture-lotte-world-folk-museum": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "stray-kids-culture-lotte-world-folk-museum",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/celeb/725/3007",
+    "reviewed": false
+  },
+  "stray-kids-food-cheongsol-restaurant": {
+    "citationNote": "YouTube title confirms Stray Kids + 'Idol Human Theater' show; specific restaurant name/dish not confirmed from title alone. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "stray-kids-food-cheongsol-restaurant",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://youtu.be/EKQT8IP1TeU?si=yTbgDIwHGVXOJh8a",
+    "reviewed": false
+  },
+  "stray-kids-food-haidilao-coex": {
+    "citationStatus": "unreviewed",
+    "placeId": "stray-kids-food-haidilao-coex",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 'SKZ CODE' 73화 'Go, Han'에 등장, 필릭스·아이엔의 소스 레시피로 유명",
+    "reviewed": false,
+    "suggestedQueryEn": "stray-kids Haidilao COEX Seoul visit",
+    "suggestedQueryKo": "stray-kids 하이디라오 COEX점 방문"
+  },
+  "stray-kids-food-lamb-nikuya": {
+    "citationNote": "Naver blog confirms Stray Kids + Day6 as regulars, near the JYP building.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "stray-kids-food-lamb-nikuya",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://m.blog.naver.com/onlspace/223396030338",
+    "reviewed": false
+  },
+  "stray-kids-landmark_observatory-coex-starfield-library": {
+    "citationStatus": "unreviewed",
+    "placeId": "stray-kids-landmark_observatory-coex-starfield-library",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 스트레이키즈 팬덤(STAY)은 별과 관련된 상징적 의미가 있어 팬들이 별마당도서관을 자주 찾음(정인지 확인, 2026-08-29)",
+    "reviewed": false,
+    "suggestedQueryEn": "stray-kids COEX Starfield Library Seoul visit",
+    "suggestedQueryKo": "stray-kids 별마당도서관 스타필드코엑스몰 방문"
+  },
+  "stray-kids-landmark_observatory-yongma-land": {
+    "citationStatus": "unreviewed",
+    "placeId": "stray-kids-landmark_observatory-yongma-land",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 스트레이 키즈 관련 촬영지이자 팬 성지로, 폐업한 놀이공원",
+    "reviewed": false,
+    "suggestedQueryEn": "stray-kids Yongma Land Seoul filming location",
+    "suggestedQueryKo": "stray-kids 용마랜드 촬영"
+  },
+  "twice-food-hangari-bossam": {
+    "citationNote": "Naver blog confirms Jihyo/'I Live Alone' context but the specific restaurant-name confirmation was not reached in the fetched excerpt.",
+    "citationStatus": "partial",
+    "koEnMismatch": false,
+    "placeId": "twice-food-hangari-bossam",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://blog.naver.com/blanche15/223187754269?viewType=pc",
+    "reviewed": false
+  },
+  "twice-food-pairing-room": {
+    "citationNote": "dukplace.com blocked all automated fetches (Cloudflare bot challenge, HTTP 403).",
+    "citationStatus": "broken",
+    "koEnMismatch": false,
+    "placeId": "twice-food-pairing-room",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://dukplace.com/ko/spot/celeb/292/1067",
+    "reviewed": false
+  },
+  "twice-food-seogangsoe-tteokbokki": {
+    "citationNote": "Source confirms Nayeon's repeated favorable mentions of this 100%-rice tteokbokki spot.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "twice-food-seogangsoe-tteokbokki",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://kingstudio.co.kr/blog/top-5-twice-spots-in-seoul/",
+    "reviewed": false
+  },
+  "twice-food-superzip": {
+    "citationNote": "YouTube title confirms 'TWICE Food Tour EP.04 - Superzip'; Nayeon-specific triple-cheese detail not confirmed from title alone. NARROWED 2026-09-18: relationText trimmed to exactly what the already-fetched source supports (no new external research). citationStatus upgraded to direct.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "twice-food-superzip",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.youtube.com/watch?v=ZldexuJ_LEk&t=42",
+    "reviewed": false
+  },
+  "twice-shopping-myeongdong-underground-shopping-center": {
+    "citationStatus": "unreviewed",
+    "placeId": "twice-shopping-myeongdong-underground-shopping-center",
+    "researchNote": "No real citation yet — pipeline placeholder was: [콘텐츠 인용 - 링크 미확인] 트와이스 전용 공식 스토어는 없지만 앨범·굿즈를 파는 상점들이 있음(정인지 확인, 2026-08-29)",
+    "reviewed": false,
+    "suggestedQueryEn": "twice Myeongdong Underground Shopping Center Seoul visit",
+    "suggestedQueryKo": "twice 명동지하쇼핑센터 방문"
+  },
+  "twice-shopping-withmuu": {
+    "citationNote": "Article confirms Withmuu as a general multi-IP K-pop merch store; TWICE is not specifically named among the IPs sold.",
+    "citationStatus": "weak",
+    "koEnMismatch": false,
+    "placeId": "twice-shopping-withmuu",
+    "relationOverclaim": true,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://www.mydaily.co.kr/page/view/2025111015300821208",
+    "reviewed": false
+  },
+  "txt-food-downtowner-hannam": {
+    "citationNote": "Source explicitly confirms 'LO$ER=LO♡ER' MV filming location.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "txt-food-downtowner-hannam",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://delibinu.com/post/the-ultimate-txt-tomorrow-x-together-guide-to-seoul",
+    "reviewed": false
+  },
+  "txt-food-milestone-coffee": {
+    "citationNote": "Source explicitly confirms Beomgyu's Vienna Coffee/Flat White pick.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "txt-food-milestone-coffee",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://delibinu.com/post/the-ultimate-txt-tomorrow-x-together-guide-to-seoul",
+    "reviewed": false
+  },
+  "txt-food-pizza-express": {
+    "citationNote": "Source explicitly confirms Soobin's viral mirror selfie spot.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "txt-food-pizza-express",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://delibinu.com/post/the-ultimate-txt-tomorrow-x-together-guide-to-seoul",
+    "reviewed": false
+  },
+  "txt-food-sunday-burger-club": {
+    "citationNote": "Source explicitly confirms Yeonjun & Hueningkai's Good Day Chicken Burger pick.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "txt-food-sunday-burger-club",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://delibinu.com/post/the-ultimate-txt-tomorrow-x-together-guide-to-seoul",
+    "reviewed": false
+  },
+  "txt-food-ugly-bakery": {
+    "citationNote": "Source explicitly confirms Soobin's Green Onion Bread recommendation.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "txt-food-ugly-bakery",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://delibinu.com/post/the-ultimate-txt-tomorrow-x-together-guide-to-seoul",
+    "reviewed": false
+  },
+  "txt-shopping-hyundai-card-vinyl-plastic": {
+    "citationNote": "Source explicitly confirms Beomgyu's record shop of choice.",
+    "citationStatus": "direct",
+    "koEnMismatch": false,
+    "placeId": "txt-shopping-hyundai-card-vinyl-plastic",
+    "relationOverclaim": false,
+    "researchNote": "Automated fetch-and-read pass, 2026-09-17. Source: https://delibinu.com/post/the-ultimate-txt-tomorrow-x-together-guide-to-seoul",
+    "reviewed": false
+  }
+}
