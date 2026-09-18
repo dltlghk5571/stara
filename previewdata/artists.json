@@ -2,76 +2,91 @@
   {
     "artist_id": "newjeans",
     "artist_name_ko": "뉴진스",
-    "artist_name_en": "NewJeans"
+    "artist_name_en": "NewJeans",
+    "image_url": "/artist-logos/newjeans.png"
   },
   {
     "artist_id": "enhypen",
     "artist_name_ko": "엔하이픈",
-    "artist_name_en": "ENHYPEN"
+    "artist_name_en": "ENHYPEN",
+    "image_url": "/artist-logos/enhypen.png"
   },
   {
     "artist_id": "bts",
     "artist_name_ko": "방탄소년단",
-    "artist_name_en": "BTS"
+    "artist_name_en": "BTS",
+    "image_url": "/artist-logos/bts.png"
   },
   {
     "artist_id": "illit",
     "artist_name_ko": "아일릿",
-    "artist_name_en": "ILLIT"
+    "artist_name_en": "ILLIT",
+    "image_url": "/artist-logos/illit.png"
   },
   {
     "artist_id": "ateez",
     "artist_name_ko": "에이티즈",
-    "artist_name_en": "ATEEZ"
+    "artist_name_en": "ATEEZ",
+    "image_url": "/artist-logos/ateez.png"
   },
   {
     "artist_id": "blackpink",
     "artist_name_ko": "블랙핑크",
-    "artist_name_en": "BLACKPINK"
+    "artist_name_en": "BLACKPINK",
+    "image_url": "/artist-logos/blackpink.png"
   },
   {
     "artist_id": "seventeen",
     "artist_name_ko": "세븐틴",
-    "artist_name_en": "SEVENTEEN"
+    "artist_name_en": "SEVENTEEN",
+    "image_url": "/artist-logos/seventeen.png"
   },
   {
     "artist_id": "txt",
     "artist_name_ko": "투모로우바이투게더",
-    "artist_name_en": "TXT"
+    "artist_name_en": "TXT",
+    "image_url": "/artist-logos/txt.png"
   },
   {
     "artist_id": "twice",
     "artist_name_ko": "트와이스",
-    "artist_name_en": "TWICE"
+    "artist_name_en": "TWICE",
+    "image_url": "/artist-logos/twice.png"
   },
   {
     "artist_id": "stray-kids",
     "artist_name_ko": "스트레이 키즈",
-    "artist_name_en": "Stray Kids"
+    "artist_name_en": "Stray Kids",
+    "image_url": "/artist-logos/stray-kids.png"
   },
   {
     "artist_id": "aespa",
     "artist_name_ko": "에스파",
-    "artist_name_en": "aespa"
+    "artist_name_en": "aespa",
+    "image_url": "/artist-logos/aespa.png"
   },
   {
     "artist_id": "nct",
     "artist_name_ko": "엔시티",
-    "artist_name_en": "NCT"
+    "artist_name_en": "NCT",
+    "image_url": "/artist-logos/nct.png"
   },
   {
     "artist_id": "exo",
     "artist_name_ko": "엑소",
-    "artist_name_en": "EXO"
+    "artist_name_en": "EXO",
+    "image_url": "/artist-logos/exo.png"
   },
   {
     "artist_id": "red-velvet",
     "artist_name_ko": "레드벨벳",
-    "artist_name_en": "Red Velvet"
+    "artist_name_en": "Red Velvet",
+    "image_url": "/artist-logos/red-velvet.png"
   },
   {
     "artist_id": "bigbang",
     "artist_name_ko": "빅뱅",
-    "artist_name_en": "BIGBANG"
+    "artist_name_en": "BIGBANG",
+    "image_url": "/artist-logos/bigbang.png"
   }
 ]

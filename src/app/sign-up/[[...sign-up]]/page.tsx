@@ -31,11 +31,11 @@ export default async function Page() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: 28,
           marginBottom: 20,
         }}
       >
-        🎬
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/stara-icon.png" alt="STARA" width={44} height={44} style={{ objectFit: "contain" }} />
       </div>
       <h1 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 26, textAlign: "center" }}>
         {translate(d, "signIn.joinTitle")}

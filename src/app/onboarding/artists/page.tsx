@@ -73,18 +73,30 @@ export default function OnboardingArtistsPage() {
                     width: 54,
                     height: 54,
                     borderRadius: 12,
-                    background: AVATAR_COLORS[i % AVATAR_COLORS.length],
+                    background: artist.imageUrl ? WHITE : AVATAR_COLORS[i % AVATAR_COLORS.length],
                     border: BORDER,
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    overflow: "hidden",
                     fontFamily: "Outfit",
                     fontWeight: 900,
                     fontSize: 16,
                     color: BLACK,
                   }}
                 >
-                  {initialsOf(artist.nameEn)}
+                  {artist.imageUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={artist.imageUrl}
+                      alt=""
+                      width={54}
+                      height={54}
+                      style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                    />
+                  ) : (
+                    initialsOf(artist.nameEn)
+                  )}
                 </div>
                 <span style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 11, textAlign: "center", lineHeight: 1.2 }}>
                   {artistName(artist, locale)}
