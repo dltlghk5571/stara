@@ -37,6 +37,7 @@ export const ko: Dict = {
       selectCta: "이 지역 선택 ✦",
       filmingLocations: "촬영지 {count}곳",
       spots: "{count}곳",
+      koreanOnlyBadge: "KO",
     },
     generate: {
       needRegionTitle: "지역을 먼저 선택해주세요",

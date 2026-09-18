@@ -36,6 +36,7 @@ export const en = {
       selectCta: "Select this region ✦",
       filmingLocations: "{count} filming locations",
       spots: "{count} spots",
+      koreanOnlyBadge: "KO",
     },
     generate: {
       needRegionTitle: "Please choose a region first",

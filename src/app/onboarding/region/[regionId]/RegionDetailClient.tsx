@@ -8,6 +8,16 @@ import { BackButton, KButton, KCard, Pill } from "@/components/ui/kroute";
 import { artistName, placeName, regionDesc, regionName, useLocale, useT } from "@/i18n";
 import { BLACK, BORDER, CREAM, LBLUE, LIME, PALGREEN, WHITE } from "@/lib/kroute-tokens";
 
+/** Hangul syllable block (U+AC00–U+D7A3), checked by code point rather than a literal
+ *  character-range regex so this source file stays Korean-character-free. */
+function containsHangul(text: string): boolean {
+  for (const ch of text) {
+    const code = ch.codePointAt(0) ?? 0;
+    if (code >= 0xac00 && code <= 0xd7a3) return true;
+  }
+  return false;
+}
+
 interface RepresentativeArtist {
   name: string;
   nameEn: string;
@@ -119,11 +129,35 @@ export default function RegionDetailClient({ region, representativeArtist, artis
             </Pill>
           )}
           {!representativeArtist &&
-            highlights?.map((p) => (
-              <Pill key={p.id} bg={WHITE}>
-                📍 {placeName(p, locale)}
-              </Pill>
-            ))}
+            highlights?.map((p) => {
+              const name = placeName(p, locale);
+              // TourAPI 영문 게이트웨이에 이 스팟의 영문 이름이 없으면 mapper가 국문 원문을
+              // nameEn에도 그대로 채운다(의도된 폴백) — 영문 화면에서 한글이 섞여 보일 때
+              // 작은 배지로 구분만 해준다(번역 요청/제외는 하지 않음).
+              const isKoreanOnly = locale === "en" && containsHangul(name);
+              return (
+                <Pill key={p.id} bg={WHITE}>
+                  📍 {name}
+                  {isKoreanOnly && (
+                    <span
+                      style={{
+                        fontFamily: "Outfit",
+                        fontWeight: 900,
+                        fontSize: 9,
+                        letterSpacing: 0.3,
+                        color: "#999",
+                        background: "#F0F0F0",
+                        border: "1.5px solid #ddd",
+                        borderRadius: 4,
+                        padding: "1px 4px",
+                      }}
+                    >
+                      {t("onboarding.regionDetail.koreanOnlyBadge")}
+                    </span>
+                  )}
+                </Pill>
+              );
+            })}
         </div>
 
         <KButton onClick={() => setSheetOpen(true)}>{t("onboarding.regionDetail.selectCta")}</KButton>
