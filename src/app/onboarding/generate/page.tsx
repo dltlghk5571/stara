@@ -3,7 +3,7 @@
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getRegionById } from "@/data/regions";
-import { placeName, regionName, routeOptionLabel, useLocale, useT } from "@/i18n";
+import { placeName, regionName, routeOptionLabel, routeOptionDescription, useLocale, useT } from "@/i18n";
 import { useRouteOptions } from "@/lib/tour-api/useRouteOptions";
 import { useTripStore } from "@/store/tripStore";
 import { KButton, Pill } from "@/components/ui/kroute";
@@ -153,6 +153,9 @@ function GenerateInner() {
                 })}
               </span>
             </div>
+            <p style={{ fontFamily: "Nunito", fontSize: 12, color: "#888", marginTop: -4, marginBottom: 8 }}>
+              {routeOptionDescription(option, locale)}
+            </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               {option.places.map((p) => (
                 <div key={p.id} className="kr-pathNode" style={{ padding: "6px 0" }}>

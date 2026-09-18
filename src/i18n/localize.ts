@@ -41,6 +41,11 @@ export const routeOptionLabel = (
   l: Locale,
 ) => pick(o.labelKo, o.labelEn, l);
 
+export const routeOptionDescription = (
+  o: Pick<RouteOption, "descriptionKo" | "descriptionEn">,
+  l: Locale,
+) => pick(o.descriptionKo, o.descriptionEn, l);
+
 export const artistName = (a: Pick<Artist, "name" | "nameEn">, l: Locale) =>
   pick(a.name, a.nameEn, l);
 

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getRegionById } from "@/data/regions";
 import { getArtistById } from "@/data/artists";
 import { ARTIST_PLACES } from "@/data/places";
+import { placesForArtists } from "@/lib/artistPlaceSelector";
 import RegionDetailClient from "./RegionDetailClient";
 
 interface Props {
@@ -24,9 +25,7 @@ export default async function OnboardingRegionDetailPage({ params, searchParams 
           name: artist.name,
           nameEn: artist.nameEn,
           initials: artist.nameEn.slice(0, 2).toUpperCase(),
-          spotCount: ARTIST_PLACES.filter((p) =>
-            p.artistIds.includes(region.representativeArtistId!)
-          ).length,
+          spotCount: placesForArtists(ARTIST_PLACES, [region.representativeArtistId!]).length,
         }
       : null;
 

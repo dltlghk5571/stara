@@ -6,6 +6,7 @@ import type { Place } from "@/types";
 import { getArtistById } from "@/data/artists";
 import { getQuestsForPlace } from "@/data/quests";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
+import { getPlacePresentation } from "@/lib/placePresentation";
 import {
   useT,
   useLocale,
@@ -80,6 +81,7 @@ export default function PlaceDetailSheet({ place, onClose }: Props) {
       .join(", ") || t("reels.staraPick");
   const quests = getQuestsForPlace(place);
   const { info: tourismInfo, images: tourismImages } = useTourismInfo(place.contentId, place.category);
+  const presentation = getPlacePresentation(place, locale);
 
   return (
     <div className="place-sheet" onClick={onClose}>
@@ -92,6 +94,15 @@ export default function PlaceDetailSheet({ place, onClose }: Props) {
             <X size={20} />
           </button>
         </div>
+
+        {presentation.primaryImage && (
+          // eslint-disable-next-line @next/next/no-img-element -- 외부 STARA/KTO 이미지, 도메인 미확정
+          <img
+            src={presentation.primaryImage}
+            alt=""
+            style={{ width: "100%", height: "160px", objectFit: "cover", borderRadius: "14px", marginBottom: "16px" }}
+          />
+        )}
 
         <div style={{ marginBottom: "16px", borderRadius: "14px", background: "rgba(255,143,122,.1)", padding: "12px", fontSize: "13px", color: "var(--navy)" }}>
           <p style={{ fontWeight: 700 }}>{t("reels.relationWith", { artists: artistLabel })}</p>
@@ -151,6 +162,31 @@ export default function PlaceDetailSheet({ place, onClose }: Props) {
                 {tourismInfo.overview}
               </p>
             )}
+          </div>
+        )}
+
+        {/* STARA 아티스트 장소 전용 KTO 보강(seoulTourismEnrichment 사이드카) — 위 블록(제네릭
+            source==="kto" 장소의 실시간 조회)과는 별개 경로다. presentation이 이미 source==="kto"인
+            place는 걸러내므로(placePresentation.ts) 여기서 다시 확인하지 않는다. */}
+        {presentation.tourismTitle && (
+          <p style={{ marginTop: "16px", fontSize: "13px", fontWeight: 700, color: "var(--gray)" }}>
+            {presentation.tourismTitle}
+          </p>
+        )}
+        {presentation.tourismOverview && (
+          <div style={{ marginTop: "16px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--gray)" }}>{t("reels.aboutPlace")}</p>
+            <p style={{ marginTop: "8px", fontSize: "13px", lineHeight: 1.5, color: "var(--navy)" }}>
+              {presentation.tourismOverview}
+            </p>
+          </div>
+        )}
+        {presentation.tourismAddress && (
+          <div style={{ marginTop: "16px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--gray)" }}>{t("reels.address")}</p>
+            <p style={{ marginTop: "8px", fontSize: "13px", lineHeight: 1.5, color: "var(--navy)" }}>
+              {presentation.tourismAddress}
+            </p>
           </div>
         )}
       </div>

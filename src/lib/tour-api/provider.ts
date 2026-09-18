@@ -14,6 +14,7 @@ import { mapTourItemsToPlaces } from "./mapper";
 import { TOUR_API_BASE_URL, TOUR_API_EN_BASE_URL } from "./config";
 import type { TourApiDetailIntroItem, Locale } from "./types";
 import type { Place } from "@/types";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 
 export type { Locale };
 
@@ -53,9 +54,26 @@ async function withEnglishFallback<T>(
   return result;
 }
 
+/**
+ * getNearby/searchTourismKeyword 전용 — mapTourItemsToPlaces에 "실제로 어느 언어를 받았는지"를
+ * 정확히 넘기려고 폴백 발생 여부까지 함께 돌려준다. 요청한 locale을 그대로 넘기면, 폴백으로
+ * 국문 데이터를 받고도 mapper에는 "en"이라고 알려주게 되어 nameEn/relationTextEn에 국문 원문이
+ * 영문인 것처럼 남는다.
+ */
+async function withEnglishFallbackTracked<T>(
+  locale: Locale,
+  run: (baseUrl: string) => Promise<T[]>
+): Promise<{ items: T[]; actualLocale: Locale }> {
+  const items = await run(baseUrlFor(locale));
+  if (locale === "en" && items.length === 0) {
+    return { items: await run(TOUR_API_BASE_URL), actualLocale: "ko" };
+  }
+  return { items, actualLocale: locale };
+}
+
 export const tourismDataProvider: TourismDataProvider = {
   async getNearby(params, locale = "en") {
-    const items = await withEnglishFallback(locale, (baseUrl) =>
+    const { items, actualLocale } = await withEnglishFallbackTracked(locale, (baseUrl) =>
       fetchLocationBasedList(
         {
           mapX: params.lng,
@@ -66,7 +84,7 @@ export const tourismDataProvider: TourismDataProvider = {
         baseUrl
       )
     );
-    return mapTourItemsToPlaces(items, locale);
+    return mapTourItemsToPlaces(items, actualLocale);
   },
 
   async getDetail(contentId, contentTypeId, locale = "en") {
@@ -79,9 +97,12 @@ export const tourismDataProvider: TourismDataProvider = {
       fetchDetailIntro(contentId, contentTypeId, baseUrl)
     );
 
+    // KTO 원문의 HTML 엔티티(&ldquo; 등)를 순수 텍스트로 풀어서 돌려준다(20절) — 여기서
+    // 한 번만 디코딩하면 이 함수를 쓰는 모든 화면(PlaceDetailSheet 등)이 따로 안 해도 된다.
+    const address = [common[0]?.addr1, common[0]?.addr2].filter(Boolean).join(" ") || null;
     return {
-      overview: common[0]?.overview ?? null,
-      address: [common[0]?.addr1, common[0]?.addr2].filter(Boolean).join(" ") || null,
+      overview: common[0]?.overview ? decodeHtmlEntities(common[0].overview) : null,
+      address: address ? decodeHtmlEntities(address) : null,
       tel: common[0]?.tel ?? null,
       intro: intro[0] ?? null,
     };
@@ -101,7 +122,7 @@ export function searchTourismKeyword(
   contentTypeId?: string,
   locale: Locale = "en"
 ) {
-  return withEnglishFallback(locale, (baseUrl) =>
+  return withEnglishFallbackTracked(locale, (baseUrl) =>
     fetchSearchKeyword({ keyword, contentTypeId }, baseUrl)
-  ).then((items) => mapTourItemsToPlaces(items, locale));
+  ).then(({ items, actualLocale }) => mapTourItemsToPlaces(items, actualLocale));
 }

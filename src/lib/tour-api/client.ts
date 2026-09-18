@@ -54,26 +54,34 @@ async function callTourApi<T>(
   const cached = cacheGet<T[]>(cacheKey);
   if (cached) return cached;
 
-  try {
-    const res = await fetch(buildUrl(baseUrl, operation, params), {
-      signal: AbortSignal.timeout(TOUR_API_TIMEOUT_MS),
-      cache: "no-store",
-    });
-    if (!res.ok) {
-      console.error(`[tour-api] ${operation} HTTP ${res.status}`);
+  // 네트워크 오류/타임아웃(throw)만 한 번 재시도한다 — HTTP 오류 응답(res.ok===false)은
+  // 대개 요청 자체가 잘못됐거나(4xx) 서비스 장애(5xx)라 재시도해도 똑같이 실패할 확률이
+  // 높아 쿼터만 낭비한다. 일시적 장애만 재시도 대상으로 좁힌다.
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(buildUrl(baseUrl, operation, params), {
+        signal: AbortSignal.timeout(TOUR_API_TIMEOUT_MS),
+        cache: "no-store",
+      });
+      if (!res.ok) {
+        console.error(`[tour-api] ${operation} HTTP ${res.status}`);
+        return [];
+      }
+      const json = (await res.json()) as TourApiResponse<T>;
+      const result = normalizeItems(json);
+      cacheSet(cacheKey, result);
+      return result;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      if (attempt === 0) {
+        console.error(`[tour-api] ${operation} failed, retrying once:`, message);
+        continue;
+      }
+      console.error(`[tour-api] ${operation} failed after retry:`, message);
       return [];
     }
-    const json = (await res.json()) as TourApiResponse<T>;
-    const result = normalizeItems(json);
-    cacheSet(cacheKey, result);
-    return result;
-  } catch (err) {
-    console.error(
-      `[tour-api] ${operation} failed:`,
-      err instanceof Error ? err.message : err
-    );
-    return [];
   }
+  return [];
 }
 
 export function fetchLocationBasedList(

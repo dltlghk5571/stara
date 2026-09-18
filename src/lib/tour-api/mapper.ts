@@ -4,6 +4,7 @@
 import type { Place, PlaceCategory } from "@/types";
 import type { Locale, TourApiRawItem } from "./types";
 import { RESTAURANT_CONTENT_TYPE_ID } from "./config";
+import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 
 const DEFAULT_DWELL_MINUTES = 45;
 // KTO 원본에는 구조화된 개장/마감 시각이 없는 경우가 많아, scheduleCalculator가
@@ -26,27 +27,34 @@ export function mapTourItemToPlace(item: TourApiRawItem, locale: Locale = "ko"):
   const isFood = item.contenttypeid === RESTAURANT_CONTENT_TYPE_ID;
   const category: PlaceCategory = isFood ? "local_restaurant" : "local_tourism";
 
-  // ponytail: 한 번의 호출은 ko/en 중 하나만 응답하므로 요청하지 않은 쪽 언어 필드는
-  // 정확한 번역이 없다 — item.title을 그대로 폴백으로 쓴다(빈 문자열보다 낫고, Place
-  // 스키마가 두 필드 다 필수라 불가피함). 두 언어를 동시에 정확히 채우려면 ko/en을
-  // 각각 조회해 contentId로 병합해야 함(Section H 3번, 필요해지면 추가). locale 인자를
-  // 남겨두는 이유는 이 함수를 호출하는 쪽이 "이 title이 어느 언어인지" 알고 있다는
-  // 사실 자체를 명시적으로 만들어, 향후 이중 조회 병합 로직을 여기에 붙이기 쉽게 하기 위함.
-  const koTitle = locale === "ko" ? item.title : item.title;
-  const enTitle = locale === "en" ? item.title : item.title;
+  // 한 번의 호출은 ko/en 중 하나만 응답한다. 이름은 두 필드 다 필수라 반대쪽 언어도
+  // item.title을 그대로 쓸 수밖에 없지만(정확한 번역 없음 — 이중 조회 병합은 Section H
+  // 3번 참고, 필요해지면 추가), 설명문(overview)은 실제로 받은 언어(locale) 쪽에만 넣고
+  // 반대쪽은 안전한 일반 안내문으로 채운다 — 다른 언어 원문을 잘못된 언어 라벨로 노출하지
+  // 않기 위함(예: 영문 요청이 폴백으로 국문 데이터를 받았는데 relationTextEn에 그 국문
+  // 원문이 그대로 남는 사고를 막는다).
+  // KTO 원문에는 &ldquo; 같은 HTML 엔티티가 그대로 섞여 오는 경우가 있다 — 신뢰할 HTML로
+  // 취급하지 않고(dangerouslySetInnerHTML 안 씀) 순수 텍스트로만 풀어서 저장한다(20절).
+  const overview = item.overview?.trim();
+  const relationTextKo =
+    locale === "ko" && overview
+      ? decodeHtmlEntities(overview)
+      : "한국관광공사에서 제공하는 지역 관광정보입니다.";
+  const relationTextEn =
+    locale === "en" && overview
+      ? decodeHtmlEntities(overview)
+      : "Local tourism info provided by the Korea Tourism Organization.";
 
   return {
     id: `kto-${item.contentid}`,
-    nameKo: koTitle,
-    nameEn: enTitle,
+    nameKo: decodeHtmlEntities(item.title),
+    nameEn: decodeHtmlEntities(item.title),
     latitude,
     longitude,
     category,
     artistIds: [],
-    relationTextKo: item.overview?.trim() || "한국관광공사에서 제공하는 지역 관광정보입니다.",
-    relationTextEn:
-      item.overview?.trim() ||
-      "Local tourism info provided by the Korea Tourism Organization.",
+    relationTextKo,
+    relationTextEn,
     openTime: DEFAULT_OPEN_TIME,
     closeTime: DEFAULT_CLOSE_TIME,
     dwellMinutes: DEFAULT_DWELL_MINUTES,
@@ -57,7 +65,9 @@ export function mapTourItemToPlace(item: TourApiRawItem, locale: Locale = "ko"):
     questIds: [],
     source: "kto",
     contentId: item.contentid,
-    address: [item.addr1, item.addr2].filter(Boolean).join(" ") || undefined,
+    address: [item.addr1, item.addr2].filter(Boolean).join(" ")
+      ? decodeHtmlEntities([item.addr1, item.addr2].filter(Boolean).join(" "))
+      : undefined,
   };
 }
 

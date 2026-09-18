@@ -7,6 +7,7 @@ import { ARTIST_PLACES, getPlaceById } from "@/data/places";
 import { USER_FACING_CATEGORIES, type PlaceCategory } from "@/types";
 import type { Place } from "@/types";
 import { haversineKm } from "@/lib/distance";
+import { placesForArtists } from "@/lib/artistPlaceSelector";
 import { useLocale, useT, placeName } from "@/i18n";
 import type { Locale } from "@/lib/tour-api/types";
 import { useTripStore } from "@/store/tripStore";
@@ -123,15 +124,12 @@ export default function EditPage() {
 
   // ARTIST_PLACES는 현재 서울 실데이터만 존재 — 다른 지역 트립에서는 서울 장소가
   // 섞여 나오지 않도록 지역이 서울이 아니면 추천 풀을 비운다(검색/지도탭 추가는 영향 없음).
+  const artistFilteredPlaces =
+    selectedArtistIds.length === 0 ? ARTIST_PLACES : placesForArtists(ARTIST_PLACES, selectedArtistIds);
   const candidatePlaces =
     storeSelectedRegionId !== null && storeSelectedRegionId !== "seoul"
       ? []
-      : ARTIST_PLACES.filter(
-          (p) =>
-            selectedCategories.includes(p.category) &&
-            (selectedArtistIds.length === 0 ||
-              p.artistIds.some((id) => selectedArtistIds.includes(id)))
-        );
+      : artistFilteredPlaces.filter((p) => selectedCategories.includes(p.category));
 
   const userAddedStops = [
     ...selectedPlaceIds.map(getPlaceById).filter((p): p is Place => !!p),

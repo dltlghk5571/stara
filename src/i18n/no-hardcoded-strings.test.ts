@@ -20,6 +20,11 @@ const ALLOW = [
   // `reasonKo` copy: the field name in `src/types` fixes this string as Korean,
   // and it is not currently rendered anywhere (plumbed to the store, unused).
   join("src", "lib", "autoPlaceSelector"),
+  // Internal editorial review tool (draft→verified→published) — a local dev-only
+  // surface for the STARA content team, never part of the bilingual end-user app,
+  // so it is intentionally exempt from the t()/dictionary requirement below.
+  join("src", "app", "review"),
+  join("src", "lib", "review"),
 ];
 
 function walk(dir: string): string[] {
