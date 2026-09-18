@@ -16,6 +16,9 @@ export async function POST(request: NextRequest) {
     note?: string;
     tripId?: string;
     tripName?: string;
+    /** 배지 집계용 스냅샷 — 클라이언트가 place.category/artistIds에서 그대로 넘긴다. */
+    category?: string;
+    isArtistPlace?: boolean;
   } | null;
   if (!body?.placeId || !body?.photoUrl) {
     return NextResponse.json({ error: "placeId and photoUrl required" }, { status: 400 });
@@ -33,6 +36,8 @@ export async function POST(request: NextRequest) {
       note: body.note,
       tripId: body.tripId,
       tripName: body.tripName,
+      category: body.category,
+      isArtistPlace: body.isArtistPlace,
     })
     .returning();
 

@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(), // Clerk user id
@@ -23,5 +23,12 @@ export const questPhotos = pgTable("quest_photos", {
   /** 다이어리 탭에 보여줄 사람이 읽을 수 있는 루트 이름. tripStore.activeTripName을 그대로 저장해둔다
    *  (별도 trips 테이블 없이, 과거 루트 탭에 사람이 읽을 수 있는 이름을 보여주기 위한 비정규화). */
   tripName: text("trip_name"),
+  /** 완료 시점의 place.category 스냅샷 — 배지(badge) 집계용. 장소 데이터가 나중에 바뀌어도
+   *  이미 딴 배지가 흔들리지 않도록, placeId로 다시 조회하지 않고 여기 남겨둔다. 이 컬럼
+   *  도입 이전 행은 null(배지 집계에서 제외됨 — placeName과 같은 전례). */
+  category: text("category"),
+  /** 완료 시점의 (place.artistIds.length > 0) 스냅샷 — K-pop 배지 집계용. 마찬가지로
+   *  도입 이전 행은 null. */
+  isArtistPlace: boolean("is_artist_place"),
   completedAt: timestamp("completed_at").notNull().defaultNow(),
 });

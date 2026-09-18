@@ -12,7 +12,6 @@ export default function CompletePage() {
   const [step, setStep] = useState<"complete" | "diary-prompt">("complete");
   const completedAt = useTripStore((s) => s.completedAt);
   const activeTripName = useTripStore((s) => s.activeTripName);
-  const earnedStampIds = useTripStore((s) => s.earnedStampIds);
   const resetTrip = useTripStore((s) => s.resetTrip);
   const { orderedPlaces } = useTripPlan();
 
@@ -52,13 +51,10 @@ export default function CompletePage() {
         </div>
         <div className="completion-stamp">🎬</div>
         <div className="flow-sub" style={{ marginBottom: "18px" }}>
-          {t("complete.summary", {
-            stamps: earnedStampIds.length,
-            places: orderedPlaces.length,
-          })}
+          {t("complete.summary", { places: orderedPlaces.length })}
         </div>
         <button className="btn btn-coral" onClick={() => setStep("diary-prompt")}>
-          {t("complete.receiveStamp")}
+          {t("mission.continueCta")}
         </button>
       </div>
     );
@@ -76,7 +72,7 @@ export default function CompletePage() {
           <div style={{ fontFamily: "'Space Mono', monospace", fontSize: "9px", color: "var(--gray)", marginTop: "3px" }}>
             {t("complete.diaryEntriesPhotos", {
               entries: orderedPlaces.length,
-              photos: earnedStampIds.length,
+              photos: orderedPlaces.length,
             })}
           </div>
         </div>

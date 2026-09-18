@@ -50,7 +50,7 @@ export default function SubQuestList({ quest, completedQuestIds, onToggle, onVer
   return (
     <div style={wrapperStyle}>
       <p style={kickerStyle}>
-        <Sparkles size={14} /> {t("stamps.bonusSubQuest")}
+        <Sparkles size={14} /> {t("trip.bonusSubQuest")}
       </p>
       <label style={{ display: "flex", alignItems: "flex-start", gap: 10, cursor: "pointer", minHeight: 44 }}>
         <input
@@ -94,7 +94,7 @@ function TmoneyPhotoSubQuest({ quest, done, onVerified }: { quest: Quest; done: 
   return (
     <div style={wrapperStyle}>
       <p style={kickerStyle}>
-        <Sparkles size={14} /> {t("stamps.bonusSubQuest")}
+        <Sparkles size={14} /> {t("trip.bonusSubQuest")}
       </p>
       {done ? (
         <div style={{ display: "flex", alignItems: "center", gap: 10, minHeight: 44 }}>

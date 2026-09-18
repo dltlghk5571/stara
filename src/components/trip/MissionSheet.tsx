@@ -16,7 +16,7 @@ import type { Place } from "@/types";
 interface Props {
   place: Place;
   onClose: () => void;
-  /** 스탬프까지 확정된 뒤(성공 모달의 "Receive Stamp" 클릭 시) 호출 — 방금 저장된 사진 정보를 그대로 넘긴다 */
+  /** 성공 모달의 "Continue" 클릭 시 호출 — 방금 저장된 사진 정보를 그대로 넘긴다 */
   onComplete: (photo: DiaryPhoto) => void;
 }
 
@@ -28,7 +28,7 @@ type GpsStatus = "checking" | "ok" | "far" | "unavailable" | "test_bypass";
 
 /**
  * 미션 시트 — 사진 첨부 + 위치 확인이 필수다. 제출하면 업로드 → quest_photos 저장 →
- * 필수 퀘스트 완료 처리 → 스탬프 확정까지 한 번에 처리한다.
+ * 필수 퀘스트 완료 처리까지 한 번에 처리한다.
  *
  * 사진 자체(내용)는 아직 검증하지 않고 항상 통과시킨다 — 대신 GPS로 "이 장소 근처에
  * 실제로 있었는지"만 확인한다. 위치를 못 가져오면(권한거부/미지원/타임아웃) 사용자가
@@ -36,7 +36,11 @@ type GpsStatus = "checking" | "ok" | "far" | "unavailable" | "test_bypass";
  *
  * 테스터 계정(capabilities.bypassGpsMission)은 navigator.geolocation을 아예 호출하지
  * 않는다 — 좌표를 조작하는 게 아니라 GPS 검증 단계 자체를 건너뛴다. 그 외 사진 선택/업로드/
- * 퀘스트 완료/스탬프 발급 흐름은 일반 유저와 동일하게 그대로 거친다.
+ * 퀘스트 완료 흐름은 일반 유저와 동일하게 그대로 거친다.
+ *
+ * 장소별 스탬프는 더 이상 여기서 발급하지 않는다 — 완료 즉시 보상은 체크 표시뿐이고,
+ * 실제 "배지"는 계정 전체 누적 방문 이력을 기준으로 서버에서 계산한다(BadgesTab 참고).
+ * 이 시트는 quest_photos에 category/isArtistPlace 스냅샷만 남겨서 그 집계가 가능하게 한다.
  */
 export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const t = useT();
@@ -45,7 +49,6 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
   const activeTripName = useTripStore((s) => s.activeTripName);
   const toggleQuest = useTripStore((s) => s.toggleQuest);
   const completedQuestIds = useTripStore((s) => s.completedQuestIds);
-  const claimStamp = useTripStore((s) => s.claimStamp);
   const { bypassGpsMission } = useVerificationCapabilities();
 
   const [file, setFile] = useState<File | Blob | null>(null);
@@ -139,6 +142,8 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
           note: caption || undefined,
           tripId: activeTripId ?? undefined,
           tripName: activeTripName ?? undefined,
+          category: place.category,
+          isArtistPlace: place.artistIds.length > 0,
         }),
       });
       if (!res.ok) throw new Error("save failed");
@@ -156,7 +161,6 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
       };
 
       if (quest && !completedQuestIds.includes(quest.id)) toggleQuest(quest.id);
-      claimStamp(place);
       setSavedPhoto(photo);
       setStatus("success");
     } catch (error) {
@@ -208,7 +212,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             style={{
               width: 72,
               height: 72,
-              borderRadius: 16,
+              borderRadius: "50%",
               border: "2.5px solid #111111",
               background: PALGREEN,
               boxShadow: "4px 4px 0 #111111",
@@ -219,7 +223,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
               margin: "8px auto 20px",
             }}
           >
-            🏅
+            ✓
           </div>
           <KButton onClick={() => savedPhoto && onComplete(savedPhoto)}>{t("mission.continueCta")}</KButton>
         </KCard>

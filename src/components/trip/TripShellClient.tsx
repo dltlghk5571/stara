@@ -6,9 +6,10 @@ import { useUser } from "@clerk/nextjs";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import { getPlaceById } from "@/data/places";
-import { levelFromStamps, nextRewardKey } from "@/lib/gamification";
+import { levelFromBadges, nextRewardKey } from "@/lib/gamification";
+import type { BadgeProgress } from "@/lib/badges";
 import MapView from "@/components/map/MapView";
-import StampGrid from "@/components/stamp/StampGrid";
+import BadgeGrid from "@/components/badge/BadgeGrid";
 import MissionSheet from "@/components/trip/MissionSheet";
 import SubQuestList from "@/components/quest/SubQuestList";
 import { BottomNav, KButton, KCard, Pill } from "@/components/ui/kroute";
@@ -52,14 +53,23 @@ export interface TripGroup {
   photos: DiaryPhoto[];
 }
 
+/** 장소 체크포인트의 필수 퀘스트 id 형식(`getQuestsForPlace` 참고) — 스탬프를 없앤 뒤로는
+ *  이 값이 "이 장소 미션을 완료했는가"의 유일한 근거다(루트 진행 게이팅용, 배지 집계는
+ *  서버가 quest_photos에서 따로 계산한다). */
+function isPlaceMissionDone(place: Place, completedQuestIds: string[]): boolean {
+  return completedQuestIds.includes(`q-${place.id}`);
+}
+
 type Tab = KrouteTab;
 
 interface Props {
   initialDiaryGroups: TripGroup[];
+  /** 계정 전체 누적 방문 기준 배지 진행도 — trip/page.tsx가 서버에서 계산해 내려준다. */
+  initialBadges: BadgeProgress[];
   initialTab?: Tab;
 }
 
-export default function TripShellClient({ initialDiaryGroups, initialTab }: Props) {
+export default function TripShellClient({ initialDiaryGroups, initialBadges, initialTab }: Props) {
   const router = useRouter();
   const { user } = useUser();
   const t = useT();
@@ -70,7 +80,6 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
 
   const activeTripId = useTripStore((s) => s.activeTripId);
   const activeTripName = useTripStore((s) => s.activeTripName);
-  const earnedStampIds = useTripStore((s) => s.earnedStampIds);
   const completedQuestIds = useTripStore((s) => s.completedQuestIds);
   const toggleQuest = useTripStore((s) => s.toggleQuest);
   const completeQuest = useTripStore((s) => s.completeQuest);
@@ -106,7 +115,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
   if (!startedAt && !mainRoutePlaces) return null;
 
   const currentIndex = orderedPlaces.findIndex(
-    (p) => !earnedStampIds.includes(`stamp-${p.id}`)
+    (p) => !isPlaceMissionDone(p, completedQuestIds)
   );
   const allDone = currentIndex === -1;
 
@@ -125,7 +134,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
     setSessionPhotos((prev) => [photo, ...prev]);
     setMissionPlace(null);
     const stillRemaining = orderedPlaces.some(
-      (p) => !useTripStore.getState().earnedStampIds.includes(`stamp-${p.id}`)
+      (p) => !isPlaceMissionDone(p, useTripStore.getState().completedQuestIds)
     );
     if (!stillRemaining) {
       completeTrip();
@@ -149,7 +158,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
           <CoverTab
             holderName={holderName}
             activeTripName={activeTripName}
-            earnedCount={earnedStampIds.length}
+            earnedCount={orderedPlaces.filter((p) => isPlaceMissionDone(p, completedQuestIds)).length}
             totalCount={orderedPlaces.length}
             onContinue={() => setTab("route")}
             onCreateNew={() => router.push("/onboarding/artists")}
@@ -157,9 +166,7 @@ export default function TripShellClient({ initialDiaryGroups, initialTab }: Prop
           />
         )}
 
-        {tab === "stamps" && (
-          <StampsTab orderedPlaces={orderedPlaces} earnedStampIds={earnedStampIds} />
-        )}
+        {tab === "badges" && <BadgesTab progress={initialBadges} />}
 
         {tab === "route" && (
           <RouteTab
@@ -308,27 +315,28 @@ function CoverTab({
   );
 }
 
-function StampsTab({ orderedPlaces, earnedStampIds }: { orderedPlaces: Place[]; earnedStampIds: string[] }) {
+function BadgesTab({ progress }: { progress: BadgeProgress[] }) {
   const t = useT();
-  const level = levelFromStamps(earnedStampIds.length);
-  const reward = t(nextRewardKey(earnedStampIds.length));
+  const earnedCount = progress.filter((p) => p.earned).length;
+  const level = levelFromBadges(earnedCount);
+  const reward = t(nextRewardKey(earnedCount));
   return (
     <div className="kr-scrollY" style={{ height: "100%", padding: "48px 24px 24px" }}>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
-        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>{t("trip.missionStamps")}</h2>
+        <h2 style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 24 }}>{t("trip.missionBadges")}</h2>
         <Pill bg={CYAN}>{t("trip.level", { n: level })}</Pill>
       </div>
       <p style={{ fontFamily: "Caveat", fontSize: 18, color: "#666", fontStyle: "italic", marginBottom: 14 }}>
-        {t("trip.collectAll")}
+        {t("trip.collectAllBadges")}
       </p>
 
       <KCard style={{ overflow: "hidden", background: "#F0E8FF", marginBottom: 14 }}>
         <div style={{ padding: "16px 20px", display: "flex", alignItems: "center" }}>
           <div style={{ flex: 1 }}>
             <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 28, lineHeight: 1 }}>
-              {earnedStampIds.length} / {orderedPlaces.length}
+              {earnedCount} / {progress.length}
             </p>
-            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 3 }}>{t("trip.stampsHint")}</p>
+            <p style={{ fontFamily: "Nunito", fontSize: 13, color: "#666", marginTop: 3 }}>{t("trip.badgesHint")}</p>
           </div>
           <div style={{ width: 1.5, height: 44, background: "rgba(0,0,0,.12)", margin: "0 16px" }} />
           <div style={{ flex: 1 }}>
@@ -338,7 +346,7 @@ function StampsTab({ orderedPlaces, earnedStampIds }: { orderedPlaces: Place[]; 
         </div>
       </KCard>
 
-      <StampGrid orderedPlaces={orderedPlaces} earnedStampIds={earnedStampIds} />
+      <BadgeGrid progress={progress} />
     </div>
   );
 }
@@ -453,7 +461,7 @@ function RouteTab({
                   {placeName(p, locale)}
                 </p>
                 <p style={{ fontFamily: "Nunito", fontSize: 12, fontWeight: 700, color: status === "done" ? "#555" : active ? "#333" : "#666" }}>
-                  {status === "done" ? t("trip.missionComplete") : active ? t("trip.goNow") : t("stamps.locked")}
+                  {status === "done" ? t("trip.missionComplete") : active ? t("trip.goNow") : t("common.locked")}
                 </p>
               </div>
               {active && <Pill bg={PINK} color={WHITE}>{t("trip.goBadge")}</Pill>}

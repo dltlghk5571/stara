@@ -94,12 +94,37 @@ Vercel 프로젝트 설정 → Environment Variables 에 아래 값을 등록하
 (`useVerificationCapabilities`가 클라이언트용, `getServerVerificationCapabilities`가
 서버용).
 
-**같은 브라우저에서 계정을 바꿀 때**: 여행 진행 상태(`completedQuestIds`,
-`earnedStampIds` 등)는 브라우저 로컬(zustand persist)에 저장되므로, `tripStore`가
+**같은 브라우저에서 계정을 바꿀 때**: 여행 진행 상태(`completedQuestIds` 등)는
+브라우저 로컬(zustand persist)에 저장되므로, `tripStore`가
 `ownerUserId`로 소유자를 구분한다(`TripOwnershipGuard`가 전역에서 Clerk userId 변화를
 감지해 자동으로 바인딩). 같은 유저가 로그아웃 후 다시 로그인하면 로컬 여행이
 그대로 남고, 테스터 → 일반 계정처럼 **다른** 유저로 전환되면 이전 진행 상황이 전부
 초기화된다 — 테스터의 완료 기록이 일반 계정에 보이는 일은 없다.
+
+### 배지(badge) 시스템
+
+기존 "장소마다 하나씩 찍히는 스탬프"는 폐지됐다. 지금은 계정 전체 누적 방문 기록을
+기준으로 조건(카테고리별 N곳 방문)을 달성하면 배지를 주는 방식이다 — 6개 카테고리
+(푸드/쇼핑/컬처/액티비티/랜드마크/K-POP) × Lv.1/Lv.2 = 12개, 카탈로그는
+`src/data/badges.ts`에 있다.
+
+- **장소 미션 완료 시**: 더 이상 즉시 "스탬프"를 주지 않는다 — 체크 표시만 뜨고
+  (`MissionSheet.tsx`), 루트 진행 게이팅(다음 체크포인트 잠금 해제)은 `tripStore`의
+  `completedQuestIds`만으로 판단한다(`stamp-*` id 네임스페이스는 완전히 제거됨).
+- **배지 집계는 서버에서, 계정 단위로, 여러 여행에 걸쳐 누적된다.** 새 테이블을 따로
+  만들지 않고, 이미 있는 `quest_photos`에 완료 시점 스냅샷 컬럼 두 개
+  (`category`, `is_artist_place`)를 추가해서 씀 — `MissionSheet`가 제출할 때
+  `place.category`/`place.artistIds.length > 0`을 그대로 보낸다. `/trip` 서버
+  컴포넌트가 유저의 `quest_photos`를 placeId 기준으로 중복 제거한 뒤
+  `computeBadgeProgress`(`src/lib/badges.ts`, 순수 함수)로 12개 배지 진행도를 계산해
+  `TripShellClient`에 내려준다.
+- **카테고리 매핑**: STARA의 `PlaceCategory`엔 별도 "랜드마크" 카테고리가 없어서
+  `photo`+`local_tourism`을 landmark 배지로, `food`+`local_restaurant`을 food 배지로
+  묶었다(`badgeCategoryForPlaceCategory`). K-POP 배지는 카테고리가 아니라
+  `artistIds.length > 0` 여부로 따로 집계 — 다른 카테고리 배지와 중복 집계될 수 있다
+  (아티스트가 연결된 음식점 방문은 food 배지와 kpop 배지 둘 다에 카운트됨).
+- **도입 이전 사진**: `category`/`is_artist_place`가 null이라 배지 집계에서 자연히
+  제외된다(`place_name` 컬럼 도입 때와 같은 패턴).
 
 ### DB 스키마 변경 적용 (새 환경/Vercel)
 
@@ -124,13 +149,13 @@ src/
     edit/                 C. 코스 편집 (지도 + 릴스 카드)
     final/                D. 최종 루트 확인
     travel/               E. 여행 진행
-    stamps/               F. 스탬프북
+    stamps/               F. 배지북
     complete/             G. 여행 완료
   components/
     map/                 지도 렌더링 (Leaflet 구현을 나머지 앱과 분리)
     reels/               릴스형 장소 카드, 필터, 상세 시트
     quest/                체크포인트/서브 퀘스트 체크리스트
-    stamp/                스탬프 그리드
+    badge/                배지 그리드
     route/                실시간 일정 요약 바
     layout/               공용 상단바
   data/                  artists / places / quests / routes 더미 데이터
@@ -178,7 +203,7 @@ src/
 | DirectionsProvider | `src/lib/distance.ts` Haversine(기본) — TMAP 연동 시 구간별 실제 duration/geometry로 override | `src/lib/directions/` 참고, 실패 시 구간 단위로 Haversine 폴백 |
 | 지도 렌더링 | `src/components/map/LeafletMap.tsx` | 다른 지도 SDK로 교체 시 `MapView.tsx`가 노출하는 `MapPin`/`MapViewProps` 인터페이스만 유지하면 나머지 화면은 무수정 |
 | 관광지 랭킹 signal | `src/lib/tour-api/relatedTourism.ts` (`TarRlteTarService1`, 실제 연동됨) — 메인 루트 5곳을 anchor로 연관 관광지 랭킹을 가져와 `scoreCandidate`에 반영 | 실패/미승인 시 `relatedTourismScore`가 0(중립)이 되어 거리/식사시간 기준으로만 자연스럽게 폴백 |
-| QuestVerificationProvider | 사용자가 직접 체크 (`store/tripStore.ts`) | GPS/사진 인증 붙일 때 `toggleQuest`/`claimStamp` 내부 로직만 확장 |
+| QuestVerificationProvider | 수동 체크(`toggleQuest`)와 서버 검증 완료(`completeQuest`, 멱등) 두 경로 — GPS(체크포인트 미션)와 AI 사진 인증(T-money 퀘스트)은 이미 연결돼 있다(`store/tripStore.ts`) | 새 검증 방식을 추가할 땐 `Quest.verification`에 케이스만 늘리면 됨 |
 | CollectionBookProvider | 미구현 (완료 화면에 안내 문구만 표시) | 향후 별도 모듈로 추가 |
 
 ## 테스트 및 빌드 결과

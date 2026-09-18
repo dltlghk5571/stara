@@ -64,7 +64,7 @@ export type QuestType =
   | "experience"
   | "language";
 
-export type RewardType = "stamp" | "bonus_stamp" | "bonus_point";
+export type RewardType = "checkpoint" | "bonus_badge" | "bonus_point";
 
 /**
  * 퀘스트를 "어떻게 완료 처리하는가". 없으면(undefined) manual(체크박스로 직접 완료)로
@@ -84,7 +84,6 @@ export interface Quest {
   descriptionEn: string;
   required: boolean;
   rewardType: RewardType;
-  stampId?: string;
   /** 생략 시 manual(체크박스)로 취급. */
   verification?: QuestVerification;
 }
@@ -105,7 +104,6 @@ export interface Trip {
   autoAddedPlaceIds: string[];
   orderedPlaceIds: string[];
   completedQuestIds: string[];
-  earnedStampIds: string[];
   startedAt: string | null;
   completedAt: string | null;
 }

@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { getQuestsForPlace } from "@/data/quests";
 import { safeStringStorage } from "@/lib/storage";
 import { TRIP_START_TIME, TRIP_END_LIMIT } from "@/config";
 import type { Place } from "@/types";
@@ -14,7 +13,6 @@ interface TripState {
    *  getPlaceById로 못 찾으므로 selectedPlaceIds와 별도로 전체 객체를 들고 있는다. */
   customPlaces: Place[];
   completedQuestIds: string[];
-  earnedStampIds: string[];
   startedAt: string | null;
   completedAt: string | null;
   /** 여행 출발 예정 시각("HH:mm"). 일정 계산의 기준점. */
@@ -46,7 +44,6 @@ interface TripActions {
   /** 멱등 완료 처리 — 서버 검증(예: T-money 인증)처럼 "체크박스 토글"이 아니라 "성공 시에만
    *  한 방향으로 완료"해야 하는 퀘스트용. 이미 완료된 questId를 다시 넣어도 아무 변화 없다. */
   completeQuest: (questId: string) => void;
-  claimStamp: (place: Place) => boolean;
   startTrip: () => void;
   completeTrip: () => void;
   resetTrip: () => void;
@@ -73,7 +70,6 @@ const initialState: TripState = {
   selectedPlaceIds: [],
   customPlaces: [],
   completedQuestIds: [],
-  earnedStampIds: [],
   startedAt: null,
   completedAt: null,
   tripStartTime: TRIP_START_TIME,
@@ -88,7 +84,7 @@ const initialState: TripState = {
 
 export const useTripStore = create<TripState & TripActions>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       ...initialState,
 
       addPlace: (placeId) =>
@@ -128,22 +124,6 @@ export const useTripStore = create<TripState & TripActions>()(
             ? s
             : { completedQuestIds: [...s.completedQuestIds, questId] }
         ),
-
-      claimStamp: (place) => {
-        const requiredQuestIds = getQuestsForPlace(place)
-          .filter((q) => q.required)
-          .map((q) => q.id);
-        const { completedQuestIds, earnedStampIds } = get();
-        const allDone = requiredQuestIds.every((id) =>
-          completedQuestIds.includes(id)
-        );
-        if (!allDone) return false;
-        const stampId = `stamp-${place.id}`;
-        if (!earnedStampIds.includes(stampId)) {
-          set({ earnedStampIds: [...earnedStampIds, stampId] });
-        }
-        return true;
-      },
 
       startTrip: () => set({ startedAt: new Date().toISOString() }),
       completeTrip: () => set({ completedAt: new Date().toISOString() }),

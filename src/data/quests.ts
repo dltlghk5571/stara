@@ -78,9 +78,11 @@ const PLACE_QUEST_OVERRIDES: Record<
  * 장소의 필수 체크포인트 퀘스트를 즉석에서 계산한다. place.category만 있으면
  * 되므로, 정적 PLACES 배열에 없는 TourAPI(kto-*) 장소에도 항상 동일하게 동작한다
  * (이전엔 PLACES로만 미리 빌드해둔 QUESTS 테이블을 조회했기 때문에, TourAPI 장소는
- * 필수 퀘스트가 0개로 잡혀 스탬프가 조건 없이 통과되는 버그가 있었다).
+ * 필수 퀘스트가 0개로 잡혀 완료 조건 없이 통과되는 버그가 있었다).
  * 개별 장소 퀘스트(PLACE_QUEST_OVERRIDES)가 있으면 그것을 우선 쓰고, 없으면
- * category template으로 폴백한다.
+ * category template으로 폴백한다. id(`q-${place.id}`)가 "이 장소 미션을 완료했는가"의
+ * 유일한 근거다(tripStore.completedQuestIds에 포함되는지로 판단) — 배지 집계는 여기가
+ * 아니라 quest_photos 테이블 기준으로 서버에서 따로 계산한다(src/lib/badges.ts 참고).
  */
 export function getQuestsForPlace(place: Place): Quest[] {
   const t = PLACE_QUEST_OVERRIDES[place.id] ?? QUEST_TEXT_BY_CATEGORY[place.category];
@@ -94,8 +96,7 @@ export function getQuestsForPlace(place: Place): Quest[] {
       descriptionKo: `[${place.nameKo}] ${t.descKo}`,
       descriptionEn: `[${place.nameEn}] ${t.descEn}`,
       required: true,
-      rewardType: "stamp",
-      stampId: `stamp-${place.id}`,
+      rewardType: "checkpoint",
     },
   ];
 }
@@ -106,7 +107,7 @@ export function getQuestsForPlace(place: Place): Quest[] {
  * 않는다 — 그래서 이 풀에는 포함하지 않고 별도 상수로 둔다. GPS 검증 없음(사진/사물
  * 인증 퀘스트).
  */
-export const TMONEY_SEGMENT_QUEST_TEMPLATE: Omit<Quest, "id" | "segmentId" | "stampId"> = {
+export const TMONEY_SEGMENT_QUEST_TEMPLATE: Omit<Quest, "id" | "segmentId"> = {
   type: "experience",
   titleKo: "T-money 카드 인증하기",
   titleEn: "Show your T-money card",
@@ -118,10 +119,7 @@ export const TMONEY_SEGMENT_QUEST_TEMPLATE: Omit<Quest, "id" | "segmentId" | "st
 };
 
 /** 이동 구간(핀 사이)에 배치되는 보너스 서브 퀘스트 템플릿 풀 */
-export const SUB_QUEST_TEMPLATES: Omit<
-  Quest,
-  "id" | "segmentId" | "stampId"
->[] = [
+export const SUB_QUEST_TEMPLATES: Omit<Quest, "id" | "segmentId">[] = [
   {
     type: "language",
     titleKo: "한국어 한마디: 밥 한 공기 주세요",
@@ -129,7 +127,7 @@ export const SUB_QUEST_TEMPLATES: Omit<
     descriptionKo: "이동 중 실용 한국어 표현을 익혀보세요: '밥 한 공기 주세요'",
     descriptionEn: "Learn a practical Korean phrase while moving: 'One more bowl of rice, please'",
     required: false,
-    rewardType: "bonus_stamp",
+    rewardType: "bonus_badge",
   },
   {
     type: "language",
@@ -138,7 +136,7 @@ export const SUB_QUEST_TEMPLATES: Omit<
     descriptionKo: "이동 중 실용 한국어 표현을 익혀보세요: '영수증은 필요 없어요'",
     descriptionEn: "Learn a practical Korean phrase while moving: 'I don't need a receipt'",
     required: false,
-    rewardType: "bonus_stamp",
+    rewardType: "bonus_badge",
   },
   {
     type: "experience",

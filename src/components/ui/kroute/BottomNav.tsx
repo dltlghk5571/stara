@@ -3,12 +3,12 @@
 import { BORDER, BSHADOW, PINK, WHITE } from "@/lib/kroute-tokens";
 import { useT } from "@/i18n";
 
-export type KrouteTab = "cover" | "route" | "stamps" | "diary";
+export type KrouteTab = "cover" | "route" | "badges" | "diary";
 
 const TABS: { id: KrouteTab; icon: string }[] = [
   { id: "cover", icon: "🏠" },
   { id: "route", icon: "🗺️" },
-  { id: "stamps", icon: "🏅" },
+  { id: "badges", icon: "🎖️" },
   { id: "diary", icon: "📖" },
 ];
 

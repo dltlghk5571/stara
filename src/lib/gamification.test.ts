@@ -1,25 +1,25 @@
 import { describe, expect, it } from "vitest";
-import { levelFromStamps, nextRewardKey, stampsUntilNextLevel } from "./gamification";
+import { levelFromBadges, nextRewardKey, badgesUntilNextLevel } from "./gamification";
 
-describe("levelFromStamps", () => {
+describe("levelFromBadges", () => {
   it("0개면 레벨 1부터 시작한다", () => {
-    expect(levelFromStamps(0)).toBe(1);
+    expect(levelFromBadges(0)).toBe(1);
   });
 
   it("3개당 1레벨씩 오른다", () => {
-    expect(levelFromStamps(2)).toBe(1);
-    expect(levelFromStamps(3)).toBe(2);
-    expect(levelFromStamps(6)).toBe(3);
+    expect(levelFromBadges(2)).toBe(1);
+    expect(levelFromBadges(3)).toBe(2);
+    expect(levelFromBadges(6)).toBe(3);
   });
 });
 
-describe("stampsUntilNextLevel", () => {
+describe("badgesUntilNextLevel", () => {
   it("정확히 레벨업 경계면 다음 레벨 전체 분량이 남은 것으로 계산한다", () => {
-    expect(stampsUntilNextLevel(3)).toBe(3);
+    expect(badgesUntilNextLevel(3)).toBe(3);
   });
 
   it("중간이면 나머지만큼만 남는다", () => {
-    expect(stampsUntilNextLevel(1)).toBe(2);
+    expect(badgesUntilNextLevel(1)).toBe(2);
   });
 });
 

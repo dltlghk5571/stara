@@ -72,13 +72,13 @@ describe("bindUser — per-account ownership guard for the browser-local persist
     expect(useTripStore.getState().completedQuestIds).toEqual([]);
   });
 
-  it("earnedStampIds do not leak between users when the account changes", () => {
+  it("selectedPlaceIds (and other trip-scoped state) do not leak between users when the account changes", () => {
     useTripStore.getState().bindUser("user_a");
-    useTripStore.setState({ earnedStampIds: ["stamp-place-1"] });
+    useTripStore.setState({ selectedPlaceIds: ["bts-culture-gyeongbokgung"] });
 
     useTripStore.getState().bindUser("user_b");
 
-    expect(useTripStore.getState().earnedStampIds).toEqual([]);
+    expect(useTripStore.getState().selectedPlaceIds).toEqual([]);
   });
 
   it("resetTrip() preserves the current ownerUserId — resetting a trip is not an account switch", () => {
