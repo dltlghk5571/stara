@@ -20,8 +20,22 @@ export default async function HomePage() {
         overflow: "hidden",
       }}
     >
-      <div style={{ position: "absolute", top: 16, right: 16, zIndex: 5 }}>
+      <div
+        style={{
+          position: "absolute",
+          top: 16,
+          right: 16,
+          zIndex: 5,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-end",
+          gap: 8,
+        }}
+      >
         <LocaleToggle />
+        <Pill bg={YELLOW} style={{ fontSize: 12, padding: "5px 16px", letterSpacing: 0.5 }}>
+          {translate(d, "splash.passportPill")}
+        </Pill>
       </div>
       <div
         style={{
@@ -45,12 +59,6 @@ export default async function HomePage() {
           border: "3px solid rgba(0,0,0,.12)",
         }}
       />
-
-      <div className="kr-aFadeUp" style={{ position: "absolute", top: 60, left: "50%", transform: "translateX(-50%)" }}>
-        <Pill bg={YELLOW} style={{ fontSize: 12, padding: "5px 16px", letterSpacing: 0.5 }}>
-          {translate(d, "splash.passportPill")}
-        </Pill>
-      </div>
 
       <div className="kr-aFadeUp" style={{ width: "100%", maxWidth: 320 }}>
         {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 브랜드 자산, next/image 최적화 대상 아님 */}
