@@ -131,6 +131,6 @@ describe("parseOdsayResponse", () => {
     expect(result?.fromPlaceId).toBe("place-a");
     expect(result?.toPlaceId).toBe("place-b");
     expect(result?.fare).toBe(1500);
-    expect(result?.source).toBe("odsay");
+    expect(result?.provider).toBe("odsay");
   });
 });

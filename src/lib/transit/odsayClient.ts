@@ -1,13 +1,17 @@
-// ODsay Lab 대중교통 경로 안내 API — 서버 전용. Route Handler에서만 import할 것.
-// ODSAY_API_KEY는 브라우저에 노출되지 않는다(NEXT_PUBLIC_ 접두사 없음).
+// ODsay Lab 대중교통 경로 안내 API — 서버 전용.
+//
+// ⚠️ 비활성 상태(레거시): STARA의 상세 대중교통 제공사는 TMAP Transit으로 교체됐다
+// (src/lib/transit/tmapTransitClient.ts, route.ts 참고). ODSAY_ENABLED=false이고
+// route.ts는 더 이상 이 파일을 import하지 않는다 — Vercel Hobby 환경에서 ODsay Server키의
+// 고정 IP 화이트리스트 요구사항을 안전하게 충족할 방법이 없어서(고정 아웃바운드 IP 없음,
+// Static IP 구매/프록시 도입 모두 보류) 교체를 결정했다. 실제로 TMAP Transit이 운영에서
+// 검증되기 전까지는 삭제하지 않고 컴파일 가능한 상태로만 남겨둔다.
 //
 // ODsay는 실시간 도착정보가 아니라 정적 경로 데이터를 기준으로 안내한다 — "약 N분"으로만
 // 표현하고, "3분 후 도착" 같은 실시간 문구는 쓰지 않는다.
 //
 // 응답을 캐시하지 않는다(의도적) — ODsay는 API 응답값을 저장/재사용하는 것을 원칙적으로
-// 허용하지 않는다. TMAP과 달리 여기엔 src/lib/cache.ts를 쓰지 않는다. 대신 호출 자체를
-// 드물게 만든다: 이 함수는 사용자가 명시적으로 "상세 경로 보기"를 눌렀고(detail:true) 쿼터
-// 예약에 성공했을 때만 route.ts에서 호출된다(src/lib/transit/quota.ts 참고).
+// 허용하지 않는다. TMAP과 달리 여기엔 src/lib/cache.ts를 쓰지 않는다.
 import type { Coordinate, TransitItinerary, TransitStep } from "./types";
 
 const ODSAY_BASE_URL =
@@ -133,7 +137,7 @@ export function parseOdsayResponse(
     totalWalkMinutes,
     fare,
     steps,
-    source: "odsay",
+    provider: "odsay",
   };
 }
 

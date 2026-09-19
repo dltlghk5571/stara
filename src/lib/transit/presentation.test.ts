@@ -37,7 +37,7 @@ describe("transitStepCount", () => {
     toPlaceId: "B",
     totalMinutes: 30,
     steps: [],
-    source: "odsay",
+    provider: "odsay",
   };
 
   it("도보를 제외한 교통수단 구간만 센다", () => {

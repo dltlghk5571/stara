@@ -107,7 +107,7 @@ export const ko: Dict = {
     hideDirections: "경로 접기",
     loadingDetailedRoute: "대중교통 경로를 불러오는 중…",
     detailUnavailable: "상세 대중교통 안내를 현재 불러올 수 없습니다.",
-    poweredByOdsay: "ODsay 제공",
+    transitSource: "대중교통 정보: TMAP",
     openInMap: "지도에서 길찾기",
     walkLabel: "도보",
     subwayLabelWord: "지하철",

@@ -3,8 +3,8 @@ import type { Place } from "@/types";
 import type { Locale } from "@/i18n";
 import type { TransitGuideResponse } from "@/lib/transit/types";
 
-/** detail:false 응답은 절대 "itinerary"가 아니다(서버가 그 모드에서 ODsay를 호출하지
- *  않으므로) — 그 보장을 타입에 그대로 남겨서 호출부에서 불필요한 분기를 없앤다. */
+/** detail:false 응답은 절대 "itinerary"가 아니다(서버가 그 모드에서 TMAP Transit을
+ *  호출하지 않으므로) — 그 보장을 타입에 그대로 남겨서 호출부에서 불필요한 분기를 없앤다. */
 export type TransitBaseGuideResponse = Extract<TransitGuideResponse, { kind: "walk" | "estimate" }>;
 
 export type TransitEstimateState =
@@ -13,14 +13,16 @@ export type TransitEstimateState =
   | { status: "error" };
 
 /**
- * /api/transit를 호출한다. detail:false(기본, 컴포넌트 마운트 시 자동 실행)는 ODsay를
- * 전혀 건드리지 않는다 — walk 또는 TMAP/Haversine estimate만 온다. detail:true는 사용자가
- * "상세 대중교통 경로 보기"를 명시적으로 눌렀을 때만 MovementGuide가 직접 호출한다.
+ * /api/transit를 호출한다. detail:false(기본, 컴포넌트 마운트 시 자동 실행)는 TMAP
+ * Transit을 전혀 건드리지 않는다 — walk 또는 TMAP 이동시간/Haversine estimate만 온다.
+ * detail:true는 사용자가 "상세 대중교통 경로 보기"를 명시적으로 눌렀을 때만
+ * MovementGuide가 직접 호출한다(로그인 필요 — 서버가 Clerk 세션으로 재확인한다).
  *
- * 응답을 캐시하지 않는다(의도적) — ODsay 응답 재사용 금지 정책 때문에, 세션/모듈 스코프
- * Map 같은 걸 두지 않는다. 호출부가 원하는 동안만(컴포넌트가 마운트돼 있는 동안, 혹은
- * 로컬 state 안) 결과를 들고 있다 — 재사용 가능한 저장소가 아니라 화면에 보여주는 동안의
- * presentation state일 뿐이다.
+ * 클라이언트에서는 응답을 캐시하지 않는다(의도적) — 세션/모듈 스코프 Map 같은 걸 두지
+ * 않는다. 호출부가 원하는 동안만(컴포넌트가 마운트돼 있는 동안, 혹은 로컬 state 안)
+ * 결과를 들고 있다 — 재사용 가능한 저장소가 아니라 화면에 보여주는 동안의 presentation
+ * state일 뿐이다. (서버 쪽에는 TMAP 약관이 허용하는 짧은 TTL의 공유 캐시가 별도로 있다
+ * — src/lib/transit/itineraryCache.ts.)
  */
 export async function fetchTransitGuide(
   from: Place,

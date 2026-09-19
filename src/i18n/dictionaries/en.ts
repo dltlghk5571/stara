@@ -106,7 +106,7 @@ export const en = {
     hideDirections: "Hide directions",
     loadingDetailedRoute: "Loading transit route…",
     detailUnavailable: "Detailed transit guidance isn't available right now.",
-    poweredByOdsay: "Powered by ODsay",
+    transitSource: "Transit information: TMAP",
     openInMap: "Open in map",
     walkLabel: "WALK",
     subwayLabelWord: "SUBWAY",

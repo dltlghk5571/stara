@@ -30,6 +30,7 @@
 |---|---|---|---|
 | Tmap SDK (jsv2) | SK Open API (SK텔레콤) | 지도 렌더링, 경로 핀·마커·내 위치 표시 | `layout.tsx`(SDK 로드), `TmapMapView.tsx` |
 | Tmap 자동차 길찾기 API (`/tmap/routes`) | SK Open API (SK텔레콤) | 장소 간 실제 이동거리·소요시간 계산(도로 기준). 실패 시 직선거리(Haversine) 추정으로 폴백 | `src/lib/directions/tmapProvider.ts` |
+| TMAP Transit(대중교통 경로 안내, `/transit/routes`) | SK Open API (SK텔레콤) | 두 장소 사이의 상세 지하철/버스 경로(역·노선·버스번호·정거장 수). Tmap 자동차 길찾기와는 **별개 상품/쿼터**(무료 10회/일). 사용자가 "상세 대중교통 경로 보기"를 눌렀을 때만, 로그인 상태에서만, 짧은 서버 캐시(≤23시간) 미스일 때만 호출 | `src/lib/transit/tmapTransitClient.ts`, `src/app/api/transit/route.ts` |
 | Clerk | Clerk | 회원가입·로그인·세션 인증. `/onboarding`, `/trip`, `/edit`, `/complete` 접근 시 미로그인이면 `/sign-in`으로 리다이렉트 | `src/proxy.ts`(미들웨어), `@clerk/nextjs` 전반 |
 | Vercel Blob | Vercel | 미션 인증 사진 원본 파일 업로드·공개 저장 | `src/app/api/photo-upload/route.ts`, `MissionSheet.tsx` |
 | Neon (Postgres, HTTP 드라이버) | Neon | 사용자·퀘스트 인증샷 기록 등 앱 데이터 저장(`@neondatabase/serverless` + drizzle-orm) | `src/db/index.ts` 및 하위 API 라우트 |
@@ -37,6 +38,13 @@
 
 - Tmap SDK는 클라이언트에 노출되는 `NEXT_PUBLIC_TMAP_APP_KEY`, 길찾기 API는 서버 전용
   `TMAP_APP_KEY`로 키가 분리되어 있다(둘 다 SK Open API 동일 제공사).
+- TMAP Transit은 위 두 상품과 또 다른 별도 신청이 필요한 상품이라, 서버 전용
+  `TMAP_TRANSIT_API_KEY`를 따로 쓴다(`TMAP_APP_KEY`를 재사용하지 않음). 기본
+  비활성화(`TMAP_TRANSIT_ENABLED`가 `"true"`일 때만 켜짐)이며, 정규화된 응답만 짧은
+  TTL로 캐시한다(TMAP 약관상 파생 데이터 24시간 이상 보관 금지 — 항상 23시간 미만으로
+  강제). 과거 ODsay Lab API를 썼으나, Vercel Hobby 환경에 고정 아웃바운드 IP가 없어
+  ODsay Server키 IP 화이트리스트 요건을 만족할 수 없어 TMAP Transit으로 교체했다
+  (레거시 코드는 `src/lib/transit/odsayClient.ts`에 비활성 상태로 남아있음).
 - Clerk·Vercel Blob·Neon은 각각 자체 REST/HTTP API를 통해 통신하지만, STARA 코드에서는
   공식 SDK(`@clerk/nextjs`, `@vercel/blob`, `@neondatabase/serverless`)로 감싸서 호출한다.
 - Anthropic API 키(`ANTHROPIC_API_KEY`)는 서버 전용이며 `NEXT_PUBLIC_*`로 노출하지

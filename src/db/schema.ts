@@ -1,4 +1,5 @@
-import { boolean, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, doublePrecision, integer, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import type { TransitItinerary } from "@/lib/transit/types";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(), // Clerk user id
@@ -34,11 +35,12 @@ export const questPhotos = pgTable("quest_photos", {
 });
 
 /**
- * STARA 자체 API 호출 횟수 카운터(일별) — ODsay Basic 플랜의 30회/일 쿼터를 보호하기 위한
- * 우리 쪽 예산 집행용. ODsay 응답(경로/역/버스 데이터)은 여기에도, 다른 어떤 테이블에도
- * 저장하지 않는다 — ODsay는 API 응답값을 저장/재사용하는 것을 원칙적으로 허용하지 않는다
- * (src/lib/transit/quota.ts, src/app/api/transit/route.ts 참고). id는 `${provider}:${date}`
- * (예: "odsay:2026-09-20") — provider+date 조합의 원자적 upsert 대상 키로 쓴다.
+ * STARA 자체 API 호출 횟수 카운터(일별) — provider별로 공유되는 예산 집행 테이블. 원래
+ * ODsay Basic 플랜(30회/일)을 보호하려고 만들었고, 지금은 TMAP Transit(무료 10회/일)
+ * 예산도 같은 테이블·같은 원자적 upsert 메커니즘을 provider 키만 바꿔서 재사용한다
+ * (src/lib/transit/quota.ts). 경로/역/버스 같은 실제 응답 데이터는 이 테이블에 담지
+ * 않는다 — "오늘 몇 번 호출했는가"라는 카운터만. id는 `${provider}:${date}`
+ * (예: "tmap_transit:2026-09-20") — provider+date 조합의 원자적 upsert 대상 키로 쓴다.
  */
 export const apiDailyUsage = pgTable("api_daily_usage", {
   id: text("id").primaryKey(),
@@ -46,4 +48,27 @@ export const apiDailyUsage = pgTable("api_daily_usage", {
   date: text("date").notNull(), // "YYYY-MM-DD" (UTC)
   count: integer("count").notNull().default(0),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+/**
+ * 대중교통 상세 경로(TransitItinerary)의 짧은 수명 캐시 — 같은 구간을 여러 사용자가
+ * 반복 요청할 때 업스트림(TMAP Transit 등, 하루 호출 수가 적은 제공사) 호출을 아낀다.
+ * 정규화된 STARA TransitItinerary만 저장한다(원본 업스트림 payload 전체는 저장하지 않음).
+ * expiresAt이 지난 행은 절대 반환하지 않는다(src/lib/transit/itineraryCache.ts) — TMAP
+ * 약관상 파생 데이터를 24시간 이상 보관/재사용할 수 없어서, TTL은 항상 24시간보다 짧게
+ * 강제된다. id는 `${provider}:${locale}:${originLat},${originLng}:${destLat},${destLng}`
+ * (좌표 5자리 반올림)로 A→B와 B→A가 서로 다른 키가 되도록 방향성을 유지한다. 사용자 신원은
+ * 전혀 담지 않는다(개인정보 아님, 경로 데이터).
+ */
+export const transitItineraryCache = pgTable("transit_itinerary_cache", {
+  id: text("id").primaryKey(),
+  provider: text("provider").notNull(),
+  locale: text("locale").notNull(),
+  originLat: doublePrecision("origin_lat").notNull(),
+  originLng: doublePrecision("origin_lng").notNull(),
+  destinationLat: doublePrecision("destination_lat").notNull(),
+  destinationLng: doublePrecision("destination_lng").notNull(),
+  itineraryJson: jsonb("itinerary_json").$type<TransitItinerary>().notNull(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  expiresAt: timestamp("expires_at").notNull(),
 });

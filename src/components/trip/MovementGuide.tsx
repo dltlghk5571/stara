@@ -31,10 +31,11 @@ const label: CSSProperties = {
  * 현재 활성 구간 하나에만 붙는다 — 미래 구간을 미리 불러오지 않는다).
  *
  * 마운트 시 자동으로 가져오는 건 기본 추정치(도보 또는 TMAP/Haversine estimate)뿐이다
- * — ODsay는 절대 자동 호출하지 않는다. 사용자가 "상세 대중교통 경로 보기"를 직접 눌러야만
- * 그때 딱 한 번 /api/transit(detail:true)를 요청한다(서버가 그 요청에서만 쿼터를
- * 원자적으로 소비하고 ODsay를 호출한다 — src/app/api/transit/route.ts 참고). 실패/쿼터
- * 소진이어도 기존 추정치 + "지도에서 길찾기" 링크는 항상 그대로 남는다.
+ * — TMAP Transit(대중교통 상세 경로 API)은 절대 자동 호출하지 않는다. 사용자가 "상세
+ * 대중교통 경로 보기"를 직접 눌러야만 그때 딱 한 번 /api/transit(detail:true)를
+ * 요청한다(서버가 캐시를 먼저 확인하고, 캐시 미스일 때만 쿼터를 원자적으로 소비하고
+ * TMAP Transit을 호출한다 — src/app/api/transit/route.ts 참고). 실패/쿼터 소진이어도
+ * 기존 추정치 + "지도에서 길찾기" 링크는 항상 그대로 남는다.
  */
 export default function MovementGuide({ from, to }: { from: Place; to: Place }) {
   const t = useT();
@@ -70,8 +71,8 @@ export default function MovementGuide({ from, to }: { from: Place; to: Place }) 
   }
 
   // 기본 추정치 요청 자체가 실패(네트워크 등)해도 트립을 막지 않는다 — 좌표로 즉석 계산한
-  // 값을 보여준다(서버와 같은 도보 임계값 공식이라 판정이 갈리지 않는다). 이 경로도 ODsay를
-  // 전혀 호출하지 않는다.
+  // 값을 보여준다(서버와 같은 도보 임계값 공식이라 판정이 갈리지 않는다). 이 경로도 TMAP
+  // Transit을 전혀 호출하지 않는다.
   if (estimate.status === "error") {
     const minutes = Math.round(travelMinutesBetween(from, to));
     if (!isTransitSegment(from, to)) {
@@ -181,7 +182,7 @@ function BaseCard({
             <TransitStepRow key={i} index={i} step={step} />
           ))}
           <p style={{ fontFamily: "Nunito", fontSize: 10, color: "#999", marginTop: 2 }}>
-            {t("movement.poweredByOdsay")}
+            {t("movement.transitSource")}
           </p>
         </div>
       )}
