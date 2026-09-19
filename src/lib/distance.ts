@@ -42,3 +42,8 @@ export function estimateTravelMinutes(distanceKm: number): number {
 export function travelMinutesBetween(a: Place, b: Place): number {
   return estimateTravelMinutes(haversineKm(a, b));
 }
+
+/** 도보 임계값을 넘어 대중교통(버스/지하철 통합)으로 분류되는 구간인지 */
+export function isTransitSegment(a: Place, b: Place): boolean {
+  return haversineKm(a, b) * TRAVEL_CONFIG.detourFactor > TRAVEL_CONFIG.walkThresholdKm;
+}

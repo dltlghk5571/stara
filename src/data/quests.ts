@@ -102,10 +102,11 @@ export function getQuestsForPlace(place: Place): Quest[] {
 }
 
 /**
- * AI 사진 인증 세그먼트 퀘스트 — 여행당 정확히 한 번, 결정론적 "중간" 구간에만 배정된다
- * (scheduleCalculator.ts 참고). 나머지 구간처럼 SUB_QUEST_TEMPLATES를 순환 배정하지
- * 않는다 — 그래서 이 풀에는 포함하지 않고 별도 상수로 둔다. GPS 검증 없음(사진/사물
- * 인증 퀘스트).
+ * AI 사진 인증 세그먼트 퀘스트 — 여행 중 대중교통 구간이 하나라도 있으면 여행당 정확히
+ * 한 번, 첫 구간(인덱스 0)에만 배정된다(scheduleCalculator.ts 참고) — 실제로 버스를
+ * 타기 전에 미리 인증하라는 취지. 전부 도보 구간이면 아예 배정되지 않는다. 나머지
+ * 구간처럼 SUB_QUEST_TEMPLATES를 순환 배정하지 않는다 — 그래서 이 풀에는 포함하지 않고
+ * 별도 상수로 둔다. GPS 검증 없음(사진/사물 인증 퀘스트).
  */
 export const TMONEY_SEGMENT_QUEST_TEMPLATE: Omit<Quest, "id" | "segmentId"> = {
   type: "experience",

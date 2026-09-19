@@ -98,20 +98,21 @@ function tmoneySegments(stops: ReturnType<typeof buildSchedule>["stops"]) {
 
 describe("pickTmoneySegmentIndex", () => {
   it("구간이 없으면(장소 0~1개) -1을 반환한다", () => {
-    expect(pickTmoneySegmentIndex(0)).toBe(-1);
+    expect(pickTmoneySegmentIndex(0, true)).toBe(-1);
   });
 
-  it("구간이 1개면 그 구간(인덱스 0)을 반환한다 — 짧은 루트도 반드시 배정된다", () => {
-    expect(pickTmoneySegmentIndex(1)).toBe(0);
+  it("대중교통 구간이 없으면(전부 도보) -1을 반환한다", () => {
+    expect(pickTmoneySegmentIndex(4, false)).toBe(-1);
   });
 
-  it("구간이 여러 개면 중간 인덱스를 결정론적으로 반환한다", () => {
-    expect(pickTmoneySegmentIndex(4)).toBe(1);
-    expect(pickTmoneySegmentIndex(9)).toBe(4);
+  it("대중교통 구간이 하나라도 있으면 항상 첫 구간(인덱스 0)을 반환한다", () => {
+    expect(pickTmoneySegmentIndex(1, true)).toBe(0);
+    expect(pickTmoneySegmentIndex(4, true)).toBe(0);
+    expect(pickTmoneySegmentIndex(9, true)).toBe(0);
   });
 
   it("같은 입력이면 항상 같은 결과다(랜덤 없음)", () => {
-    expect(pickTmoneySegmentIndex(7)).toBe(pickTmoneySegmentIndex(7));
+    expect(pickTmoneySegmentIndex(7, true)).toBe(pickTmoneySegmentIndex(7, true));
   });
 });
 
@@ -133,11 +134,19 @@ describe("buildSchedule — T-money 세그먼트 퀘스트 배정", () => {
     expect(tmoneySegments(result.stops)).toHaveLength(1);
   });
 
-  it("T-money 퀘스트는 결정론적 '중간' 구간에 배정된다", () => {
-    const result = buildSchedule(places(5)); // 구간 4개 -> pickTmoneySegmentIndex(4) === 1 -> stops[2] (segmentIndex 1)
-    expect(result.stops[2].segmentQuest?.verification?.type).toBe("tmoney_photo");
-    expect(result.stops[1].segmentQuest?.verification).toBeUndefined();
+  it("T-money 퀘스트는 첫 구간(버스 타기 전)에 배정된다", () => {
+    const result = buildSchedule(places(5)); // 구간 4개, 전부 대중교통 -> 첫 구간(stops[1])
+    expect(result.stops[1].segmentQuest?.verification?.type).toBe("tmoney_photo");
+    expect(result.stops[2].segmentQuest?.verification).toBeUndefined();
     expect(result.stops[3].segmentQuest?.verification).toBeUndefined();
+  });
+
+  it("전부 도보 구간이면(대중교통 없음) T-money 퀘스트가 아예 배정되지 않는다", () => {
+    const A = place({ id: "A", latitude: 37.5, longitude: 127 });
+    const B = place({ id: "B", latitude: 37.5001, longitude: 127.0001 }); // 도보 거리
+    const C = place({ id: "C", latitude: 37.5002, longitude: 127.0002 }); // 도보 거리
+    const result = buildSchedule([A, B, C]);
+    expect(tmoneySegments(result.stops)).toHaveLength(0);
   });
 
   it("T-money가 아닌 구간은 여전히 기존 보너스 퀘스트 풀을 순환 배정한다", () => {
