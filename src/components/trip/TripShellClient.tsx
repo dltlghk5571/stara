@@ -11,6 +11,7 @@ import type { BadgeProgress } from "@/lib/badges";
 import MapView from "@/components/map/MapView";
 import BadgeGrid from "@/components/badge/BadgeGrid";
 import MissionSheet from "@/components/trip/MissionSheet";
+import MovementGuide from "@/components/trip/MovementGuide";
 import SubQuestList from "@/components/quest/SubQuestList";
 import { BottomNav, KButton, KCard, Pill } from "@/components/ui/kroute";
 import type { KrouteTab } from "@/components/ui/kroute";
@@ -173,6 +174,8 @@ export default function TripShellClient({ initialDiaryGroups, initialBadges, ini
             orderedPlaces={orderedPlaces}
             statusOf={statusOf}
             allDone={allDone}
+            movementFrom={currentIndex > 0 ? orderedPlaces[currentIndex - 1] : undefined}
+            movementTo={currentIndex > 0 ? orderedPlaces[currentIndex] : undefined}
             segmentQuest={
               currentIndex >= 0 ? schedule.stops[currentIndex]?.segmentQuest : undefined
             }
@@ -355,6 +358,8 @@ function RouteTab({
   orderedPlaces,
   statusOf,
   allDone,
+  movementFrom,
+  movementTo,
   segmentQuest,
   completedQuestIds,
   onToggleSubQuest,
@@ -365,6 +370,8 @@ function RouteTab({
   orderedPlaces: Place[];
   statusOf: (i: number) => "done" | "next" | "locked";
   allDone: boolean;
+  movementFrom?: Place;
+  movementTo?: Place;
   segmentQuest?: Quest;
   completedQuestIds: string[];
   onToggleSubQuest: (questId: string) => void;
@@ -403,16 +410,19 @@ function RouteTab({
         />
       </div>
 
-      {segmentQuest && (
+      {(movementFrom && movementTo) || segmentQuest ? (
         <div style={{ padding: "0 24px", marginBottom: 10, flexShrink: 0 }}>
-          <SubQuestList
-            quest={segmentQuest}
-            completedQuestIds={completedQuestIds}
-            onToggle={onToggleSubQuest}
-            onVerifiedComplete={onVerifiedCompleteSubQuest}
-          />
+          {movementFrom && movementTo && <MovementGuide from={movementFrom} to={movementTo} />}
+          {segmentQuest && (
+            <SubQuestList
+              quest={segmentQuest}
+              completedQuestIds={completedQuestIds}
+              onToggle={onToggleSubQuest}
+              onVerifiedComplete={onVerifiedCompleteSubQuest}
+            />
+          )}
         </div>
-      )}
+      ) : null}
 
       <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 8px" }}>
         <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 16, marginBottom: 12 }}>{t("trip.missionsChecklist")}</p>
