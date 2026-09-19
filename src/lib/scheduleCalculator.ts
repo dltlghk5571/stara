@@ -2,7 +2,7 @@ import type { Place, ScheduleResult, ScheduleStop } from "@/types";
 import { travelMinutesBetween, isTransitSegment } from "./distance";
 import { toHHMM, toMinutes } from "./time";
 import { TRIP_END_LIMIT, TRIP_START_TIME } from "@/config";
-import { SUB_QUEST_TEMPLATES, TMONEY_SEGMENT_QUEST_TEMPLATE } from "@/data/quests";
+import { TMONEY_SEGMENT_QUEST_TEMPLATE, buildLanguageSubQuest } from "@/data/quests";
 
 /**
  * T-money 인증 퀘스트를 배정할 구간 인덱스(0-based)를 계산한다. 여행 중 대중교통
@@ -20,8 +20,9 @@ export function pickTmoneySegmentIndex(segmentCount: number, hasTransitSegment: 
  * - 도착이 운영 시작 전이면 오픈 시간까지 대기
  * - 도착이 운영 종료 후면 isOpenTimeConflict 플래그만 세우고 진행(경고 용도)
  * - 대중교통 구간이 하나라도 있으면 첫 구간(인덱스 0)에만 T-money 인증 퀘스트를 배정하고
- *   (여행당 정확히 1회, pickTmoneySegmentIndex 참고), 나머지 구간에는 서브 퀘스트 풀을
- *   순환 배정한다. 전부 도보 구간이면 T-money 퀘스트 자체를 배정하지 않는다.
+ *   (여행당 정확히 1회, pickTmoneySegmentIndex 참고), 나머지 구간에는 그 구간의 "다음
+ *   행선지" 장소 카테고리에 맞는 한국어 문구 퀘스트를 즉석에서 만들어 배정한다
+ *   (buildLanguageSubQuest 참고). 전부 도보 구간이면 T-money 퀘스트 자체를 배정하지 않는다.
  * - legDurationOverridesSec에 구간(`${prevId}__${placeId}`)별 실제 이동시간(초, TMAP 등)이
  *   있으면 그걸 쓰고, 없는 구간만 기존 Haversine 추정치로 계산한다(구간 단위 폴백).
  */
@@ -41,7 +42,6 @@ export function buildSchedule(
     (place, i) => i > 0 && isTransitSegment(orderedPlaces[i - 1], place)
   );
   const tmoneySegmentIndex = pickTmoneySegmentIndex(segmentCount, hasTransitSegment);
-  let nonTmoneyCounter = 0;
 
   orderedPlaces.forEach((place, i) => {
     let travelMinutesFromPrev = 0;
@@ -58,9 +58,7 @@ export function buildSchedule(
 
       const segmentIndex = i - 1;
       const template =
-        segmentIndex === tmoneySegmentIndex
-          ? TMONEY_SEGMENT_QUEST_TEMPLATE
-          : SUB_QUEST_TEMPLATES[nonTmoneyCounter++ % SUB_QUEST_TEMPLATES.length];
+        segmentIndex === tmoneySegmentIndex ? TMONEY_SEGMENT_QUEST_TEMPLATE : buildLanguageSubQuest(place);
       segmentQuest = {
         ...template,
         id: `subquest-${segmentId}`,

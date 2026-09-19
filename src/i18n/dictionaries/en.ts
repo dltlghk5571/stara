@@ -244,9 +244,6 @@ export const en = {
   },
   splash: {
     passportPill: "K-TRAVEL PASSPORT",
-    tagline: "Follow your star, travel K-culture ✦",
-    cardHeading: "KOREA ADVENTURE",
-    cardSub: "Earn badges · complete your route",
     cta: "START EXPEDITION 🚀",
     version: "v1.0.0 · Made with K-Love 💕",
   },

@@ -244,9 +244,6 @@ export const ko: Dict = {
   },
   splash: {
     passportPill: "K-트래블 패스포트",
-    tagline: "스타 따라, K-culture 여행 ✦",
-    cardHeading: "코리아 어드벤처",
-    cardSub: "배지를 모으고 · 루트를 완성하세요",
     cta: "탐험 시작 🚀",
     version: "v1.0.0 · K-러브로 만들었어요 💕",
   },

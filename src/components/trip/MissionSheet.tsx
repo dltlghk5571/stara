@@ -7,7 +7,7 @@ import { getQuestsForPlace } from "@/data/quests";
 import { haversineKm } from "@/lib/distance";
 import { GPS_MISSION_CHECK_ENABLED, GPS_MISSION_RADIUS_METERS } from "@/config";
 import { KButton, KCard, Pill } from "@/components/ui/kroute";
-import { useT, useLocale, placeName, questTitle, questDesc } from "@/i18n";
+import { useT, useLocale, placeName, placeRelation, questTitle, questDesc } from "@/i18n";
 import { LIME, PALGREEN, PINK, YELLOW } from "@/lib/kroute-tokens";
 import { useVerificationCapabilities } from "@/lib/auth/useVerificationCapabilities";
 import type { DiaryPhoto } from "@/components/trip/TripShellClient";
@@ -302,6 +302,24 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
               ✕
             </button>
           </div>
+
+          {placeRelation(place, locale) && (
+            <div
+              style={{
+                background: "#FFF0F8",
+                border: "2px dashed #111111",
+                borderRadius: 12,
+                padding: "10px 12px",
+                marginBottom: 14,
+                fontFamily: "Nunito",
+                fontSize: 13,
+                color: "#333",
+                lineHeight: 1.5,
+              }}
+            >
+              ✦ {placeRelation(place, locale)}
+            </div>
+          )}
 
           <p style={{ fontFamily: "Nunito", fontSize: 14, color: "#555", lineHeight: 1.6, marginBottom: 14 }}>
             {quest ? questDesc(quest, locale) : null}

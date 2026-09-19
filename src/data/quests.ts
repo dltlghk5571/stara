@@ -8,6 +8,9 @@
 // 텍스트만 수정하면 됩니다.
 // ─────────────────────────────────────────────────────────
 import type { Place, Quest, QuestType, PlaceCategory } from "@/types";
+import { badgeCategoryForPlaceCategory } from "./badges";
+import { phrasesForTheme, type PhrasebankThemeId } from "./phrasebank";
+import { getArtistById } from "./artists";
 
 const QUEST_TEXT_BY_CATEGORY: Record<
   PlaceCategory,
@@ -119,51 +122,38 @@ export const TMONEY_SEGMENT_QUEST_TEMPLATE: Omit<Quest, "id" | "segmentId"> = {
   verification: { type: "tmoney_photo" },
 };
 
-/** 이동 구간(핀 사이)에 배치되는 보너스 서브 퀘스트 템플릿 풀 */
-export const SUB_QUEST_TEMPLATES: Omit<Quest, "id" | "segmentId">[] = [
-  {
+/** place.id로부터 phrases 배열 안의 결정론적 인덱스를 고른다(랜덤 없음, 같은 장소는 항상 같은 문구). */
+function pickPhraseIndex(seed: string, count: number): number {
+  if (count <= 0) return 0;
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) hash = (hash * 31 + seed.charCodeAt(i)) >>> 0;
+  return hash % count;
+}
+
+/**
+ * 이동 구간(핀과 핀 사이)의 보너스 서브 퀘스트를 "다음 행선지" 장소에 맞춰 즉석에서
+ * 만든다 — theme_phrasebank.json(src/data/phrasebank.ts)에서 장소 카테고리에 맞는 테마의
+ * 문구를 하나 골라 언어 학습 퀘스트로 감싼다. 아티스트와 연관된 장소(artistIds 있음)는
+ * 카테고리보다 kpop 테마를 우선한다. T-money 세그먼트(TMONEY_SEGMENT_QUEST_TEMPLATE)에는
+ * 쓰이지 않는다 — scheduleCalculator.ts가 그 구간만 따로 배정한다.
+ */
+export function buildLanguageSubQuest(place: Place): Omit<Quest, "id" | "segmentId"> {
+  const theme: PhrasebankThemeId =
+    place.artistIds.length > 0 ? "kpop" : badgeCategoryForPlaceCategory(place.category) ?? "basic";
+  const phrases = phrasesForTheme(theme);
+  const phrase = phrases[pickPhraseIndex(place.id, phrases.length)];
+
+  const artist = theme === "kpop" ? getArtistById(place.artistIds[0]) : undefined;
+  const ko = phrase.ko.replace("{A}", artist?.name ?? "아티스트");
+  const en = phrase.en.replace("{A}", artist?.nameEn ?? "the artist");
+
+  return {
     type: "language",
-    titleKo: "한국어 한마디: 밥 한 공기 주세요",
-    titleEn: "Korean phrase: One more bowl of rice, please",
-    descriptionKo: "이동 중 실용 한국어 표현을 익혀보세요: '밥 한 공기 주세요'",
-    descriptionEn: "Learn a practical Korean phrase while moving: 'One more bowl of rice, please'",
+    titleKo: `한국어 한마디: ${ko}`,
+    titleEn: `Korean phrase: ${en}`,
+    descriptionKo: `다음 장소로 이동하며 실용 한국어 표현을 익혀보세요: '${ko}' (${phrase.romanization})`,
+    descriptionEn: `Learn a practical Korean phrase on the way to your next stop: '${en}'`,
     required: false,
     rewardType: "bonus_badge",
-  },
-  {
-    type: "language",
-    titleKo: "한국어 한마디: 영수증은 필요 없어요",
-    titleEn: "Korean phrase: I don't need a receipt",
-    descriptionKo: "이동 중 실용 한국어 표현을 익혀보세요: '영수증은 필요 없어요'",
-    descriptionEn: "Learn a practical Korean phrase while moving: 'I don't need a receipt'",
-    required: false,
-    rewardType: "bonus_badge",
-  },
-  {
-    type: "experience",
-    titleKo: "지하철 다음 역 한글로 읽기",
-    titleEn: "Read the next subway station in Hangeul",
-    descriptionKo: "지하철을 탔다면 다음 역 이름을 한글로 읽어보세요.",
-    descriptionEn: "If you're on the subway, try reading the next station's name in Hangeul.",
-    required: false,
-    rewardType: "bonus_point",
-  },
-  {
-    type: "experience",
-    titleKo: "한글 간판 3개 찾기",
-    titleEn: "Spot 3 Hangeul signboards",
-    descriptionKo: "이동하면서 한글로 된 간판을 3개 찾아보세요.",
-    descriptionEn: "While walking, find 3 signboards written in Hangeul.",
-    required: false,
-    rewardType: "bonus_point",
-  },
-  {
-    type: "language",
-    titleKo: "한국어 한마디: 이거 얼마예요?",
-    titleEn: "Korean phrase: How much is this?",
-    descriptionKo: "이동 중 실용 한국어 표현을 익혀보세요: '이거 얼마예요?'",
-    descriptionEn: "Learn a practical Korean phrase while moving: 'How much is this?'",
-    required: false,
-    rewardType: "bonus_point",
-  },
-];
+  };
+}

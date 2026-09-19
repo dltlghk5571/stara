@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { buildSchedule, pickTmoneySegmentIndex } from "./scheduleCalculator";
-import { SUB_QUEST_TEMPLATES } from "@/data/quests";
 import type { Place } from "@/types";
 
 function place(overrides: Partial<Place> & Pick<Place, "id" | "latitude" | "longitude">): Place {
@@ -149,11 +148,14 @@ describe("buildSchedule — T-money 세그먼트 퀘스트 배정", () => {
     expect(tmoneySegments(result.stops)).toHaveLength(0);
   });
 
-  it("T-money가 아닌 구간은 여전히 기존 보너스 퀘스트 풀을 순환 배정한다", () => {
+  it("T-money가 아닌 구간은 다음 행선지 카테고리에 맞는 언어 학습 퀘스트를 배정한다", () => {
     const result = buildSchedule(places(5));
     const nonTmoney = result.stops.slice(1).filter((s) => s.segmentQuest?.verification?.type !== "tmoney_photo");
+    expect(nonTmoney.length).toBeGreaterThan(0);
     for (const stop of nonTmoney) {
-      expect(SUB_QUEST_TEMPLATES.some((t) => t.titleKo === stop.segmentQuest?.titleKo)).toBe(true);
+      expect(stop.segmentQuest?.type).toBe("language");
+      expect(stop.segmentQuest?.rewardType).toBe("bonus_badge");
+      expect(stop.segmentQuest?.required).toBe(false);
     }
   });
 

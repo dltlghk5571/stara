@@ -52,61 +52,33 @@ export default async function HomePage() {
         </Pill>
       </div>
 
-      <div className="kr-aFadeUp" style={{ marginBottom: 4, position: "relative" }}>
-        <div style={{ position: "absolute", top: -20, left: -28, fontSize: 22, color: CYAN }}>✦</div>
-        <div style={{ position: "absolute", top: -8, right: -24, fontSize: 14, color: YELLOW }}>✦</div>
-        <h1
-          style={{
-            fontFamily: "Outfit",
-            fontWeight: 900,
-            fontSize: 64,
-            lineHeight: 1,
-            color: BLACK,
-            letterSpacing: "-3px",
-            textAlign: "center",
-          }}
-        >
-          ✦STARA
-        </h1>
+      <div className="kr-aFadeUp" style={{ width: "100%", maxWidth: 320 }}>
+        {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 브랜드 자산, next/image 최적화 대상 아님 */}
+        <img
+          src="/stara-full-transparent.png"
+          alt="STARA — Follow Your Star"
+          style={{ width: "100%", height: "auto", display: "block" }}
+        />
       </div>
-      <p
-        className="kr-aFadeUp kr-aD2 kr-hidden0"
-        style={{
-          marginTop: 4,
-          fontFamily: "Caveat",
-          fontWeight: 700,
-          fontSize: 22,
-          color: CYAN,
-          fontStyle: "italic",
-          textAlign: "center",
-        }}
-      >
-        {translate(d, "splash.tagline")}
-      </p>
 
-      <div className="kr-aFadeUp kr-aD3 kr-hidden0" style={{ marginTop: 28, width: "100%", maxWidth: 270 }}>
+      <div className="kr-aFadeUp kr-aD3 kr-hidden0" style={{ marginTop: 20, width: "100%", maxWidth: 270 }}>
         <div
           style={{
             background: "#FFF9E6",
             border: BORDER,
             borderRadius: 20,
             boxShadow: SHADOW,
-            padding: 20,
+            padding: 24,
             textAlign: "center",
-            position: "relative",
           }}
         >
-          <div style={{ position: "absolute", top: 10, left: 14, fontSize: 18, opacity: 0.5 }}>☕</div>
-          <div style={{ position: "absolute", top: 10, right: 14, fontSize: 18, opacity: 0.5 }}>📸</div>
-          <div style={{ fontSize: 60 }} className="kr-aFloat">
-            🎬
-          </div>
-          <p style={{ fontFamily: "Outfit", fontWeight: 900, fontSize: 15, marginTop: 8, color: BLACK }}>
-            {translate(d, "splash.cardHeading")}
-          </p>
-          <p style={{ fontFamily: "Caveat", fontSize: 15, color: "#666", fontStyle: "italic", marginTop: 2 }}>
-            {translate(d, "splash.cardSub")}
-          </p>
+          {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 브랜드 자산, next/image 최적화 대상 아님 */}
+          <img
+            src="/stara-objects-transparent.png"
+            alt=""
+            className="kr-aFloat"
+            style={{ width: "100%", height: "auto", display: "block" }}
+          />
         </div>
       </div>
 
