@@ -30,6 +30,8 @@ Vercel 프로젝트 설정 → Environment Variables 에 아래 값을 등록하
 | `TOUR_API_KEY` | 선택(없으면 dummy 폴백) | 공공데이터포털 TourAPI 디코딩 서비스키. 국문/영문/연관관광지 서비스는 data.go.kr에서 상품별로 별도 활용신청 필요(같은 키 재사용) |
 | `TMAP_APP_KEY` | 선택(없으면 Haversine 폴백) | TMAP(SK Open API) appKey |
 | `ODSAY_API_KEY` | 선택(없으면 TMAP/Haversine 추정치로 폴백) | ODsay Lab 대중교통 경로 안내 API 키 |
+| `ODSAY_DAILY_BUDGET` | 선택 | STARA 자체 일일 ODsay 호출 예산. 기본값 20(Basic 30/일보다 낮게, 예: 25 권장) |
+| `ODSAY_ENABLED` | 선택 | `"false"`로만 설정하면 ODsay 완전히 비활성화(킬 스위치). 기본값 활성화 |
 | `TOUR_API_BASE_URL` | 선택 | 기본값 `apis.data.go.kr/B551011/KorService2` |
 | `TOUR_API_EN_BASE_URL` | 선택 | 기본값 `apis.data.go.kr/B551011/EngService2` |
 | `TOUR_API_RELATED_BASE_URL` | 선택 | 기본값 `apis.data.go.kr/B551011/TarRlteTarService1` |
@@ -67,32 +69,71 @@ Vercel 프로젝트 설정 → Environment Variables 에 아래 값을 등록하
 퀘스트(있다면) 위에 `MovementGuide`(`src/components/trip/MovementGuide.tsx`)로
 렌더링된다.
 
+**ODsay Basic 플랜은 30회/일 쿼터다.** 그래서 ODsay는 화면이 열렸다고, 구간이
+여러 개라고, 컴포넌트가 마운트됐다고 자동으로 호출되지 않는다 — 사용자가 "상세
+대중교통 경로 보기"를 직접 눌렀을 때만, 그것도 STARA 자체 예산 안에서만 호출된다.
+
+- **기본 로드는 ODsay를 전혀 모른다**: `MovementGuide`가 마운트되면
+  `useTransitEstimate`(`src/store/useTransitEstimate.ts`)가 `/api/transit`을
+  `detail:false`로 호출해 도보 안내 또는 기존 TMAP/Haversine 추정치("대중교통 ·
+  약 N분")만 즉시 보여준다. 이 경로는 ODsay를 절대 건드리지 않는다.
+- **상세 경로는 명시적 사용자 액션에서만**: "상세 대중교통 경로 보기" 버튼을 눌러야
+  `detail:true` 요청이 한 번 나가고, 그때만 서버가 ODsay 호출을 고려한다. 버튼을
+  다시 눌러도(성공한 뒤 접었다 펼치기) 재요청하지 않는다 — 이미 받아온 결과를
+  화면에서만 다시 보여준다. 실패/쿼터소진 상태에서의 재시도만 새 요청을 만든다
+  (둘 다 사용자의 명시적 클릭이 필요하다. 자동 재시도 없음).
+- **짧은 도보 구간은 `detail:true`여도 ODsay를 호출하지 않는다**: 기존 도보 임계값
+  (`TRAVEL_CONFIG.walkThresholdKm`) 이내면 `/api/transit`이 항상 곧바로 단순 WALK
+  안내를 반환한다(`src/app/api/transit/route.ts`) — 이 판정이 ODsay 호출 여부보다
+  먼저다.
+- **일일 예산을 원자적으로 집행한다**: `src/lib/transit/quota.ts`의
+  `reserveOdsayCallSlot()`이 Postgres UPSERT 한 번
+  (`INSERT ... ON CONFLICT DO UPDATE ... WHERE count < budget ... RETURNING`)으로
+  "오늘 카운트를 읽고 +1"을 원자적으로 처리한다 — 동시 요청이 몰려도 예산을 넘지
+  않는다("읽고 나서 메모리에서 +1" 같은 비원자적 패턴을 쓰지 않는다). 예약에 성공한
+  뒤에만 실제로 ODsay를 호출하고, ODsay가 나중에 실패해도 이미 쓴 슬롯은 되돌리지
+  않는다(업스트림 쪽 쿼터는 실패해도 소진됐을 수 있어서).
+  `ODSAY_DAILY_BUDGET`(기본 20, Basic 30/일보다 낮게 권장 — 예: 25)과
+  `ODSAY_ENABLED`("false"면 완전히 꺼짐, 그 외엔 활성화)로 조절한다.
+  `npm run transit:usage`로 오늘 사용량을 확인할 수 있다.
+- **ODsay 응답은 어디에도 저장하지 않는다**: ODsay는 API 응답값을 저장/재사용하는
+  것을 원칙적으로 허용하지 않는다. DB에는 "오늘 몇 번 호출했는가"라는 카운터
+  (`api_daily_usage` 테이블)만 남기고, 경로/역/버스 같은 ODsay 응답 내용 자체는
+  Postgres에도, Zustand persist에도, localStorage/sessionStorage에도, 서버
+  인메모리 캐시에도 두지 않는다 — `odsayClient.ts`는 (TMAP과 달리) `src/lib/cache.ts`를
+  쓰지 않는다. 상세 경로 응답은 그 화면을 보고 있는 동안의 React state로만 잠깐
+  존재하고, 컴포넌트가 사라지면 함께 사라진다.
 - **역할 분리**: STARA의 루트 최적화(어떤 장소를 어떤 순서로 방문할지)와 ODsay(그
   두 장소 사이를 어떻게 이동할지)는 완전히 분리돼 있다. ODsay는 절대 방문 순서를
-  바꾸지 않는다 — `places[i] → places[i+1]` 구간 하나에 대해서만 호출된다
-  (`src/lib/scheduleCalculator.ts`는 여전히 ODsay를 전혀 모른다).
+  바꾸지 않는다 — `places[i] → places[i+1]` 구간 하나에 대해서만, 그것도 현재
+  활성 구간 하나에만 붙는다(미래 구간을 미리 불러오지 않는다).
+  `src/lib/scheduleCalculator.ts`는 여전히 ODsay를 전혀 모른다.
 - **ODsay는 실시간 도착정보가 아니다**: 정적 경로 데이터 기준 안내라 "약 34분"처럼만
   표현하고, "3분 후 도착" 같은 실시간 문구는 쓰지 않는다. 실시간 버스/지하철 도착
   정보는 이번 범위에 없다.
-- **짧은 도보 구간은 ODsay를 호출하지 않는다**: 기존 도보 임계값(`TRAVEL_CONFIG.walkThresholdKm`)
-  이내면 `/api/transit`이 곧바로 단순 WALK 안내를 반환한다(`src/app/api/transit/route.ts`).
-- **폴백 계층**: ODsay 실패/키없음/경로없음 → 기존 TMAP 실제 이동시간 → 그마저 없으면
-  Haversine 추정치, 순서로 폴백한다. 어떤 경우에도 역/노선/버스 번호를 지어내지
-  않는다 — 실패하면 "대중교통 · 약 N분" 추정치와 외부 지도 링크("지도에서 열기")만
-  보여준다.
+- **폴백 계층**: ODsay가 꺼져있거나(`ODSAY_ENABLED=false`), 오늘치 예산이
+  소진됐거나(`quota_unavailable`), 호출은 했지만 실패/경로없음이면(`failed`) —
+  세 경우 모두 기존 TMAP 실제 이동시간 → 그마저 없으면 Haversine 추정치로
+  폴백한다. 어떤 경우에도 역/노선/버스 번호를 지어내지 않는다 — "대중교통 · 약
+  N분" 추정치와 외부 지도 링크("지도에서 길찾기")는 항상 그대로 남는다.
 - **정규화된 도메인 타입**: ODsay 원본 JSON을 UI에 직접 노출하지 않는다.
   `src/lib/transit/odsayClient.ts`(`parseOdsayResponse`, 서버 전용)가 첫 번째(추천)
   경로만 골라 `TransitItinerary`(`src/lib/transit/types.ts`)로 변환한다 — 노선명/버스
   번호/역 이름 등 식별에 필요한 필드가 하나라도 빠지면 그 경로 전체를 버리고
   추정치 폴백으로 넘어간다(부분적으로 틀린 정보를 보여주지 않기 위함).
-- **캐싱**: 기존 TMAP과 같은 인메모리 TTL 캐시(`src/lib/cache.ts`)를 그대로 재사용한다.
-  캐시 키는 출발/도착 좌표 + 로케일 조합.
+- **어트리뷰션**: ODsay 상세 경로가 실제로 화면에 표시될 때만 "Powered by ODsay"
+  (ko: "ODsay 제공")를 작게 표시한다 — ODsay를 쓰지 않은 estimate/walk 화면에는
+  표시하지 않는다.
+- **테스터 계정도 동일 규칙**: 테스터라고 자동으로 ODsay를 더 많이/자동으로
+  호출하지 않는다. 기본 로드는 estimate만, 상세 경로는 명시적 클릭에서만 —
+  일반 유저와 완전히 같은 흐름이다. GPS/T-money 테스터 우회와는 무관.
 - **영문 지원**: STARA가 `en`이면 ODsay에도 영문 응답을(`lang=1`), `ko`면 국문
   응답을 요청한다 — 역/노선 이름을 따로 기계번역하지 않는다.
 
 `ODSAY_API_KEY`가 로컬에 있으면 도보 전용/지하철만/버스만/환승/영문 로케일 각각
-직접 트립을 진행해보며 확인할 수 있다. 키가 없어도 앱은 정상 동작한다(추정치
-폴백).
+"상세 대중교통 경로 보기"를 직접 눌러 확인할 수 있다 — 쿼터가 작으니 회귀
+테스트만을 위해 여러 번 누르지 말 것. 키가 없어도, `ODSAY_ENABLED=false`여도,
+쿼터가 소진돼도 앱은 정상 동작한다(추정치 폴백 + 지도 링크).
 
 ### 테스트(tester) 계정 — 검증 우회 모드
 
@@ -238,7 +279,7 @@ src/
 |---|---|---|
 | TourismDataProvider | `src/lib/tour-api/` (KorService2 연동, `/api/tourism/*`) — 실패 시 `src/data/*.ts` 더미로 자동 폴백. `?locale=en`이면 EngService2 우선 시도 후 국문으로 폴백 | 아티스트 장소는 계속 STARA 자체 데이터가 관리하고, TourAPI는 로컬 관광지/음식점 자동보완 후보 풀만 확장 공급 |
 | DirectionsProvider | `src/lib/distance.ts` Haversine(기본) — TMAP 연동 시 구간별 실제 duration/geometry로 override | `src/lib/directions/` 참고, 실패 시 구간 단위로 Haversine 폴백 |
-| 대중교통 이동 안내 | `src/lib/transit/odsayClient.ts`(ODsay, 실제 연동됨) — `/api/transit`이 짧은 구간은 도보로 즉시 처리, 그 외는 ODsay 호출 | 실패 시 TMAP → Haversine 추정치로 폴백(`TransitGuideResponse`의 `kind: "estimate"`), 역/버스 정보는 지어내지 않음 |
+| 대중교통 이동 안내 | `src/lib/transit/odsayClient.ts`(ODsay, 실제 연동됨) — `/api/transit`이 짧은 구간은 도보로 즉시 처리, 그 외는 사용자가 "상세 경로 보기"를 눌렀을 때만(`detail:true`) 쿼터 예약 후 ODsay 호출 | 비활성화/쿼터소진/실패 시 TMAP → Haversine 추정치로 폴백(`TransitGuideResponse`의 `kind: "estimate"` + `reason`), 역/버스 정보는 지어내지 않고 ODsay 응답은 저장하지 않음 |
 | 지도 렌더링 | `src/components/map/LeafletMap.tsx` | 다른 지도 SDK로 교체 시 `MapView.tsx`가 노출하는 `MapPin`/`MapViewProps` 인터페이스만 유지하면 나머지 화면은 무수정 |
 | 관광지 랭킹 signal | `src/lib/tour-api/relatedTourism.ts` (`TarRlteTarService1`, 실제 연동됨) — 메인 루트 5곳을 anchor로 연관 관광지 랭킹을 가져와 `scoreCandidate`에 반영 | 실패/미승인 시 `relatedTourismScore`가 0(중립)이 되어 거리/식사시간 기준으로만 자연스럽게 폴백 |
 | QuestVerificationProvider | 수동 체크(`toggleQuest`)와 서버 검증 완료(`completeQuest`, 멱등) 두 경로 — GPS(체크포인트 미션)와 AI 사진 인증(T-money 퀘스트)은 이미 연결돼 있다(`store/tripStore.ts`) | 새 검증 방식을 추가할 땐 `Quest.verification`에 케이스만 늘리면 됨 |
@@ -261,10 +302,12 @@ src/
 
 - `TMAP_APP_KEY`가 없으면 이동시간/경로는 실제 도로/대중교통 API가 아닌 직선거리 기반
   근사치입니다(키가 있으면 구간별로 실제 TMAP 값이 적용됩니다).
-- `ODSAY_API_KEY`가 없으면 대중교통 이동 안내는 역/노선/버스 정보 없이 "대중교통 · 약
-  N분" 추정치만 표시합니다. 키가 있어도 ODsay는 정적 경로 데이터 기준이라 실시간
-  버스/지하철 도착 정보는 제공하지 않습니다("약 N분"만 — "3분 후 도착" 같은 실시간
-  문구는 없음).
+- `ODSAY_API_KEY`가 없거나, `ODSAY_ENABLED=false`거나, 오늘치 예산(`ODSAY_DAILY_BUDGET`,
+  기본 20)이 소진됐으면 대중교통 이동 안내는 역/노선/버스 정보 없이 "대중교통 · 약
+  N분" 추정치만 표시합니다. 키가 있어도 ODsay는 화면이 열렸다고 자동 호출되지
+  않습니다 — 사용자가 "상세 대중교통 경로 보기"를 직접 눌렀을 때만 호출되고
+  (Basic 플랜 30회/일 쿼터 보호), 정적 경로 데이터 기준이라 실시간 버스/지하철
+  도착 정보는 제공하지 않습니다("약 N분"만 — "3분 후 도착" 같은 실시간 문구는 없음).
 - "관광지별 연관 관광지" 서비스는 시군구코드 기반이라, 현재는 주소가 고정된 STARA 메인 루트
   5곳만 anchor로 사용합니다(구/코드를 미리 매핑해둠). 사용자가 선택한 장소나 KTO 후보까지
   anchor로 넓히려면 `resolveSignguCdFromAddress`(주소→구 자동 추출, 이미 구현됨)를

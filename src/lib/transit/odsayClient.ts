@@ -2,9 +2,12 @@
 // ODSAY_API_KEY는 브라우저에 노출되지 않는다(NEXT_PUBLIC_ 접두사 없음).
 //
 // ODsay는 실시간 도착정보가 아니라 정적 경로 데이터를 기준으로 안내한다 — "약 N분"으로만
-// 표현하고, "3분 후 도착" 같은 실시간 문구는 쓰지 않는다(17번 항목 참고).
-
-import { cacheGet, cacheSet } from "@/lib/cache";
+// 표현하고, "3분 후 도착" 같은 실시간 문구는 쓰지 않는다.
+//
+// 응답을 캐시하지 않는다(의도적) — ODsay는 API 응답값을 저장/재사용하는 것을 원칙적으로
+// 허용하지 않는다. TMAP과 달리 여기엔 src/lib/cache.ts를 쓰지 않는다. 대신 호출 자체를
+// 드물게 만든다: 이 함수는 사용자가 명시적으로 "상세 경로 보기"를 눌렀고(detail:true) 쿼터
+// 예약에 성공했을 때만 route.ts에서 호출된다(src/lib/transit/quota.ts 참고).
 import type { Coordinate, TransitItinerary, TransitStep } from "./types";
 
 const ODSAY_BASE_URL =
@@ -148,10 +151,6 @@ export async function getOdsayItinerary(
     return null;
   }
 
-  const cacheKey = `odsay:${origin.lat},${origin.lng}:${destination.lat},${destination.lng}:${locale}`;
-  const cached = cacheGet<TransitItinerary>(cacheKey);
-  if (cached) return cached;
-
   try {
     const params = new URLSearchParams({
       SX: String(origin.lng),
@@ -171,9 +170,7 @@ export async function getOdsayItinerary(
       return null;
     }
     const json = (await res.json()) as OdsayResponse;
-    const result = parseOdsayResponse(json, fromPlaceId, toPlaceId);
-    if (result) cacheSet(cacheKey, result);
-    return result;
+    return parseOdsayResponse(json, fromPlaceId, toPlaceId);
   } catch (err) {
     console.error("[odsay] request failed:", err instanceof Error ? err.message : err);
     return null;

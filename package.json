@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
-    "data:kto-match": "dotenv -e .env.local -- tsx scripts/kto-match.ts"
+    "data:kto-match": "dotenv -e .env.local -- tsx scripts/kto-match.ts",
+    "transit:usage": "dotenv -e .env.local -- tsx scripts/transit-usage.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.7.5",

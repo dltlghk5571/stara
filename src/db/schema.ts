@@ -1,4 +1,4 @@
-import { boolean, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { boolean, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: text("id").primaryKey(), // Clerk user id
@@ -31,4 +31,19 @@ export const questPhotos = pgTable("quest_photos", {
    *  도입 이전 행은 null. */
   isArtistPlace: boolean("is_artist_place"),
   completedAt: timestamp("completed_at").notNull().defaultNow(),
+});
+
+/**
+ * STARA 자체 API 호출 횟수 카운터(일별) — ODsay Basic 플랜의 30회/일 쿼터를 보호하기 위한
+ * 우리 쪽 예산 집행용. ODsay 응답(경로/역/버스 데이터)은 여기에도, 다른 어떤 테이블에도
+ * 저장하지 않는다 — ODsay는 API 응답값을 저장/재사용하는 것을 원칙적으로 허용하지 않는다
+ * (src/lib/transit/quota.ts, src/app/api/transit/route.ts 참고). id는 `${provider}:${date}`
+ * (예: "odsay:2026-09-20") — provider+date 조합의 원자적 upsert 대상 키로 쓴다.
+ */
+export const apiDailyUsage = pgTable("api_daily_usage", {
+  id: text("id").primaryKey(),
+  provider: text("provider").notNull(),
+  date: text("date").notNull(), // "YYYY-MM-DD" (UTC)
+  count: integer("count").notNull().default(0),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

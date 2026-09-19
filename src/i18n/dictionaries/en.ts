@@ -102,8 +102,11 @@ export const en = {
   },
   movement: {
     nextMove: "NEXT MOVE",
-    viewDirections: "View directions",
+    viewDetailedRoute: "View detailed transit route",
     hideDirections: "Hide directions",
+    loadingDetailedRoute: "Loading transit route…",
+    detailUnavailable: "Detailed transit guidance isn't available right now.",
+    poweredByOdsay: "Powered by ODsay",
     openInMap: "Open in map",
     walkLabel: "WALK",
     subwayLabelWord: "SUBWAY",
