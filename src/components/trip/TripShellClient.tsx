@@ -90,7 +90,7 @@ export default function TripShellClient({ initialDiaryGroups, initialBadges, ini
   const startTrip = useTripStore((s) => s.startTrip);
   const completeTrip = useTripStore((s) => s.completeTrip);
 
-  const { orderedPlaces, schedule } = useTripPlan();
+  const { orderedPlaces, schedule, routeGeometry } = useTripPlan();
 
   // Diary 사진의 placeId를 이름으로 풀 때 쓰는 "현재 trip/route에 있는 동적 장소" 소스.
   // orderedPlaces(현재 루트) > mainRoutePlaces > customPlaces(둘 다 persisted) 순으로 채움 —
@@ -172,6 +172,7 @@ export default function TripShellClient({ initialDiaryGroups, initialBadges, ini
         {tab === "route" && (
           <RouteTab
             orderedPlaces={orderedPlaces}
+            routeGeometry={routeGeometry}
             statusOf={statusOf}
             allDone={allDone}
             movementFrom={currentIndex > 0 ? orderedPlaces[currentIndex - 1] : undefined}
@@ -356,6 +357,7 @@ function BadgesTab({ progress }: { progress: BadgeProgress[] }) {
 
 function RouteTab({
   orderedPlaces,
+  routeGeometry,
   statusOf,
   allDone,
   movementFrom,
@@ -368,6 +370,9 @@ function RouteTab({
   onFinish,
 }: {
   orderedPlaces: Place[];
+  /** TMAP 실제 도로 기준 폴리라인(있으면) — 직선 대신 도로를 따라가는 경로선을 그린다.
+   *  없거나 점이 1개 이하면 MapView가 자체적으로 핀-핀 직선으로 폴백한다. */
+  routeGeometry?: [number, number][];
   statusOf: (i: number) => "done" | "next" | "locked";
   allDone: boolean;
   movementFrom?: Place;
@@ -403,6 +408,7 @@ function RouteTab({
             status: statusOf(i),
           }))}
           showPath
+          routeGeometry={routeGeometry}
           onPinClick={(id) => {
             const i = orderedPlaces.findIndex((p) => p.id === id);
             if (i >= 0) onOpenMission(i);

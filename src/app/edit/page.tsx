@@ -68,7 +68,7 @@ export default function EditPage() {
   const setTripStartTime = useTripStore((s) => s.setTripStartTime);
   const tripEndTime = useTripStore((s) => s.tripEndTime);
   const setTripEndTime = useTripStore((s) => s.setTripEndTime);
-  const { orderedPlaces, selectedPlaceIds, schedule, removalSuggestion } = useTripPlan();
+  const { orderedPlaces, selectedPlaceIds, schedule, removalSuggestion, routeGeometry } = useTripPlan();
 
   function toggleCategory(c: PlaceCategory) {
     setSelectedCategories((prev) =>
@@ -198,6 +198,7 @@ export default function EditPage() {
               title: placeName(p, locale),
             }))}
             showPath
+            routeGeometry={routeGeometry}
             onMapClick={handleMapClick}
           />
           {mapNotice && (
