@@ -54,6 +54,11 @@ export interface Place {
   /** source가 "kto"일 때 한국관광공사 원본 contentId (상세/이미지 캐시 키로도 사용) */
   contentId?: string;
   address?: string;
+  /** regions.ts의 Region.id(예: "seoul"/"busan"/"incheon"). 아티스트 연관 장소가 여러 지역에
+   *  걸쳐 수집되면서, 루트 생성 시 다른 지역 장소가 섞여 들어가지 않게 구분하는 용도로
+   *  추가됨(export-seoul-dataset.ts가 city_id를 그대로 채운다). 없으면 지역 무관(STARA가
+   *  직접 만든 mainRoute/local 자동보완 풀처럼 지역 스코프가 필요 없는 장소). */
+  regionId?: string;
 }
 
 export type QuestType =

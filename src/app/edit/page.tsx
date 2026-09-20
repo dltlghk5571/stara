@@ -125,14 +125,18 @@ export default function EditPage() {
     else removeCustomPlace(placeId);
   }
 
-  // ARTIST_PLACES는 현재 서울 실데이터만 존재 — 다른 지역 트립에서는 서울 장소가
-  // 섞여 나오지 않도록 지역이 서울이 아니면 추천 풀을 비운다(검색/지도탭 추가는 영향 없음).
+  // ARTIST_PLACES엔 여러 지역 장소가 섞여 있어서, 다른 지역 트립에 엉뚱한 지역 장소가
+  // 섞여 나오지 않도록 선택된 지역(regionId)으로 먼저 거른다(검색/지도탭 추가는 영향 없음
+  // — 그쪽은 TourAPI 위치기반 조회라 애초에 지역 밖 결과가 안 나옴).
+  const regionFilteredPlaces =
+    storeSelectedRegionId !== null
+      ? ARTIST_PLACES.filter((p) => p.regionId === storeSelectedRegionId)
+      : ARTIST_PLACES;
   const artistFilteredPlaces =
-    selectedArtistIds.length === 0 ? ARTIST_PLACES : placesForArtists(ARTIST_PLACES, selectedArtistIds);
-  const candidatePlaces =
-    storeSelectedRegionId !== null && storeSelectedRegionId !== "seoul"
-      ? []
-      : artistFilteredPlaces.filter((p) => selectedCategories.includes(p.category));
+    selectedArtistIds.length === 0
+      ? regionFilteredPlaces
+      : placesForArtists(regionFilteredPlaces, selectedArtistIds);
+  const candidatePlaces = artistFilteredPlaces.filter((p) => selectedCategories.includes(p.category));
 
   const userAddedStops = [
     ...selectedPlaceIds.map(getPlaceById).filter((p): p is Place => !!p),

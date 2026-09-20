@@ -118,10 +118,12 @@ interface State {
 
 /**
  * 지역 중심 좌표 주변에서 테마(팬 하이라이트/K-컬처 익스플로러/쇼핑&맛집, routeThemes.ts)별로
- * 3가지 루트안을 만든다. 서울(city_id="seoul"과 매핑되는 regionId="seoul")이고 아티스트가
- * 선택된 경우, 실제 아티스트 장소를 themeScore로 순위 매겨 앵커로 우선 배치하고 남는
- * 슬롯은 기존과 동일하게 TourAPI 지역 명소로 채운다("K팝을 활용한 지역 관광
- * 활성화"라는 제품 목표상 지자체 제공 장소가 항상 함께 노출되어야 함 — K절 참고).
+ * 3가지 루트안을 만든다. 선택된 지역에 실제 아티스트 장소 데이터가 있으면(Place.regionId가
+ * 그 지역과 일치하는 항목, export-seoul-dataset.ts 참고) themeScore로 순위 매겨 앵커로 우선
+ * 배치하고, 남는 슬롯은 기존과 동일하게 TourAPI 지역 명소로 채운다("K팝을 활용한 지역 관광
+ * 활성화"라는 제품 목표상 지자체 제공 장소가 항상 함께 노출되어야 함 — K절 참고). ARTIST_PLACES를
+ * regionId로 거르지 않으면 다른 지역 장소가 앵커로 섞여 들어간다(예: 서울 장소가 압도적으로
+ * 많아 부산 트립에도 서울 촬영지가 앵커로 뽑히는 사고) — themeScore 자체엔 거리 개념이 없다.
  */
 export function useRouteOptions(
   regionId: string | null,
@@ -140,8 +142,8 @@ export function useRouteOptions(
   useEffect(() => {
     if (!key || centerLat == null || centerLng == null) return;
 
-    // 실제 아티스트 장소 데이터는 서울만 존재(city_id="seoul" 필터로 만들어짐).
-    const artistAnchors = regionId === "seoul" ? placesForArtists(ARTIST_PLACES, selectedArtistIds) : [];
+    const regionArtistPlaces = ARTIST_PLACES.filter((p) => p.regionId === regionId);
+    const artistAnchors = placesForArtists(regionArtistPlaces, selectedArtistIds);
 
     let cancelled = false;
     Promise.all(
