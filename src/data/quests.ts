@@ -133,13 +133,21 @@ function pickPhraseIndex(seed: string, count: number): number {
 /**
  * 이동 구간(핀과 핀 사이)의 보너스 서브 퀘스트를 "다음 행선지" 장소에 맞춰 즉석에서
  * 만든다 — theme_phrasebank.json(src/data/phrasebank.ts)에서 장소 카테고리에 맞는 테마의
- * 문구를 하나 골라 언어 학습 퀘스트로 감싼다. 아티스트와 연관된 장소(artistIds 있음)는
- * 카테고리보다 kpop 테마를 우선한다. T-money 세그먼트(TMONEY_SEGMENT_QUEST_TEMPLATE)에는
+ * 문구를 하나 골라 언어 학습 퀘스트로 감싼다. T-money 세그먼트(TMONEY_SEGMENT_QUEST_TEMPLATE)에는
  * 쓰이지 않는다 — scheduleCalculator.ts가 그 구간만 따로 배정한다.
+ *
+ * kpop 테마는 아티스트와 연관된 장소(artistIds 있음) 중에서도 category가 "shopping"일
+ * 때만 쓴다 — kpop 테마 문구 절반(포토카드/앨범/응원봉/사인)이 굿즈샵을 전제로 하고 있어서,
+ * 음식점처럼 실제로는 다른 걸 하는 장소에 그대로 적용하면 "여기서 이 앨범 있어요?"처럼
+ * 맥락에 안 맞는 문구가 나온다. 아티스트와의 연관성 자체는 이미 relationText로 화면에
+ * 따로 표시되니, 서브퀘스트 문구까지 kpop으로 덮을 필요는 없다 — food/culture/photo 등은
+ * 그 장소에서 실제로 할 법한 카테고리 문구를 그대로 쓴다.
  */
 export function buildLanguageSubQuest(place: Place): Omit<Quest, "id" | "segmentId"> {
   const theme: PhrasebankThemeId =
-    place.artistIds.length > 0 ? "kpop" : badgeCategoryForPlaceCategory(place.category) ?? "basic";
+    place.artistIds.length > 0 && place.category === "shopping"
+      ? "kpop"
+      : badgeCategoryForPlaceCategory(place.category) ?? "basic";
   const phrases = phrasesForTheme(theme);
   const phrase = phrases[pickPhraseIndex(place.id, phrases.length)];
 

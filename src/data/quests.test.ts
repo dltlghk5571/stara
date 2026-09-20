@@ -29,12 +29,22 @@ describe("buildLanguageSubQuest", () => {
     expect(q.titleKo).toContain("한국어 한마디");
   });
 
-  it("artistIds가 있으면 카테고리 대신 kpop 테마 문구를 쓴다", () => {
+  it("shopping 카테고리 + artistIds가 있으면 카테고리 대신 kpop 테마 문구를 쓴다(굿즈샵 문맥과 맞음)", () => {
     const withArtist = buildLanguageSubQuest(
-      place({ id: "p-artist", category: "food", artistIds: ["bts"] })
+      place({ id: "p-artist", category: "shopping", artistIds: ["bts"] })
     );
-    const withoutArtist = buildLanguageSubQuest(place({ id: "p-artist", category: "food" }));
+    const withoutArtist = buildLanguageSubQuest(place({ id: "p-artist", category: "shopping" }));
     expect(withArtist.titleKo).not.toBe(withoutArtist.titleKo);
+  });
+
+  it("shopping이 아닌 카테고리는 artistIds가 있어도 카테고리 테마를 그대로 쓴다(굿즈샵 전제 문구가 음식점 등에 나오는 버그 회귀 방지)", () => {
+    // 실사례: bigbang-food-mosu-seoul(category: food, artistIds: [bigbang])이 kpop 테마를
+    // 타면 "이 앨범 있어요?" 같은 굿즈샵 문구가 파인다이닝 레스토랑에서 나왔다.
+    const withArtist = buildLanguageSubQuest(
+      place({ id: "p-food-artist", category: "food", artistIds: ["bts"] })
+    );
+    const withoutArtist = buildLanguageSubQuest(place({ id: "p-food-artist", category: "food" }));
+    expect(withArtist.titleKo).toBe(withoutArtist.titleKo);
   });
 
   it("같은 장소는 항상 같은 문구를 반환한다(결정론적)", () => {
