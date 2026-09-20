@@ -15,6 +15,7 @@
 | `detailCommon2` | KorService2 / EngService2 | contentId 기준 공통 상세정보(개요·주소·좌표) 조회 | `fetchDetailCommon` |
 | `detailIntro2` | KorService2 / EngService2 | 카테고리별 소개 정보(운영시간 등) 조회 | `fetchDetailIntro` |
 | `detailImage2` | KorService2 / EngService2 | 장소 이미지 목록 조회 | `fetchDetailImages` |
+| `searchKeyword1` | TarRlteTarService1(관광지별 연관 관광지 정보 서비스) | 메인 루트 5곳을 anchor로 "연결성 높은 장소" 랭킹 신호 조회(순수 랭킹 보정용, 실시간 방문량 아님) | `src/lib/tour-api/relatedTourism.ts` |
 
 - **국문/영문 이중 게이트웨이**: 같은 operation을 `KorService2`(국문)와 `EngService2`(영문)
   양쪽에 호출할 수 있는 구조. `locale=en` 요청 시 영문 게이트웨이를 우선 호출하고,
@@ -23,6 +24,11 @@
 - **캐시**: 동일 `baseUrl+operation+params` 조합은 인메모리 캐시(`src/lib/cache.ts`)로 재호출 방지.
 - **실패 처리**: 네트워크/HTTP 오류 시 예외를 던지지 않고 빈 배열 반환 → 호출부가 더미
   데이터 폴백 경로를 탄다.
+- **`TarRlteTarService1`(연관 관광지)은 나머지 4개와 코드 체계가 다르다**: 좌표(mapX/mapY)가
+  아니라 시군구코드 기반이라 별도 `TOUR_API_RELATED_BASE_URL`을 쓰고, 같은 `TOUR_API_KEY`를
+  재사용하지만 data.go.kr에서 별도 활용신청이 필요하다. 월 1회 갱신되는 데이터라 응답을
+  24시간 캐시한다. 실패/미승인이면 랭킹 신호가 0(중립)이 되어 거리/식사시간 기준으로만
+  자연스럽게 폴백한다.
 
 ## 2. 한국관광공사 외 API
 
