@@ -63,10 +63,23 @@ export default async function HomePage() {
       <div className="kr-aFadeUp" style={{ width: "100%", maxWidth: 320 }}>
         {/* eslint-disable-next-line @next/next/no-img-element -- 로컬 브랜드 자산, next/image 최적화 대상 아님 */}
         <img
-          src="/stara-full-transparent.png"
-          alt="STARA — Follow Your Star"
+          src="/stara-title-transparent.png"
+          alt="STARA"
           style={{ width: "100%", height: "auto", display: "block" }}
         />
+        <p
+          style={{
+            marginTop: 6,
+            textAlign: "center",
+            fontFamily: "Outfit",
+            fontWeight: 800,
+            fontSize: 13,
+            letterSpacing: 3,
+            color: "#fff",
+          }}
+        >
+          — {translate(d, "splash.tagline")} —
+        </p>
       </div>
 
       <div className="kr-aFadeUp kr-aD3 kr-hidden0" style={{ marginTop: 20, width: "100%", maxWidth: 270 }}>

@@ -265,6 +265,7 @@ export const ko: Dict = {
   },
   splash: {
     passportPill: "K-트래블 패스포트",
+    tagline: "FOLLOW YOUR STAR",
     cta: "탐험 시작 🚀",
     version: "v1.0.0 · K-러브로 만들었어요 💕",
   },

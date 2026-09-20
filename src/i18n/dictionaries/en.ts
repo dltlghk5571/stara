@@ -265,6 +265,7 @@ export const en = {
   },
   splash: {
     passportPill: "K-TRAVEL PASSPORT",
+    tagline: "FOLLOW YOUR STAR",
     cta: "START EXPEDITION 🚀",
     version: "v1.0.0 · Made with K-Love 💕",
   },
