@@ -40,7 +40,6 @@ import {
   fetchLocationBasedList,
   fetchDetailCommon,
   fetchDetailIntro,
-  fetchDetailImages,
 } from "../src/lib/tour-api/client";
 import { TOUR_API_EN_BASE_URL } from "../src/lib/tour-api/config";
 import { haversineKm } from "../src/lib/distance";
@@ -95,7 +94,6 @@ export interface SeoulTourismEnrichment {
   enTitle?: string;
   enAddress?: string;
   enOverview?: string;
-  images?: string[];
 }
 
 function readJson<T>(path: string): T {
@@ -123,7 +121,6 @@ export interface MatchDeps {
   locationBasedList: typeof fetchLocationBasedList;
   detailCommon: typeof fetchDetailCommon;
   detailIntro: typeof fetchDetailIntro;
-  detailImages: typeof fetchDetailImages;
 }
 
 export const liveDeps: MatchDeps = {
@@ -131,7 +128,6 @@ export const liveDeps: MatchDeps = {
   locationBasedList: fetchLocationBasedList,
   detailCommon: fetchDetailCommon,
   detailIntro: fetchDetailIntro,
-  detailImages: fetchDetailImages,
 };
 
 const STATUS_RANK: Record<MatchStatus, number> = {
@@ -266,16 +262,15 @@ async function matchEnglish(place: PipelinePlace, deps: MatchDeps): Promise<EnMa
   };
 }
 
-/** 확정된 enContentId의 상세/이미지를 가져온다(검색은 matchEnglish에서 이미 끝남). */
+/** 확정된 enContentId의 상세를 가져온다(검색은 matchEnglish에서 이미 끝남). */
 async function fetchEnglishDetail(
   enContentId: string,
   enContentTypeId: string,
   deps: MatchDeps
-): Promise<Pick<SeoulTourismEnrichment, "enTitle" | "enAddress" | "enOverview" | "images">> {
-  const [common, , images] = await Promise.all([
+): Promise<Pick<SeoulTourismEnrichment, "enTitle" | "enAddress" | "enOverview">> {
+  const [common] = await Promise.all([
     deps.detailCommon(enContentId, TOUR_API_EN_BASE_URL),
     deps.detailIntro(enContentId, enContentTypeId, TOUR_API_EN_BASE_URL),
-    deps.detailImages(enContentId, TOUR_API_EN_BASE_URL),
   ]);
   // 요청한 contentId와 응답의 contentid가 다르면(실측으로 관찰된 API 이상 응답) 무조건 버린다.
   const item = common.find((c) => c.contentid === enContentId);
@@ -283,7 +278,6 @@ async function fetchEnglishDetail(
     enTitle: item?.title || undefined,
     enAddress: [item?.addr1, item?.addr2].filter(Boolean).join(" ") || undefined,
     enOverview: item?.overview?.trim() || undefined,
-    images: images.map((i) => i.originimgurl).filter(Boolean),
   };
 }
 
@@ -398,7 +392,6 @@ function printReport(results: SeoulTourismEnrichment[]): void {
   const withEnTitle = matched.filter((r) => r.enTitle).length;
   const withEnOverview = matched.filter((r) => r.enOverview).length;
   const withEnAddress = matched.filter((r) => r.enAddress).length;
-  const withKtoImage = matched.filter((r) => r.images && r.images.length > 0).length;
 
   console.log("\n=== KTO matching audit ===");
   console.log(`TOTAL STARA PLACES: ${results.length}`);
@@ -425,7 +418,6 @@ function printReport(results: SeoulTourismEnrichment[]): void {
   console.log(`\nENGLISH TITLE COVERAGE (of Korean-matched): ${withEnTitle}/${matched.length}`);
   console.log(`ENGLISH OVERVIEW COVERAGE (of Korean-matched): ${withEnOverview}/${matched.length}`);
   console.log(`ENGLISH ADDRESS COVERAGE (of Korean-matched): ${withEnAddress}/${matched.length}`);
-  console.log(`ENGLISH IMAGE COVERAGE (of Korean-matched): ${withKtoImage}/${matched.length}`);
 
   const needsReview = results.filter(
     (r) => r.status === "ambiguous" || r.status === "manual_review"
@@ -486,7 +478,6 @@ export interface SeoulTourismEnrichment {
   enTitle?: string;
   enAddress?: string;
   enOverview?: string;
-  images?: string[];
 }
 
 export const SEOUL_TOURISM_ENRICHMENT: SeoulTourismEnrichment[] = [

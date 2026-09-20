@@ -40,11 +40,10 @@ interface TourismInfo {
 function useTourismInfo(contentId: string | undefined, category: Place["category"]) {
   const { locale } = useLocale();
   const [info, setInfo] = useState<TourismInfo | null>(null);
-  const [images, setImages] = useState<string[]>([]);
 
   useEffect(() => {
     // place가 바뀌면 ReelsPanel이 key={place.id}로 이 컴포넌트를 통째로 리마운트하므로
-    // 여기서 이전 place의 상태를 직접 리셋할 필요가 없다(리마운트 시 초기값 null/[]).
+    // 여기서 이전 place의 상태를 직접 리셋할 필요가 없다(리마운트 시 초기값 null).
     if (!contentId) return;
     let cancelled = false;
     const contentTypeId = guessContentTypeId(category);
@@ -54,18 +53,12 @@ function useTourismInfo(contentId: string | undefined, category: Place["category
         if (!cancelled) setInfo(json.detail);
       })
       .catch(() => {});
-    fetch(`/api/tourism/images?contentId=${contentId}&locale=${locale}`)
-      .then((res) => res.json())
-      .then((json: { images?: string[] }) => {
-        if (!cancelled) setImages(json.images ?? []);
-      })
-      .catch(() => {});
     return () => {
       cancelled = true;
     };
   }, [contentId, category, locale]);
 
-  return { info, images };
+  return { info };
 }
 
 /** 모바일: 하단 bottom sheet. 관계 설명을 최상단에 노출. */
@@ -80,7 +73,7 @@ export default function PlaceDetailSheet({ place, onClose }: Props) {
       .filter(Boolean)
       .join(", ") || t("reels.staraPick");
   const quests = getQuestsForPlace(place);
-  const { info: tourismInfo, images: tourismImages } = useTourismInfo(place.contentId, place.category);
+  const { info: tourismInfo } = useTourismInfo(place.contentId, place.category);
   const presentation = getPlacePresentation(place, locale);
 
   return (
@@ -141,27 +134,12 @@ export default function PlaceDetailSheet({ place, onClose }: Props) {
           </div>
         )}
 
-        {(tourismInfo?.overview || tourismImages.length > 0) && (
+        {tourismInfo?.overview && (
           <div style={{ marginTop: "16px" }}>
             <p style={{ fontSize: "11px", fontWeight: 700, color: "var(--gray)" }}>{t("reels.tourInfo")}</p>
-            {tourismImages.length > 0 && (
-              <div style={{ marginTop: "8px", display: "flex", gap: "8px", overflowX: "auto" }}>
-                {tourismImages.slice(0, 5).map((src) => (
-                  // eslint-disable-next-line @next/next/no-img-element -- 외부 KTO 이미지, 도메인 미확정이라 next/image 최적화 대상 아님
-                  <img
-                    key={src}
-                    src={src}
-                    alt=""
-                    style={{ width: "96px", height: "96px", borderRadius: "10px", objectFit: "cover", flexShrink: 0 }}
-                  />
-                ))}
-              </div>
-            )}
-            {tourismInfo?.overview && (
-              <p style={{ marginTop: "8px", fontSize: "13px", lineHeight: 1.5, color: "var(--navy)" }}>
-                {tourismInfo.overview}
-              </p>
-            )}
+            <p style={{ marginTop: "8px", fontSize: "13px", lineHeight: 1.5, color: "var(--navy)" }}>
+              {tourismInfo.overview}
+            </p>
           </div>
         )}
 

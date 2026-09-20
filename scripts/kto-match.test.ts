@@ -41,7 +41,6 @@ function fakeDeps(overrides: Partial<MatchDeps> = {}): MatchDeps {
     locationBasedList: vi.fn(async () => []),
     detailCommon: vi.fn(async () => []),
     detailIntro: vi.fn(async () => []),
-    detailImages: vi.fn(async () => []),
     ...overrides,
   };
 }

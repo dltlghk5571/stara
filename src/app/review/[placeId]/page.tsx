@@ -277,12 +277,6 @@ export default async function PlaceReviewDetailPage({
               Address: {record.enrichment.enAddress}
             </>
           )}
-          {(record.enrichment?.images?.length ?? 0) > 0 && (
-            <>
-              <br />
-              Images: {record.enrichment!.images!.length}
-            </>
-          )}
         </div>
       </section>
 

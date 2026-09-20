@@ -8,7 +8,6 @@ import {
   fetchSearchKeyword,
   fetchDetailCommon,
   fetchDetailIntro,
-  fetchDetailImages,
 } from "./client";
 import { mapTourItemsToPlaces } from "./mapper";
 import { TOUR_API_BASE_URL, TOUR_API_EN_BASE_URL, EN_CONTENT_TYPE_ID } from "./config";
@@ -35,7 +34,6 @@ export interface TourismDataProvider {
     contentTypeId: string,
     locale?: Locale
   ): Promise<TourismDetail | null>;
-  getImages(contentId: string, locale?: Locale): Promise<string[]>;
 }
 
 function baseUrlFor(locale: Locale): string {
@@ -117,13 +115,6 @@ export const tourismDataProvider: TourismDataProvider = {
       tel: common[0]?.tel ?? null,
       intro: intro[0] ?? null,
     };
-  },
-
-  async getImages(contentId, locale = "en") {
-    const images = await withEnglishFallback(locale, (baseUrl) =>
-      fetchDetailImages(contentId, baseUrl)
-    );
-    return images.map((i) => i.originimgurl).filter(Boolean);
   },
 };
 

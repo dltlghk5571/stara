@@ -7,7 +7,6 @@ import { TOUR_API_BASE_URL, TOUR_API_TIMEOUT_MS } from "./config";
 import { cacheGet, cacheSet } from "@/lib/cache";
 import type {
   TourApiDetailIntroItem,
-  TourApiImageItem,
   TourApiRawItem,
   TourApiResponse,
 } from "./types";
@@ -149,11 +148,4 @@ export function fetchDetailIntro(
     { contentId, contentTypeId },
     baseUrl
   );
-}
-
-export function fetchDetailImages(
-  contentId: string,
-  baseUrl?: string
-): Promise<TourApiImageItem[]> {
-  return callTourApi<TourApiImageItem>("detailImage2", { contentId, imageYN: "Y" }, baseUrl);
 }

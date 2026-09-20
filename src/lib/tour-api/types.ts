@@ -27,12 +27,6 @@ export interface TourApiDetailIntroItem {
   [key: string]: string | undefined;
 }
 
-export interface TourApiImageItem {
-  contentid: string;
-  originimgurl: string;
-  smallimageurl: string;
-}
-
 export interface TourApiResponse<T> {
   response?: {
     header?: { resultCode?: string; resultMsg?: string };

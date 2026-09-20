@@ -35,13 +35,12 @@ function enrichment(overrides: Partial<SeoulTourismEnrichment> = {}): SeoulTouri
     enTitle: "Gyeongbokgung Palace",
     enOverview: "A historic royal palace in central Seoul.",
     enAddress: "161 Sajik-ro, Jongno-gu, Seoul",
-    images: ["https://kto/image1.jpg"],
     ...overrides,
   };
 }
 
-describe("buildPlacePresentation — image fallback", () => {
-  it("STARA 이미지가 있으면 KTO 이미지보다 우선한다", () => {
+describe("buildPlacePresentation — primaryImage", () => {
+  it("STARA 이미지가 있으면 그대로 쓴다", () => {
     const p = buildPlacePresentation(
       place({ imageUrl: "https://stara/image.jpg" }),
       "en",
@@ -50,13 +49,8 @@ describe("buildPlacePresentation — image fallback", () => {
     expect(p.primaryImage).toBe("https://stara/image.jpg");
   });
 
-  it("STARA 이미지가 없으면 KTO 보강 이미지를 쓴다", () => {
+  it("STARA 이미지가 없으면 null — 컴포넌트가 기존 카테고리 플레이스홀더를 그대로 쓴다(KTO 이미지로 대체하지 않음)", () => {
     const p = buildPlacePresentation(place(), "en", enrichment());
-    expect(p.primaryImage).toBe("https://kto/image1.jpg");
-  });
-
-  it("둘 다 없으면 null — 컴포넌트가 기존 플레이스홀더를 그대로 쓴다", () => {
-    const p = buildPlacePresentation(place(), "en", enrichment({ images: [] }));
     expect(p.primaryImage).toBeNull();
     const p2 = buildPlacePresentation(place(), "en", undefined);
     expect(p2.primaryImage).toBeNull();
@@ -130,7 +124,7 @@ describe("buildPlacePresentation — 매칭 안 된 STARA 장소도 정상 동�
   });
 
   it("국문 매칭이 unmatched인 sidecar 레코드가 있어도 KTO 텍스트를 노출하지 않는다", () => {
-    const p = buildPlacePresentation(place(), "en", enrichment({ status: "unmatched", enStatus: "unavailable", enOverview: undefined, images: [] }));
+    const p = buildPlacePresentation(place(), "en", enrichment({ status: "unmatched", enStatus: "unavailable", enOverview: undefined }));
     expect(p.hasKtoEnrichment).toBe(false);
     expect(p.primaryImage).toBeNull();
   });

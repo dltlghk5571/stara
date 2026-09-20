@@ -10,7 +10,7 @@ import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 export interface PlacePresentation {
   /** placeName(place, locale)과 동일 — KTO 보강과 무관, STARA가 그대로 소유. */
   displayName: string;
-  /** Place.imageUrl → KTO 보강 이미지 1번째 → null(호출부가 기존 카테고리 플레이스홀더를 그대로 씀). */
+  /** Place.imageUrl → null(호출부가 기존 카테고리 플레이스홀더를 그대로 씀). */
   primaryImage: string | null;
   /** 이 place에 적용 가능한 KTO 보강 정보(국문 매칭 성공)가 있는지. */
   hasKtoEnrichment: boolean;
@@ -56,8 +56,7 @@ export function buildPlacePresentation(
     tourismTitle = duplicate ? null : decodedEnTitle;
   }
 
-  const ktoImage = applicable?.images?.[0] ?? null;
-  const primaryImage = place.imageUrl || ktoImage || null;
+  const primaryImage = place.imageUrl || null;
 
   return {
     displayName: placeName(place, locale),

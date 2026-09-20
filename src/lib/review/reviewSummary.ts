@@ -103,7 +103,7 @@ export function summarizeReviewRecords(records: ReviewRecord[]): ReviewSummary {
     }
     if (!r.metadata.sourceUrl) warnings.missingSource++;
     if (!r.place.openTime || !r.place.closeTime) warnings.missingHours++;
-    if (!r.place.imageUrl && !(r.enrichment?.images?.length)) warnings.missingImage++;
+    if (!r.place.imageUrl) warnings.missingImage++;
     if (!r.place.relationTextEn.trim()) warnings.missingEnglishRelation++;
     if (r.enrichment?.status === "manual_review") warnings.ktoManualReview++;
     if (r.enrichment?.status === "ambiguous") warnings.ktoAmbiguous++;
