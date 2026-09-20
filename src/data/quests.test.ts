@@ -50,4 +50,20 @@ describe("buildLanguageSubQuest", () => {
     );
     expect(titles.size).toBeGreaterThan(1);
   });
+
+  it("영어 로케일 필드에도 한국어 원문 + 로마자 발음이 빠짐없이 들어있다(번역만 있고 원문이 없던 버그)", () => {
+    const q = buildLanguageSubQuest(place({ id: "p-food-en", category: "food" }));
+    const hangulPattern = /[가-힣]/; // 한글 음절 범위
+    expect(q.titleEn).toMatch(hangulPattern);
+    expect(q.descriptionEn).toMatch(hangulPattern);
+    // descriptionEn에는 로마자 발음(괄호 안)과 영어 뜻(따옴표 안)도 같이 있어야 한다.
+    expect(q.descriptionEn).toMatch(/\(.+\)/);
+    expect(q.descriptionEn).toMatch(/"[^"]+"/);
+  });
+
+  it("titleEn은 한국어 원문을 그대로 담는다(번역문이 아니라)", () => {
+    const q = buildLanguageSubQuest(place({ id: "p-food-title", category: "food" }));
+    const koFromTitle = q.titleKo.replace("한국어 한마디: ", "");
+    expect(q.titleEn).toContain(koFromTitle);
+  });
 });

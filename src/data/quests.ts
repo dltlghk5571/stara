@@ -150,9 +150,12 @@ export function buildLanguageSubQuest(place: Place): Omit<Quest, "id" | "segment
   return {
     type: "language",
     titleKo: `한국어 한마디: ${ko}`,
-    titleEn: `Korean phrase: ${en}`,
+    titleEn: `Korean phrase: ${ko}`,
+    // 로케일과 무관하게 한국어 원문/발음(로마자 표기)/뜻 세 가지를 항상 다 보여준다 —
+    // 예전엔 titleEn/descriptionEn이 번역(en)만 담고 정작 한국어 원문과 발음이 빠져있었다
+    // (영어 UI 사용자가 "한국어를 배우는" 미션인데 한국어를 하나도 못 보는 버그).
     descriptionKo: `다음 장소로 이동하며 실용 한국어 표현을 익혀보세요: '${ko}' (${phrase.romanization})`,
-    descriptionEn: `Learn a practical Korean phrase on the way to your next stop: '${en}'`,
+    descriptionEn: `Learn a practical Korean phrase on the way to your next stop: '${ko}' (${phrase.romanization}) — "${en}"`,
     required: false,
     rewardType: "bonus_badge",
   };
