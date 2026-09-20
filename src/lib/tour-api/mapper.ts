@@ -3,7 +3,7 @@
 
 import type { Place, PlaceCategory } from "@/types";
 import type { Locale, TourApiRawItem } from "./types";
-import { RESTAURANT_CONTENT_TYPE_ID } from "./config";
+import { RESTAURANT_CONTENT_TYPE_ID, EN_CONTENT_TYPE_ID } from "./config";
 import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
 
 const DEFAULT_DWELL_MINUTES = 45;
@@ -24,7 +24,11 @@ export function mapTourItemToPlace(item: TourApiRawItem, locale: Locale = "ko"):
     return null;
   }
 
-  const isFood = item.contenttypeid === RESTAURANT_CONTENT_TYPE_ID;
+  // EngService2는 contenttypeid 값 자체가 KorService2와 다르다(음식점 39→82) — 실제로 어느
+  // 쪽에서 온 응답이든 놓치지 않게 두 체계 값을 다 확인한다(config.ts EN_CONTENT_TYPE_ID 참고).
+  const isFood =
+    item.contenttypeid === RESTAURANT_CONTENT_TYPE_ID ||
+    item.contenttypeid === EN_CONTENT_TYPE_ID[RESTAURANT_CONTENT_TYPE_ID];
   const category: PlaceCategory = isFood ? "local_restaurant" : "local_tourism";
 
   // 한 번의 호출은 ko/en 중 하나만 응답한다. 이름은 두 필드 다 필수라 반대쪽 언어도

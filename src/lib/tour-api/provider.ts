@@ -11,7 +11,7 @@ import {
   fetchDetailImages,
 } from "./client";
 import { mapTourItemsToPlaces } from "./mapper";
-import { TOUR_API_BASE_URL, TOUR_API_EN_BASE_URL } from "./config";
+import { TOUR_API_BASE_URL, TOUR_API_EN_BASE_URL, EN_CONTENT_TYPE_ID } from "./config";
 import type { TourApiDetailIntroItem, Locale } from "./types";
 import type { Place } from "@/types";
 import { decodeHtmlEntities } from "@/lib/decodeHtmlEntities";
@@ -40,6 +40,17 @@ export interface TourismDataProvider {
 
 function baseUrlFor(locale: Locale): string {
   return locale === "en" ? TOUR_API_EN_BASE_URL : TOUR_API_BASE_URL;
+}
+
+/**
+ * EngService2는 contentTypeId 체계가 KorService2와 달라(config.ts의 EN_CONTENT_TYPE_ID 참고)
+ * 국문 코드를 그대로 넘기면 에러 없이 0건만 온다. 국문 폴백 도중엔 baseUrl이 실행 중에
+ * KorService2로 바뀌므로, 바깥 locale이 아니라 "지금 실제로 치는 baseUrl" 기준으로 변환해야
+ * 폴백 호출에서 다시 잘못 변환하는 걸 막는다.
+ */
+function contentTypeIdForBaseUrl<T extends string | undefined>(contentTypeId: T, baseUrl: string): T {
+  if (!contentTypeId || baseUrl !== TOUR_API_EN_BASE_URL) return contentTypeId;
+  return (EN_CONTENT_TYPE_ID[contentTypeId] ?? contentTypeId) as T;
 }
 
 /** locale이 "en"인데 결과가 빈 배열이면 국문으로 한 번 더 시도한다. 세 메서드 모두 배열을 반환하므로 T[]로 고정. */
@@ -79,7 +90,7 @@ export const tourismDataProvider: TourismDataProvider = {
           mapX: params.lng,
           mapY: params.lat,
           radius: params.radius,
-          contentTypeId: params.contentTypeId,
+          contentTypeId: contentTypeIdForBaseUrl(params.contentTypeId, baseUrl),
         },
         baseUrl
       )
@@ -94,7 +105,7 @@ export const tourismDataProvider: TourismDataProvider = {
     if (common.length === 0) return null;
 
     const intro = await withEnglishFallback(locale, (baseUrl) =>
-      fetchDetailIntro(contentId, contentTypeId, baseUrl)
+      fetchDetailIntro(contentId, contentTypeIdForBaseUrl(contentTypeId, baseUrl), baseUrl)
     );
 
     // KTO 원문의 HTML 엔티티(&ldquo; 등)를 순수 텍스트로 풀어서 돌려준다(20절) — 여기서
@@ -123,6 +134,6 @@ export function searchTourismKeyword(
   locale: Locale = "en"
 ) {
   return withEnglishFallbackTracked(locale, (baseUrl) =>
-    fetchSearchKeyword({ keyword, contentTypeId }, baseUrl)
+    fetchSearchKeyword({ keyword, contentTypeId: contentTypeIdForBaseUrl(contentTypeId, baseUrl) }, baseUrl)
   ).then(({ items, actualLocale }) => mapTourItemsToPlaces(items, actualLocale));
 }
