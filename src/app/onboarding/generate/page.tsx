@@ -1,13 +1,26 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { X } from "lucide-react";
 import { getRegionById } from "@/data/regions";
-import { placeName, regionName, routeOptionLabel, routeOptionDescription, useLocale, useT } from "@/i18n";
+import { getArtistById } from "@/data/artists";
+import {
+  placeName,
+  placeRelation,
+  artistName,
+  regionName,
+  routeOptionLabel,
+  routeOptionDescription,
+  useLocale,
+  useT,
+  type Locale,
+} from "@/i18n";
 import { useRouteOptions } from "@/lib/tour-api/useRouteOptions";
 import { useTripStore } from "@/store/tripStore";
 import { KButton, Pill } from "@/components/ui/kroute";
 import { CREAM, LIME, YELLOW } from "@/lib/kroute-tokens";
+import type { Place } from "@/types";
 
 function GenerateInner() {
   const router = useRouter();
@@ -26,6 +39,7 @@ function GenerateInner() {
     artistIds
   );
   const setMainRoute = useTripStore((s) => s.setMainRoute);
+  const [detailPlace, setDetailPlace] = useState<Place | null>(null);
 
   if (!region) {
     return (
@@ -158,7 +172,13 @@ function GenerateInner() {
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
               {option.places.map((p) => (
-                <div key={p.id} className="kr-pathNode" style={{ padding: "6px 0" }}>
+                <button
+                  type="button"
+                  key={p.id}
+                  className="kr-pathNode kr-reset"
+                  onClick={() => setDetailPlace(p)}
+                  style={{ padding: "6px 0", width: "100%", textAlign: "left", cursor: "pointer" }}
+                >
                   <span
                     style={{
                       width: 38,
@@ -176,7 +196,7 @@ function GenerateInner() {
                     📍
                   </span>
                   <b style={{ fontFamily: "Outfit", fontWeight: 700, fontSize: 13 }}>{placeName(p, locale)}</b>
-                </div>
+                </button>
               ))}
             </div>
             <div style={{ marginTop: 10 }}>
@@ -186,6 +206,56 @@ function GenerateInner() {
             </div>
           </div>
         ))}
+      </div>
+
+      {detailPlace && (
+        <RouteStopDetailSheet place={detailPlace} locale={locale} onClose={() => setDetailPlace(null)} />
+      )}
+    </div>
+  );
+}
+
+/** 루트 후보 화면은 이미 꽉 차 있어서, 관계 텍스트를 화면에 상시 노출하는 대신 핀을 탭했을
+ *  때만 가벼운 바텀시트로 보여준다 — PlaceDetailSheet(reels)와 달리 TourAPI/퀘스트 정보는
+ *  불러오지 않는다, 여기선 "왜 이 장소가 내 아티스트와 관련 있는지"만 빠르게 확인하면 된다. */
+function RouteStopDetailSheet({
+  place,
+  locale,
+  onClose,
+}: {
+  place: Place;
+  locale: Locale;
+  onClose: () => void;
+}) {
+  const t = useT();
+  const artists = place.artistIds.map((id) => getArtistById(id)).filter(Boolean);
+  const artistLabel =
+    artists
+      .map((a) => (a ? artistName(a, locale) : null))
+      .filter(Boolean)
+      .join(", ") || t("reels.staraPick");
+
+  return (
+    <div className="place-sheet" onClick={onClose}>
+      <div className="place-sheet-card" onClick={(e) => e.stopPropagation()}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12, marginBottom: 8 }}>
+          <h2 style={{ fontFamily: "'Fraunces', serif", fontSize: 20, fontWeight: 700, color: "var(--navy)" }}>
+            {placeName(place, locale)}
+          </h2>
+          <button
+            type="button"
+            className="kr-reset"
+            onClick={onClose}
+            aria-label={t("reels.close")}
+            style={{ width: 40, height: 40, borderRadius: "50%", color: "var(--gray)", flexShrink: 0 }}
+          >
+            <X size={20} />
+          </button>
+        </div>
+        <div style={{ borderRadius: 14, background: "rgba(255,143,122,.1)", padding: 12, fontSize: 13, color: "var(--navy)" }}>
+          <p style={{ fontWeight: 700 }}>{t("reels.relationWith", { artists: artistLabel })}</p>
+          <p style={{ marginTop: 4, lineHeight: 1.5 }}>{placeRelation(place, locale)}</p>
+        </div>
       </div>
     </div>
   );
