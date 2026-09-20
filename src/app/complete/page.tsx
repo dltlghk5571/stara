@@ -49,7 +49,7 @@ export default function CompletePage() {
             name: activeTripName ?? t("complete.thisRoute"),
           })}
         </div>
-        <div className="completion-stamp">🎬</div>
+        <div className="completion-icon">🎬</div>
         <div className="flow-sub" style={{ marginBottom: "18px" }}>
           {t("complete.summary", { places: orderedPlaces.length })}
         </div>

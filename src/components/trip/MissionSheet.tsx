@@ -208,7 +208,7 @@ export default function MissionSheet({ place, onClose, onComplete }: Props) {
             {t("trip.missionComplete")}
           </p>
           <div
-            className="kr-aStampIn"
+            className="kr-aPopIn"
             style={{
               width: 72,
               height: 72,

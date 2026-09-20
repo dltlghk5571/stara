@@ -41,7 +41,7 @@ button.kr-reset {
     opacity: 1;
   }
 }
-@keyframes kr-stampIn {
+@keyframes kr-popIn {
   0% {
     transform: scale(3.5) rotate(-20deg);
     opacity: 0;
@@ -115,8 +115,8 @@ button.kr-reset {
 .kr-aFadeIn {
   animation: kr-fadeIn 0.4s ease forwards;
 }
-.kr-aStampIn {
-  animation: kr-stampIn 0.7s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
+.kr-aPopIn {
+  animation: kr-popIn 0.7s cubic-bezier(0.34, 1.2, 0.64, 1) forwards;
 }
 .kr-aFloat {
   animation: kr-float 3s ease-in-out infinite;
