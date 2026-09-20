@@ -263,8 +263,13 @@ button.kr-reset {
   height: 40vh;
 }
 
-/* /edit: 지도 + 릴스 패널을 한 화면에 같이 보여주는 구조는 유지하되,
-   데스크톱에서는 좌우 분할(지도 ~57% / 릴스 ~43%)로 전환한다. */
+/* /edit: 지도 + 릴스 패널을 세로로 쌓는다. `body`가 `max-w-[430px]`로 항상 고정폭이라
+   (layout.tsx — 데스크톱에서도 폰 프레임처럼 보이게 하는 의도적 설계), 브라우저 창 자체의
+   폭을 기준으로 판단하는 `@media (min-width: 1024px)` 같은 뷰포트 쿼리는 이 안에서 절대
+   실제로 맞을 일이 없는 조건이다(콘텐츠는 항상 430px 이하) — 그런 쿼리로 "데스크톱 좌우
+   분할"을 켜면, 430px짜리 좁은 프레임 안에 1024px+용 좌우 레이아웃을 욱여넣어 다 넘치는
+   버그가 난다(실제로 났던 버그 — 지도가 왼쪽 좁은 칸에 눌리고, 나머지 내용이 화면 밖으로
+   잘려나감). 그래서 폭 분기 없이 항상 세로 스택 하나만 쓴다. */
 .kr-editSplit {
   display: flex;
   flex-direction: column;
@@ -275,19 +280,6 @@ button.kr-reset {
   display: flex;
   flex-direction: column;
   min-height: 0;
-}
-@media (min-width: 1024px) {
-  .kr-editSplit {
-    flex-direction: row;
-  }
-  .kr-editSplit .manual-map {
-    flex: 0 0 57%;
-    height: auto;
-  }
-  .kr-editReelsCol {
-    flex: 0 0 43%;
-    min-height: 0;
-  }
 }
 .candidate-card {
   box-shadow: 4px 4px 0 #111111 !important;

@@ -1,10 +1,60 @@
 "use client";
 
-import { AlertTriangle, Clock } from "lucide-react";
+import type { CSSProperties } from "react";
+import { AlertTriangle, Clock, Minus, Plus } from "lucide-react";
 import type { ScheduleResult } from "@/types";
 import type { RemovalSuggestion } from "@/store/useTripPlan";
+import type { Locale } from "@/i18n";
 import { useT, useLocale, placeName } from "@/i18n";
-import { formatTime } from "@/lib/time";
+import { formatTime, toHHMM, toMinutes } from "@/lib/time";
+
+const STEP_MINUTES = 30;
+const MINUTES_PER_DAY = 24 * 60;
+
+/** 네이티브 `<input type="time">`는 AM/PM 표기를 브라우저/OS 로케일로 그려서 STARA
+ *  UI 언어와 어긋날 수 있다(예: 영문 UI인데 "오전/오후"로 표시). 그래서 직접 값을
+ *  들고 있는 스테퍼로 대체하고, 표시는 항상 formatTime(로케일 고정)으로만 한다 —
+ *  화면도 훨씬 덜 차지한다(30분 단위 +/-, 네이티브 피커 팝업 없음). */
+function TimeStepper({
+  label,
+  value,
+  locale,
+  onChange,
+}: {
+  label: string;
+  value: string;
+  locale: Locale;
+  onChange: (time: string) => void;
+}) {
+  function step(deltaMinutes: number) {
+    const next = (toMinutes(value) + deltaMinutes + MINUTES_PER_DAY) % MINUTES_PER_DAY;
+    onChange(toHHMM(next));
+  }
+  const btnStyle: CSSProperties = {
+    width: 26,
+    height: 26,
+    borderRadius: "50%",
+    border: "1.5px solid #e7e2d4",
+    background: "#fff",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    color: "var(--navy)",
+    flexShrink: 0,
+  };
+  return (
+    <div className="time-field" style={{ gap: 6 }}>
+      <span>{label}</span>
+      <button type="button" onClick={() => step(-STEP_MINUTES)} aria-label={`-${STEP_MINUTES}min`} style={btnStyle}>
+        <Minus size={12} />
+      </button>
+      <span style={{ minWidth: 72, textAlign: "center" }}>{formatTime(value, locale)}</span>
+      <button type="button" onClick={() => step(STEP_MINUTES)} aria-label={`+${STEP_MINUTES}min`} style={btnStyle}>
+        <Plus size={12} />
+      </button>
+    </div>
+  );
+}
 
 interface Props {
   schedule: ScheduleResult;
@@ -33,17 +83,10 @@ export default function ScheduleFooter({
     <div className="schedule-footer">
       <div className="row">
         {editable ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-            <label className="time-field">
-              <Clock size={16} />
-              {t("schedule.start")}
-              <input type="time" value={startTime} onChange={(e) => onStartTimeChange!(e.target.value)} />
-            </label>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
+            <TimeStepper label={t("schedule.start")} value={startTime!} locale={locale} onChange={onStartTimeChange!} />
             {endTime && onEndTimeChange && (
-              <label className="time-field">
-                {t("schedule.end")}
-                <input type="time" value={endTime} onChange={(e) => onEndTimeChange(e.target.value)} />
-              </label>
+              <TimeStepper label={t("schedule.end")} value={endTime} locale={locale} onChange={onEndTimeChange} />
             )}
           </div>
         ) : (
