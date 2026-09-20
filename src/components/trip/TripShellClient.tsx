@@ -532,14 +532,14 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
         <p style={{ fontFamily: "Caveat", fontSize: 17, color: MUTED_PINK, fontStyle: "italic", marginTop: 2 }}>{t("trip.diarySubtitle")}</p>
       </div>
 
-      <div className="kr-scrollY" style={{ flex: 1, padding: "0 24px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
+      <div className="kr-scrollY" style={{ flex: 1, minHeight: 0, padding: "0 24px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
         {groups.map((g) => {
           const cover = g.photos[0];
           return (
             <KCard
               key={g.key}
               onClick={() => openDiary(g.key)}
-              style={{ padding: 0, overflow: "hidden", cursor: "pointer", display: "flex", alignItems: "stretch" }}
+              style={{ padding: 0, overflow: "hidden", cursor: "pointer", display: "flex", alignItems: "stretch", flexShrink: 0 }}
             >
               <div style={{ width: 96, height: 96, flexShrink: 0, position: "relative", background: "#eee" }}>
                 {cover && (
