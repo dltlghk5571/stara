@@ -239,14 +239,14 @@ export default function TmapMapView({ pins, showPath, routeGeometry, onPinClick,
         onClick={handleLocate}
         disabled={locating}
         aria-label={t("map.myLocationAria")}
-        className="absolute bottom-3 right-3 z-[1000] flex h-11 w-11 items-center justify-center rounded-full bg-white text-black disabled:opacity-60"
+        className="absolute bottom-3 right-3 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white text-black disabled:opacity-60"
         style={{ border: "2.5px solid #111111", boxShadow: "3px 3px 0 #111111" }}
       >
         <LocateFixed size={20} className={locating ? "animate-pulse" : undefined} />
       </button>
       {locError && (
         <div
-          className="absolute bottom-16 right-3 z-[1000] max-w-[200px] rounded-lg bg-black px-3 py-2 text-xs text-white"
+          className="absolute bottom-16 right-3 z-10 max-w-[200px] rounded-lg bg-black px-3 py-2 text-xs text-white"
           style={{ border: "2px solid #111111" }}
         >
           {locError}
