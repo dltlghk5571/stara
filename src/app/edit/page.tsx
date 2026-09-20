@@ -13,7 +13,6 @@ import type { Locale } from "@/lib/tour-api/types";
 import { useTripStore } from "@/store/tripStore";
 import { useTripPlan } from "@/store/useTripPlan";
 import TopBar from "@/components/layout/TopBar";
-import AuthNav from "@/components/layout/AuthNav";
 import MapView from "@/components/map/MapView";
 import FilterBar from "@/components/reels/FilterBar";
 import ReelsPanel from "@/components/reels/ReelsPanel";
@@ -138,7 +137,7 @@ export default function EditPage() {
 
   return (
     <div id="tv-manual" className="tl-view" style={{ minHeight: "100vh" }}>
-      <TopBar title={t("edit.title")} backHref="/trip" rightSlot={<AuthNav />} />
+      <TopBar title={t("edit.title")} backHref="/trip" />
 
       <div className="ph-header" style={{ paddingBottom: 0 }}>
         <div>
