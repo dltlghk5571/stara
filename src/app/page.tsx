@@ -75,7 +75,7 @@ export default async function HomePage() {
             fontWeight: 800,
             fontSize: 13,
             letterSpacing: 3,
-            color: "#fff",
+            color: "#222a67", // stara-title-transparent.png 글자의 실제 남색과 동일(픽셀 샘플링)
           }}
         >
           — {translate(d, "splash.tagline")} —
