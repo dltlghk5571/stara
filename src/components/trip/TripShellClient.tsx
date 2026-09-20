@@ -12,6 +12,7 @@ import MapView from "@/components/map/MapView";
 import BadgeGrid from "@/components/badge/BadgeGrid";
 import MissionSheet from "@/components/trip/MissionSheet";
 import MovementGuide from "@/components/trip/MovementGuide";
+import DiaryShareButton from "@/components/trip/DiaryShareButton";
 import SubQuestList from "@/components/quest/SubQuestList";
 import { BottomNav, KButton, KCard, Pill } from "@/components/ui/kroute";
 import type { KrouteTab } from "@/components/ui/kroute";
@@ -555,6 +556,7 @@ function DiaryTab({ groups, dynamicPlacesById }: { groups: TripGroup[]; dynamicP
                   {t("trip.diaryPhotoCount", { n: g.photos.length })}
                 </p>
               </div>
+              <DiaryShareButton tripKey={g.key} />
             </KCard>
           );
         })}

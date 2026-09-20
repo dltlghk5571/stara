@@ -57,9 +57,3 @@ export async function getOrCreateLocalUser(clerkUserId: string) {
     return row ?? (await getLocalUser(clerkUserId));
   }
 }
-
-export async function getUserByUsername(username: string) {
-  const db = getDb();
-  const [row] = await db.select().from(users).where(eq(users.username, username)).limit(1);
-  return row ?? null;
-}
