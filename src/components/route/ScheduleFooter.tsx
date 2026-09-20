@@ -1,6 +1,6 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useState, type CSSProperties } from "react";
 import { AlertTriangle, Clock, Minus, Plus } from "lucide-react";
 import type { ScheduleResult } from "@/types";
 import type { RemovalSuggestion } from "@/store/useTripPlan";
@@ -79,16 +79,23 @@ export default function ScheduleFooter({
   const t = useT();
   const { locale } = useLocale();
   const editable = Boolean(startTime && onStartTimeChange);
+  // 스테퍼 두 개를 상시 노출하면 /edit 하단이 꽉 차서, 평소엔 한 줄 요약만 두고
+  // 누를 때만 팝업으로 연다(팝업 스타일은 기존 .confirm-add-* 를 그대로 재사용).
+  const [timeEditorOpen, setTimeEditorOpen] = useState(false);
   return (
     <div className="schedule-footer">
       <div className="row">
         {editable ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
-            <TimeStepper label={t("schedule.start")} value={startTime!} locale={locale} onChange={onStartTimeChange!} />
-            {endTime && onEndTimeChange && (
-              <TimeStepper label={t("schedule.end")} value={endTime} locale={locale} onChange={onEndTimeChange} />
-            )}
-          </div>
+          <button
+            type="button"
+            className="time-field"
+            style={{ border: "none", background: "none", padding: 0, font: "inherit", cursor: "pointer" }}
+            onClick={() => setTimeEditorOpen(true)}
+          >
+            <Clock size={16} />
+            {formatTime(startTime!, locale)}
+            {endTime && ` – ${formatTime(endTime, locale)}`}
+          </button>
         ) : (
           <div className="time-field">
             <Clock size={16} />
@@ -137,6 +144,27 @@ export default function ScheduleFooter({
                 )}
               </p>
             )}
+          </div>
+        </div>
+      )}
+
+      {editable && (
+        <div className={`confirm-add-overlay${timeEditorOpen ? " open" : ""}`} onClick={() => setTimeEditorOpen(false)}>
+          <div className="confirm-add-card" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", alignItems: "center" }}>
+              <TimeStepper label={t("schedule.start")} value={startTime!} locale={locale} onChange={onStartTimeChange!} />
+              {endTime && onEndTimeChange && (
+                <TimeStepper label={t("schedule.end")} value={endTime} locale={locale} onChange={onEndTimeChange} />
+              )}
+            </div>
+            <button
+              type="button"
+              className="btn btn-coral"
+              style={{ marginTop: "16px", height: "40px", width: "100%", fontSize: "12.5px" }}
+              onClick={() => setTimeEditorOpen(false)}
+            >
+              {t("common.close")}
+            </button>
           </div>
         </div>
       )}

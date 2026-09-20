@@ -5,7 +5,6 @@ import type { Place } from "@/types";
 import { getArtistById } from "@/data/artists";
 import { getQuestsForPlace } from "@/data/quests";
 import { CATEGORY_STYLE } from "@/lib/categoryStyle";
-import { getPlacePresentation } from "@/lib/placePresentation";
 import {
   useT,
   useLocale,
@@ -34,8 +33,6 @@ export default function ReelCard({
   const t = useT();
   const { locale } = useLocale();
   const style = CATEGORY_STYLE[place.category];
-  const Icon = style.icon;
-  const presentation = getPlacePresentation(place, locale);
   const artistNames = place.artistIds
     .map((id) => {
       const a = getArtistById(id);
@@ -47,19 +44,6 @@ export default function ReelCard({
 
   return (
     <div className="candidate-card">
-      <div className="banner" style={{ background: `linear-gradient(135deg, ${style.color}, ${style.color}99)` }}>
-        {presentation.primaryImage ? (
-          // eslint-disable-next-line @next/next/no-img-element -- 외부 STARA/KTO 이미지, 도메인 미확정이라 next/image 최적화 대상 아님
-          <img
-            src={presentation.primaryImage}
-            alt=""
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
-          />
-        ) : (
-          <Icon size={40} />
-        )}
-      </div>
-
       <div className="body">
         <div className="row">
           <span className="cat-tag" style={{ background: style.color }}>

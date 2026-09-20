@@ -57,6 +57,10 @@ export default function EditPage() {
   const [searching, setSearching] = useState(false);
   const [pendingPlace, setPendingPlace] = useState<Place | null>(null);
   const [mapNotice, setMapNotice] = useState<string | null>(null);
+  // 지도(위치 기반 추가)와 후보 브라우징(조건 기반 추가)을 한 화면에 같이 두면 고정 높이
+  // 100dvh 안에 둘 다 안 들어가 후보 카드 영역이 찌그러진다 — 탭으로 나눠 각 탭이 한
+  // 화면에 정확히 맞게 한다.
+  const [tab, setTab] = useState<"route" | "browse">("route");
 
   const addPlace = useTripStore((s) => s.addPlace);
   const removePlace = useTripStore((s) => s.removePlace);
@@ -136,86 +140,66 @@ export default function EditPage() {
   ];
 
   return (
-    <div id="tv-manual" className="tl-view" style={{ minHeight: "100vh" }}>
+    <div id="tv-manual" className="tl-view">
       <TopBar title={t("edit.title")} backHref="/trip" />
 
-      <div className="ph-header" style={{ paddingBottom: 0 }}>
-        <div>
-          <div className="flow-h1" style={{ fontSize: "18px" }}>
-            {t("edit.buildYourOwn")}
+      <div className="filter-bar" style={{ flexDirection: "row", gap: "8px", padding: "10px 20px" }}>
+        <button
+          type="button"
+          onClick={() => setTab("route")}
+          className={`filter-chip${tab === "route" ? " active" : ""}`}
+          style={tab === "route" ? { background: "var(--navy)" } : undefined}
+        >
+          {t("edit.tabRoute")}
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("browse")}
+          className={`filter-chip${tab === "browse" ? " active" : ""}`}
+          style={tab === "browse" ? { background: "var(--navy)" } : undefined}
+        >
+          {t("edit.tabBrowse")}
+        </button>
+      </div>
+
+      {tab === "route" ? (
+        <>
+          {/* 지도가 flex:1로 남는 높이를 전부 먹고 나머지는 flexShrink:0으로 고정 —
+              고정 높이(100dvh) 컨테이너에서 압축이 지도 한 곳에만 흡수되게 한다. */}
+          <div className="manual-map" style={{ height: "auto", flex: 1, minHeight: 0 }}>
+            <MapView
+              pins={orderedPlaces.map((p, i) => ({
+                id: p.id,
+                lat: p.latitude,
+                lng: p.longitude,
+                order: i + 1,
+                color: "#243b53",
+                title: placeName(p, locale),
+              }))}
+              showPath
+              routeGeometry={routeGeometry}
+              onMapClick={handleMapClick}
+            />
+            {mapNotice && (
+              <div
+                style={{
+                  position: "absolute", bottom: "10px", left: "50%", transform: "translateX(-50%)",
+                  background: "var(--navy)", color: "#fff", padding: "6px 12px", borderRadius: "100px",
+                  fontFamily: "'Space Mono', monospace", fontSize: "10px", pointerEvents: "none", zIndex: 5,
+                }}
+              >
+                {mapNotice}
+              </div>
+            )}
           </div>
-          <div className="flow-sub">{t("edit.tapOrSearch")}</div>
-        </div>
-      </div>
 
-      <div className="search-row">
-        <span>🔍</span>
-        <input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSearch()}
-          placeholder={t("edit.searchPlaceholder")}
-        />
-      </div>
-
-      {searchResults !== null && (
-        <div style={{ margin: "0 20px 12px", background: "#fff", border: "1px solid #f2ede0", borderRadius: "14px", padding: "6px", maxHeight: "160px", overflowY: "auto" }}>
-          {searching && <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>{t("edit.searching")}</p>}
-          {!searching && searchResults.length === 0 && (
-            <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>{t("edit.noResults")}</p>
-          )}
-          {searchResults.map((place) => (
-            <div
-              key={place.id}
-              onClick={() => {
-                setPendingPlace(place);
-                setSearchResults(null);
-                setSearchQuery("");
-              }}
-              style={{ padding: "8px 10px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 700, color: "var(--navy)" }}
-            >
-              {placeName(place, locale)}
-              {place.address && (
-                <span style={{ display: "block", fontSize: "10.5px", fontWeight: 400, color: "var(--gray)" }}>
-                  {place.address}
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="kr-editSplit">
-        <div className="manual-map">
-          <MapView
-            pins={orderedPlaces.map((p, i) => ({
-              id: p.id,
-              lat: p.latitude,
-              lng: p.longitude,
-              order: i + 1,
-              color: "#243b53",
-              title: placeName(p, locale),
-            }))}
-            showPath
-            routeGeometry={routeGeometry}
-            onMapClick={handleMapClick}
-          />
-          {mapNotice && (
-            <div
-              style={{
-                position: "absolute", bottom: "10px", left: "50%", transform: "translateX(-50%)",
-                background: "var(--navy)", color: "#fff", padding: "6px 12px", borderRadius: "100px",
-                fontFamily: "'Space Mono', monospace", fontSize: "10px", pointerEvents: "none", zIndex: 5,
-              }}
-            >
-              {mapNotice}
-            </div>
-          )}
-        </div>
-
-        <div className="kr-editReelsCol">
-          <div className="locations-title">{t("edit.selectedStops", { n: userAddedStops.length })}</div>
-          <div className="locations-scroll">
+          <div className="locations-title" style={{ flexShrink: 0, paddingBottom: "2px" }}>
+            {t("edit.selectedStops", { n: userAddedStops.length })}
+          </div>
+          <div style={{ flexShrink: 0, padding: "0 20px 6px", fontSize: "11px", color: "var(--gray)" }}>
+            {t("edit.tapMapHint")}
+          </div>
+          <div className="locations-scroll" style={{ flexShrink: 0 }}>
             {userAddedStops.map((place) => (
               <div key={place.id} className="loc-card">
                 <div className="remove" onClick={() => removeStop(place.id)}>
@@ -226,10 +210,46 @@ export default function EditPage() {
               </div>
             ))}
           </div>
-
-          <div style={{ padding: "16px 20px 0" }}>
-            <div className="locations-title" style={{ padding: 0 }}>{t("edit.browseSuggested")}</div>
+        </>
+      ) : (
+        <>
+          <div className="search-row" style={{ flexShrink: 0 }}>
+            <span>🔍</span>
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+              placeholder={t("edit.searchPlaceholder")}
+            />
           </div>
+
+          {searchResults !== null && (
+            <div style={{ flexShrink: 0, margin: "0 20px 12px", background: "#fff", border: "1px solid #f2ede0", borderRadius: "14px", padding: "6px", maxHeight: "160px", overflowY: "auto" }}>
+              {searching && <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>{t("edit.searching")}</p>}
+              {!searching && searchResults.length === 0 && (
+                <p style={{ padding: "8px", fontSize: "12px", color: "var(--gray)" }}>{t("edit.noResults")}</p>
+              )}
+              {searchResults.map((place) => (
+                <div
+                  key={place.id}
+                  onClick={() => {
+                    setPendingPlace(place);
+                    setSearchResults(null);
+                    setSearchQuery("");
+                  }}
+                  style={{ padding: "8px 10px", borderRadius: "10px", cursor: "pointer", fontSize: "13px", fontWeight: 700, color: "var(--navy)" }}
+                >
+                  {placeName(place, locale)}
+                  {place.address && (
+                    <span style={{ display: "block", fontSize: "10.5px", fontWeight: 400, color: "var(--gray)" }}>
+                      {place.address}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
           <FilterBar
             artists={ARTISTS}
             selectedArtistIds={selectedArtistIds}
@@ -237,7 +257,10 @@ export default function EditPage() {
             selectedCategories={selectedCategories}
             onToggleCategory={toggleCategory}
           />
-          <div style={{ minHeight: "420px", flex: 1, display: "flex" }}>
+          {/* 고정 minHeight를 주면 부모가 찌그러질 때 카드가 밖으로 넘쳐 깨진다 —
+              flex:1 + minHeight:0으로 남는 높이에 정확히 맞춘다(ReelsPanel의 스냅
+              스크롤도 부모 높이가 확정돼야 제대로 동작한다). */}
+          <div style={{ flex: 1, minHeight: 0, display: "flex" }}>
             <ReelsPanel
               places={candidatePlaces}
               baseOrder={orderedPlaces}
@@ -245,8 +268,8 @@ export default function EditPage() {
               onToggle={togglePlace}
             />
           </div>
-        </div>
-      </div>
+        </>
+      )}
 
       <ScheduleFooter
         schedule={schedule}
@@ -259,7 +282,7 @@ export default function EditPage() {
         endTime={tripEndTime}
         onEndTimeChange={setTripEndTime}
       />
-      <div className="manual-footer" style={{ marginTop: 0 }}>
+      <div className="manual-footer" style={{ marginTop: 0, flexShrink: 0, paddingBottom: "14px" }}>
         <button className="btn btn-coral" onClick={() => router.push("/trip?tab=route")}>
           {t("edit.backToRoute")}
         </button>
