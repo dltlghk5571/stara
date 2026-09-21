@@ -71,10 +71,10 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
         tabIndex={0}
         role="listbox"
         aria-label={t("reels.cardsAria")}
-        style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain", padding: "0 16px 16px", outline: "none", touchAction: "pan-y" }}
+        style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain", padding: "0 16px 16px", outline: "none", touchAction: "pan-y", scrollSnapType: "y mandatory" }}
       >
         {places.map((place) => (
-          <div key={place.id} style={{ height: "100%", width: "100%", padding: "8px 0", display: "flex", alignItems: "center" }}>
+          <div key={place.id} style={{ height: "100%", width: "100%", padding: "8px 0", display: "flex", alignItems: "center", scrollSnapAlign: "start", scrollSnapStop: "always" }}>
             <ReelCard
               place={place}
               isSelected={selectedPlaceIds.includes(place.id)}
