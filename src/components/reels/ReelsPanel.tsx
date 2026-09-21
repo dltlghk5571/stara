@@ -74,7 +74,7 @@ export default function ReelsPanel({ places, baseOrder, selectedPlaceIds, onTogg
         style={{ flex: 1, overflowY: "auto", overscrollBehavior: "contain", padding: "0 16px 16px", outline: "none", touchAction: "pan-y" }}
       >
         {places.map((place) => (
-          <div key={place.id} style={{ height: "100%", width: "100%", padding: "8px 0" }}>
+          <div key={place.id} style={{ height: "100%", width: "100%", padding: "8px 0", display: "flex", alignItems: "center" }}>
             <ReelCard
               place={place}
               isSelected={selectedPlaceIds.includes(place.id)}
